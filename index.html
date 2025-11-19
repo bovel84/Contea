@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Il Conte - Mobile RPG</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="overlay">
+        <h2 class="title-gold">IL CONTE</h2>
+        <p class="subtitle">RPG Testuale Mobile</p>
+        <input type="password" id="api-key" placeholder="Incolla API Key Groq qui">
+        <button class="btn-main" onclick="startGame()">ENTRA A CORTE</button>
+        
+        <div id="death-msg" style="display:none; margin-top: 20px;">
+            <div class="death-text">SEI STATO ASSASSINATO</div>
+            <p id="death-detail"></p>
+            <button class="btn-main btn-danger" onclick="location.reload()">Rinasci</button>
+        </div>
+    </div>
+
+    <div class="app-container">
+        
+        <div id="tab-stats" class="tab-view">
+            <h3 class="section-title">Stato del Regno</h3>
+            
+            <div class="health-card">
+                <span class="heart-beat">❤️</span>
+                <div class="hp-text-big" id="hp-text">100%</div>
+                <div class="hp-label">Salute del Conte</div>
+                <div class="hp-bar-bg">
+                    <div id="hp-bar" class="hp-bar-fill"></div>
+                </div>
+            </div>
+
+            <div class="stat-grid">
+                <div class="stat-box">
+                    <span class="stat-val" id="val-gold">1000</span>
+                    <span class="stat-lbl">Oro</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val" id="val-guards">50</span>
+                    <span class="stat-lbl">Guardie</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val" id="val-terror">10%</span>
+                    <span class="stat-lbl">Terrore</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val" id="val-turn">1</span>
+                    <span class="stat-lbl">Turno</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-chat" class="tab-view active-tab chat-container">
+            <div class="chat-log" id="chat-log">
+                <div class="msg msg-intrigue">Benvenuto, Eccellenza. Toccate le icone in basso per navigare. Parlate qui per comandare.</div>
+            </div>
+            <div class="input-area">
+                <input type="text" id="u-input" placeholder="Ordina..." onkeypress="if(event.key==='Enter') send()">
+                <button class="send-btn" id="btn-send" onclick="send()">➤</button>
+            </div>
+        </div>
+
+        <div id="tab-factions" class="tab-view">
+            <h3 class="section-title">Relazioni</h3>
+            
+            <div class="faction-card active" onclick="selectFaction('nobili')">
+                <div class="faction-header">
+                    <strong>⚜️ Nobiltà</strong>
+                    <span id="rel-nobili-txt" class="gold-text">50%</span>
+                </div>
+                <div class="bar-container"><div id="bar-nobili" class="bar-fill gold-bg" style="width:50%;"></div></div>
+                <small id="stat-nobili" class="status-small">Neutrale</small>
+            </div>
+
+            <div class="faction-card" onclick="selectFaction('clero')">
+                <div class="faction-header">
+                    <strong>✝️ Clero</strong>
+                    <span id="rel-clero-txt" class="gold-text">50%</span>
+                </div>
+                <div class="bar-container"><div id="bar-clero" class="bar-fill gold-bg" style="width:50%;"></div></div>
+                <small id="stat-clero" class="status-small">Neutrale</small>
+            </div>
+
+            <div class="faction-card" onclick="selectFaction('popolo')">
+                <div class="faction-header">
+                    <strong>👥 Popolo</strong>
+                    <span id="rel-popolo-txt" class="gold-text">50%</span>
+                </div>
+                <div class="bar-container"><div id="bar-popolo" class="bar-fill gold-bg" style="width:50%;"></div></div>
+                <small id="stat-popolo" class="status-small">Inquieto</small>
+            </div>
+
+            <div class="faction-card" onclick="selectFaction('spie')">
+                <div class="faction-header">
+                    <strong>👁️ Spie</strong>
+                    <span id="rel-spie-txt" style="color:#0f0">100%</span>
+                </div>
+                <div class="bar-container"><div id="bar-spie" class="bar-fill" style="width:100%; background: #0f0;"></div></div>
+                <small class="status-small">Pagale per info</small>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-btn" onclick="switchTab('tab-stats', this)">
+            <span>🏰</span> Stato
+        </button>
+        <button class="nav-btn active" onclick="switchTab('tab-chat', this)">
+            <span>📜</span> Chat
+        </button>
+        <button class="nav-btn" onclick="switchTab('tab-factions', this)">
+            <span>⚖️</span> Fazioni
+        </button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
