@@ -669,7 +669,8 @@
         }
 
         .event-panel,
-        .action-panel {
+        .action-panel,
+        .advice-panel {
             background: linear-gradient(135deg, rgba(16,16,16,0.92), rgba(8,8,8,0.9));
             border: 1px solid var(--border-soft);
             border-radius: 18px;
@@ -1350,6 +1351,13 @@
         <div class="panel-title">📣 Eventi di Corte</div>
         <div id="event-feed" class="event-feed">
             <p class="event-empty">Nessun evento registrato.</p>
+        </div>
+    </div>
+
+    <div class="advice-panel">
+        <div class="panel-title">🧠 Consigli Politici</div>
+        <div id="advice-feed" class="event-feed">
+            <p class="advice-empty">Nessun consiglio registrato.</p>
         </div>
     </div>
 
@@ -2120,6 +2128,103 @@ function applyLogisticConsequences(needs, deficits, stateRef = null) {
     }
 
     return impact;
+}
+
+const DEFICIT_FACTION_MAP = {
+    grain: ["peasants"],
+    livestock: ["peasants"],
+    wood: ["burghers", "peasants"],
+    stone: ["burghers"],
+    iron: ["militia", "burghers"],
+    copper: ["militia", "burghers"],
+    textiles: ["burghers"],
+    luxuries: ["nobility", "merchants"],
+    herbs: ["clergy", "mystics"],
+    arcane: ["mystics", "clergy"],
+    gold: ["merchants", "nobility"]
+};
+
+function buildFactionDeficitMessage(factionKey, resourceKey, amount) {
+    const label = resourceLabels[resourceKey] || resourceKey;
+    switch(factionKey) {
+        case "peasants":
+            return `I villaggi non vedono abbastanza ${label}. Senza scorte rischiamo rivolte nei campi.`;
+        case "burghers":
+            return `Le botteghe restano inattive: servono ${label} per lavorare e pagare le tasse.`;
+        case "militia":
+            return `Gli arsenali sono vuoti di ${label}; come possiamo difendere la contea?`;
+        case "merchants":
+            return `I mercati perdono credito senza ${label}. Dobbiamo riaprire i traffici.`;
+        case "nobility":
+            return `Le casate considerano offensivo il deficit di ${label}. Pretendono attenzione immediata.`;
+        case "clergy":
+            return `I riti richiedono ${label}; il popolo ha bisogno della nostra guida spirituale.`;
+        case "mystics":
+            return `Le nostre arti languono senza ${label}. Il regno perderà protezione arcana.`;
+        default:
+            return `${factionLabel(factionKey)} avverte la mancanza di ${label}.`;
+    }
+}
+
+function triggerFactionInterjections(context = {}) {
+    const messages = [];
+    const deficits = context.economy?.deficits || {};
+    Object.entries(deficits).forEach(([resourceKey, amount]) => {
+        const factionTargets = DEFICIT_FACTION_MAP[resourceKey];
+        if (!factionTargets) return;
+        factionTargets.forEach(key => {
+            const text = buildFactionDeficitMessage(key, resourceKey, amount);
+            if (text) messages.push({ key, text, priority: 3 });
+        });
+    });
+
+    if (context.economy?.logisticImpact?.military) {
+        messages.push({
+            key: "militia",
+            text: "Senza ferrivecchi e razioni la guardia non può reggere un assedio.",
+            priority: 4
+        });
+    }
+    if (context.economy?.logisticImpact?.construction) {
+        messages.push({
+            key: "burghers",
+            text: "I cantieri languono: spedite legname e pietra o le maestranze sciopereranno.",
+            priority: 3
+        });
+    }
+
+    if (context.maxAggression !== undefined && context.maxAggression >= 80) {
+        messages.push({
+            key: "militia",
+            text: "Le frontiere ribollono di stendardi stranieri. Occorre prepararci ora, non quando sarà tardi.",
+            priority: 2
+        });
+    }
+
+    factionOrder.forEach(key => {
+        const mood = factions[key] || 50;
+        if (mood <= 28 && Math.random() < 0.5) {
+            messages.push({ key, text: getFactionChatLine(key, mood), priority: 1 });
+        } else if (mood >= 75 && Math.random() < 0.25 && !messages.length) {
+            messages.push({ key, text: getFactionChatLine(key, mood), priority: 0 });
+        }
+    });
+
+    if (!messages.length) return;
+
+    messages.sort((a, b) => (b.priority || 0) - (a.priority || 0));
+    const used = new Set();
+    const selected = [];
+    messages.forEach(msg => {
+        if (selected.length >= 3) return;
+        if (used.has(msg.key)) return;
+        selected.push(msg);
+        used.add(msg.key);
+    });
+
+    selected.forEach(msg => {
+        addMsg("ai", `<strong>${factionLabel(msg.key)}</strong>: ${msg.text}`);
+    });
 }
 
 function togglePanel(id) {
@@ -3455,7 +3560,7 @@ function processVillageEconomy(targetState = null, options = {}) {
         if (!skipUI) updateUI();
     }
 
-    return { production, consumption, deficits };
+    return { production, consumption, deficits, logisticImpact, logisticNeeds };
 }
 
 function calculateVillageProduction(stateRef = null) {
@@ -3961,6 +4066,9 @@ function clearInterfaceLogs() {
     const eventFeed = document.getElementById("event-feed");
     if (eventFeed) eventFeed.innerHTML = '<p class="event-empty">Nessun evento registrato.</p>';
 
+    const adviceFeed = document.getElementById("advice-feed");
+    if (adviceFeed) adviceFeed.innerHTML = '<p class="advice-empty">Nessun consiglio registrato.</p>';
+
     const actionList = document.getElementById("action-list");
     if (actionList) actionList.innerHTML = '<p class="action-empty">Nessuna proposta al momento.</p>';
 
@@ -4119,7 +4227,7 @@ function progressSeason(options = {}) {
 
     advanceSeason(null, { silent });
     applyProduction(null, { skipUI:true, silent });
-    processVillageEconomy(null, { skipUI:true, silent });
+    const economyReport = processVillageEconomy(null, { skipUI:true, silent });
     collectTaxes(null, { silent });
     applySeasonalUpkeep(null, { silent });
     processBuildings();
@@ -4130,13 +4238,15 @@ function progressSeason(options = {}) {
     const endSnapshot = captureResourceSnapshot();
     lastResourceDelta = computeResourceDelta(startSnapshot, endSnapshot);
     lastResourceSnapshot = cloneResourceBag(endSnapshot);
+    const goldDelta = county.gold - startGold;
+    const happyDelta = county.happy - startHappy;
+    const maxAggression = neighboringCounties.reduce((max, c) => Math.max(max, c.aggression || 0), 0);
+    triggerFactionInterjections({ economy: economyReport, goldDelta, happyDelta, maxAggression, resourceDelta: lastResourceDelta });
 
     updateUI();
     autoSaveGame();
 
     if (!silent) {
-        const goldDelta = county.gold - startGold;
-        const happyDelta = county.happy - startHappy;
         addMsg("system", `📅 Resoconto stagione: ${formatResourceDelta(lastResourceDelta)} | Oro:${formatDeltaValue(goldDelta)} | Felicità:${county.happy}% (Δ${formatDeltaValue(happyDelta)})`);
     }
 }
@@ -4204,6 +4314,29 @@ function addEventCard(text) {
 
     const cards = feed.querySelectorAll(".event-card");
     if (cards.length > 8) {
+        feed.removeChild(feed.lastElementChild);
+    }
+}
+
+function addAdviceCard(text) {
+    if (!text) return;
+    const feed = document.getElementById("advice-feed");
+    if (!feed) return;
+
+    const emptyState = feed.querySelector(".advice-empty");
+    if (emptyState) emptyState.remove();
+
+    const card = document.createElement("div");
+    card.className = "event-card";
+    card.innerHTML = `
+        <div class="event-time">${timestamp()}</div>
+        <div class="msg-text">${text}</div>
+    `;
+
+    feed.prepend(card);
+
+    const cards = feed.querySelectorAll(".event-card");
+    if (cards.length > 6) {
         feed.removeChild(feed.lastElementChild);
     }
 }
@@ -4462,6 +4595,14 @@ function handleAIResponse(text, mode) {
         }
 
         displayText = displayText.replace(jsonMatch[0], "").trim();
+    }
+
+    if (mode === "advice") {
+        const adviceText = displayText.trim();
+        if (adviceText) addAdviceCard(adviceText);
+        renderActionSuggestions([], "");
+        updateUI();
+        return;
     }
 
     const { remainingText, actions, prompt } = extractActionsFromText(displayText);
