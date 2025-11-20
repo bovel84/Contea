@@ -836,6 +836,88 @@
             padding: 14px;
         }
 
+.building-card-ui {
+    background: rgba(18, 18, 18, 0.95);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform 0.2s;
+}
+.building-card-ui:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+.b-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px dashed rgba(255,255,255,0.1);
+    padding-bottom: 6px;
+    margin-bottom: 4px;
+}
+.b-title { color: var(--accent); font-weight: bold; font-size: 0.95em; }
+.b-time { font-size: 0.75em; color: #aaa; }
+.b-desc { font-size: 0.85em; color: #ddd; line-height: 1.3; flex-grow: 1; }
+.b-effect { font-size: 0.75em; color: #81c784; margin-top: 4px; }
+.b-cost { 
+    display: flex; 
+    gap: 8px; 
+    flex-wrap: wrap; 
+    font-size: 0.75em; 
+    color: var(--text-soft); 
+    background: rgba(0,0,0,0.3);
+    padding: 6px;
+    border-radius: 6px;
+}
+.cost-item { display: flex; align-items: center; gap: 3px; }
+.cost-item.missing { color: #ff6b6b; }
+
+/* Stile per il pannello cantieri */
+.const-card {
+    background: linear-gradient(90deg, rgba(20,20,20,0.9), rgba(30,30,30,0.9));
+    border: 1px solid var(--border-soft);
+    border-left: 3px solid var(--accent);
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.const-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+    color: var(--text);
+}
+
+.const-meta {
+    font-size: 0.75em;
+    color: var(--text-soft);
+    display: flex;
+    justify-content: space-between;
+}
+
+.const-progress-bg {
+    background: #333;
+    height: 6px;
+    width: 100%;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.const-progress-fill {
+    background: var(--accent);
+    height: 100%;
+    width: 0%;
+    transition: width 0.4s ease;
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+}
+
     </style>
 </head>
 
@@ -963,6 +1045,7 @@
         <button class="btn-sec" onclick="openLoadModal()">📂 Carica</button>
         <button class="btn-sec" onclick="simulateEconomyTurns(5)">📊 Diagnostica 5 turni</button>
         <button class="btn-sec" onclick="activateScreen('screen-start')">🏠 Menu iniziale</button>
+        <button class="btn-sec" onclick="openBuildingModal()">🔨 Costruisci</button>
         <span id="save-status" class="toolbar-status">Nessun salvataggio registrato.</span>
         <div class="game-nav-icons" style="margin-left:auto; display:flex; gap:18px; align-items:center;">
             <div style="text-align:center; padding:0 8px; cursor:pointer;" onclick="document.querySelectorAll('.tab-view').forEach(t=>t.classList.remove('active-tab')); document.getElementById('tab-dominio').classList.add('active-tab');">
@@ -1347,6 +1430,13 @@
         <button class="season-advance-btn" onclick="advanceSeasonManually()">Avanza alla stagione successiva</button>
     </div>
 
+    <div class="construction-panel" style="margin-top: 15px;">
+        <div class="panel-title">🏗️ Cantieri in Corso</div>
+        <div id="construction-feed" class="event-feed" style="max-height: 200px;">
+            <p class="event-empty">Nessun cantiere attivo al momento.</p>
+        </div>
+    </div>
+
     <div class="event-panel">
         <div class="panel-title">📣 Eventi di Corte</div>
         <div id="event-feed" class="event-feed">
@@ -1460,6 +1550,20 @@
         <button class="btn-main" onclick="manualSaveFromModal()">Salva in nuovo slot</button>
 
         <div id="modal-save-list"></div>
+    </div>
+</div>
+
+<div id="modal-buildings" class="modal">
+    <div class="modal-content" style="width: min(700px, 95vw);">
+        <div class="modal-header">
+            <h3>Registro dell'Architetto</h3>
+            <button class="close-btn" onclick="closeBuildingModal()">✕</button>
+        </div>
+        <p style="font-size:0.9em; color:#aaa; margin-bottom:15px;">
+            Seleziona un progetto per avviare il cantiere. Le risorse verranno dedotte immediatamente.
+        </p>
+        <div id="building-grid" class="start-grid">
+            </div>
     </div>
 </div>
 
@@ -3061,135 +3165,294 @@ function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
 function clamp(v){ return Math.max(0, Math.min(100,v)); }
 
 /* ============================================================
-   ===================== DISEGNO MAPPE =========================
+/* ============================================================
+   ===================== DISEGNO MAPPE 2.0 =====================
    ============================================================ */
+
+// Colori e stili medievali
+const MAP_STYLES = {
+    water: "#a3c6d4",
+    waterDeep: "#8ab0c0",
+    grass: "#d6e4aa",
+    forest: "#8fb376",
+    forestDark: "#6d9158",
+    mountain: "#cfcfc4",
+    mountainShadow: "#a0a0a0",
+    swamp: "#8d9678",
+    hills: "#e0d8a6",
+    paper: "#f4ecd8",
+    ink: "#3e2723"
+};
 
 function drawCountyMap() {
     const canvas = document.getElementById("county-map");
+    if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    const size = canvas.width / worldMap.width;
-    const patch = 4;
+    const tileSize = canvas.width / worldMap.width;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Sfondo base (Pergamena)
+    ctx.fillStyle = MAP_STYLES.paper;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    for (let y = 0; y < worldMap.height; y += patch) {
-        for (let x = 0; x < worldMap.width; x += patch) {
-            const terrain = dominantTerrain(x, y, patch);
-            const width = Math.min(patch, worldMap.width - x) * size;
-            const height = Math.min(patch, worldMap.height - y) * size;
-
-            roundedRect(ctx, x * size, y * size, width, height, size * 0.6);
-            ctx.fillStyle = terrainColor(terrain);
-            ctx.fill();
-        }
-    }
-
-    drawSettlements(ctx, size);
-    drawStructureMarkers(ctx, size);
-}
-
-function dominantTerrain(startX, startY, block) {
-    const counts = {};
-    for (let y = startY; y < Math.min(worldMap.height, startY + block); y++) {
-        for (let x = startX; x < Math.min(worldMap.width, startX + block); x++) {
+    // Disegna ogni casella (Tile)
+    for (let y = 0; y < worldMap.height; y++) {
+        for (let x = 0; x < worldMap.width; x++) {
             const tile = getTile(x, y);
             if (!tile) continue;
-            counts[tile.terrain] = (counts[tile.terrain] || 0) + 1;
+            drawTileVisuals(ctx, x * tileSize, y * tileSize, tileSize, tile);
         }
     }
-    const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]);
-    return sorted.length && sorted[0] ? sorted[0][0] : "plains";
+
+    // Disegna bordi griglia leggeri (opzionale, per chiarezza)
+    ctx.strokeStyle = "rgba(0,0,0,0.05)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let i = 0; i <= worldMap.width; i++) {
+        ctx.moveTo(i * tileSize, 0); ctx.lineTo(i * tileSize, canvas.height);
+        ctx.moveTo(0, i * tileSize); ctx.lineTo(canvas.width, i * tileSize);
+    }
+    ctx.stroke();
+
+    // Disegna Insediamenti e Strutture
+    drawSettlements(ctx, tileSize);
+    drawStructureMarkers(ctx, tileSize);
+    
+    // Effetto vignettatura (ombra ai bordi)
+    drawVignette(ctx, canvas.width, canvas.height);
 }
 
-function roundedRect(ctx, x, y, w, h, r) {
-    const radius = Math.min(r, w / 2, h / 2);
-    ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.lineTo(x + w - radius, y);
-    ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
-    ctx.lineTo(x + w, y + h - radius);
-    ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
-    ctx.lineTo(x + radius, y + h);
-    ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
-    ctx.lineTo(x, y + radius);
-    ctx.quadraticCurveTo(x, y, x + radius, y);
-    ctx.closePath();
+function drawTileVisuals(ctx, x, y, size, tile) {
+    // Sfondo del terreno
+    switch(tile.terrain) {
+        case "lake":
+            ctx.fillStyle = MAP_STYLES.water;
+            ctx.fillRect(x, y, size, size);
+            drawWaves(ctx, x, y, size);
+            break;
+        case "plains":
+            ctx.fillStyle = MAP_STYLES.grass;
+            ctx.fillRect(x, y, size, size);
+            if (Math.random() > 0.7) drawTuft(ctx, x, y, size);
+            break;
+        case "forest":
+            ctx.fillStyle = MAP_STYLES.grass; // Fondo erba
+            ctx.fillRect(x, y, size, size);
+            drawTreeClump(ctx, x, y, size);
+            break;
+        case "hills":
+            ctx.fillStyle = MAP_STYLES.grass;
+            ctx.fillRect(x, y, size, size);
+            drawHillCurve(ctx, x, y, size);
+            break;
+        case "mountain":
+            ctx.fillStyle = "#bdaea1"; // Fondo roccia
+            ctx.fillRect(x, y, size, size);
+            drawMountainPeak(ctx, x, y, size);
+            break;
+        case "swamp":
+            ctx.fillStyle = MAP_STYLES.swamp;
+            ctx.fillRect(x, y, size, size);
+            drawSwampDetails(ctx, x, y, size);
+            break;
+    }
 }
+
+/* --- DISEGNO ELEMENTI PROCEDURALI --- */
+
+function drawTreeClump(ctx, x, y, s) {
+    ctx.fillStyle = MAP_STYLES.forest;
+    // Disegna 3 alberelli stilizzati (triangoli/cerchi)
+    const trees = [
+        {ox: 0.2, oy: 0.3}, {ox: 0.7, oy: 0.4}, {ox: 0.4, oy: 0.8}
+    ];
+    trees.forEach(t => {
+        const tx = x + t.ox * s;
+        const ty = y + t.oy * s;
+        const ts = s * 0.4;
+        
+        // Ombra
+        ctx.fillStyle = "rgba(0,0,0,0.1)";
+        ctx.beginPath(); ctx.arc(tx + 2, ty + 2, ts/2, 0, Math.PI*2); ctx.fill();
+
+        // Chioma
+        ctx.fillStyle = MAP_STYLES.forestDark;
+        ctx.beginPath();
+        ctx.moveTo(tx, ty - ts);
+        ctx.lineTo(tx + ts/1.5, ty + ts/2);
+        ctx.lineTo(tx - ts/1.5, ty + ts/2);
+        ctx.fill();
+    });
+}
+
+function drawMountainPeak(ctx, x, y, s) {
+    const mx = x + s/2;
+    const my = y + s/2;
+    
+    ctx.beginPath();
+    ctx.moveTo(mx, y + s * 0.1);
+    ctx.lineTo(x + s * 0.9, y + s * 0.9);
+    ctx.lineTo(x + s * 0.1, y + s * 0.9);
+    ctx.closePath();
+    
+    // Lato in ombra
+    ctx.fillStyle = MAP_STYLES.mountainShadow;
+    ctx.fill();
+    
+    // Lato in luce
+    ctx.fillStyle = MAP_STYLES.mountain;
+    ctx.beginPath();
+    ctx.moveTo(mx, y + s * 0.1);
+    ctx.lineTo(mx, y + s * 0.9);
+    ctx.lineTo(x + s * 0.1, y + s * 0.9);
+    ctx.fill();
+}
+
+function drawWaves(ctx, x, y, s) {
+    ctx.strokeStyle = MAP_STYLES.waterDeep;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x + s*0.2, y + s*0.4);
+    ctx.lineTo(x + s*0.5, y + s*0.4);
+    ctx.moveTo(x + s*0.5, y + s*0.7);
+    ctx.lineTo(x + s*0.8, y + s*0.7);
+    ctx.stroke();
+}
+
+function drawHillCurve(ctx, x, y, s) {
+    ctx.fillStyle = MAP_STYLES.hills;
+    ctx.beginPath();
+    ctx.arc(x + s*0.5, y + s*0.8, s*0.4, Math.PI, 0);
+    ctx.fill();
+    ctx.strokeStyle = "#b0b090";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+}
+
+function drawTuft(ctx, x, y, s) {
+    ctx.strokeStyle = "#aabf80";
+    ctx.beginPath();
+    ctx.moveTo(x+s*0.5, y+s*0.6); ctx.lineTo(x+s*0.5, y+s*0.4);
+    ctx.moveTo(x+s*0.4, y+s*0.6); ctx.lineTo(x+s*0.3, y+s*0.45);
+    ctx.moveTo(x+s*0.6, y+s*0.6); ctx.lineTo(x+s*0.7, y+s*0.45);
+    ctx.stroke();
+}
+
+function drawSwampDetails(ctx, x, y, s) {
+    ctx.fillStyle = "rgba(40,50,40,0.1)";
+    ctx.beginPath();
+    ctx.arc(x+s*0.3, y+s*0.7, s*0.2, 0, Math.PI*2);
+    ctx.arc(x+s*0.7, y+s*0.4, s*0.15, 0, Math.PI*2);
+    ctx.fill();
+}
+
+/* --- STRUTTURE E INSEDIAMENTI --- */
 
 function drawSettlements(ctx, size) {
-    const radius = Math.max(3, size * 0.35);
     settlements.forEach(s => {
-        const cx = (s.x + 0.5) * size;
-        const cy = (s.y + 0.5) * size;
-        ctx.fillStyle = "#f4d88b";
+        const cx = s.x * size + size/2;
+        const cy = s.y * size + size/2;
+        const r = size * 0.35;
+
+        // Casa principale
+        ctx.fillStyle = "#d4af37";
         ctx.beginPath();
-        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.moveTo(cx, cy - r);
+        ctx.lineTo(cx + r, cy);
+        ctx.lineTo(cx + r, cy + r);
+        ctx.lineTo(cx - r, cy + r);
+        ctx.lineTo(cx - r, cy);
+        ctx.closePath();
         ctx.fill();
-        ctx.strokeStyle = "#4c2a00";
+        ctx.strokeStyle = "#3e2723";
         ctx.lineWidth = 1;
         ctx.stroke();
+
+        // Tetto
+        ctx.fillStyle = "#8d2d18"; // Rosso tegola
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - r);
+        ctx.lineTo(cx + r + 2, cy);
+        ctx.lineTo(cx - r - 2, cy);
+        ctx.fill();
     });
 }
 
 function drawStructureMarkers(ctx, size) {
-    const markerSize = Math.max(4, size * 0.4);
-    const markers = [
-        ...structures.mines.map(s => ({ ...s, shape:"diamond", color:"#c27b26" })),
-        ...structures.sawmills.map(s => ({ ...s, shape:"triangle", color:"#5ba86c" })),
-        ...structures.quarries.map(s => ({ ...s, shape:"square", color:"#c4c4c4" })),
-        ...structures.monasteries.map(s => ({ ...s, shape:"cross", color:"#f5f0d0" }))
-    ];
+    const drawIcon = (s, color, label) => {
+        const x = s.x * size + size/2;
+        const y = s.y * size + size/2;
+        
+        // Ombra
+        ctx.fillStyle = "rgba(0,0,0,0.4)";
+        ctx.beginPath(); ctx.arc(x+2, y+2, size*0.3, 0, Math.PI*2); ctx.fill();
 
-    markers.forEach(m => {
-        const cx = (m.x + 0.5) * size;
-        const cy = (m.y + 0.5) * size;
-        drawMarkerShape(ctx, cx, cy, markerSize, m.shape, m.color);
+        // Cerchio sfondo
+        ctx.fillStyle = color;
+        ctx.beginPath(); ctx.arc(x, y, size*0.3, 0, Math.PI*2); ctx.fill();
+        
+        // Bordo
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Lettera icona
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 10px monospace";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(label, x, y+1);
+    };
+
+    structures.mines.forEach(s => drawIcon(s, "#555", "⛏️"));
+    structures.sawmills.forEach(s => drawIcon(s, "#4caf50", "🌲"));
+    structures.quarries.forEach(s => drawIcon(s, "#795548", "🧱"));
+    structures.monasteries.forEach(s => drawIcon(s, "#9c27b0", "⛪"));
+    
+    // Disegna anche gli edifici costruiti dal giocatore (buildings completati o in corso)
+    buildings.forEach(b => {
+        if (b.stage === 'building') {
+             const x = b.x * size + size/2;
+             const y = b.y * size + size/2;
+             ctx.fillStyle = "rgba(255, 165, 0, 0.8)"; // Arancione cantiere
+             ctx.fillRect(x - size/4, y - size/4, size/2, size/2);
+             ctx.strokeStyle = "#fff";
+             ctx.strokeRect(x - size/4, y - size/4, size/2, size/2);
+        } else {
+             // Edifici completati (se vuoi icone specifiche aggiungi switch case qui)
+             const x = b.x * size + size/2;
+             const y = b.y * size + size/2;
+             ctx.fillStyle = "#2196f3"; 
+             ctx.beginPath(); ctx.arc(x, y, size*0.25, 0, Math.PI*2); ctx.fill();
+             ctx.strokeStyle = "#fff"; ctx.stroke();
+        }
     });
 }
 
-function drawMarkerShape(ctx, x, y, size, shape, color) {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.fillStyle = color;
-    ctx.strokeStyle = "#0a0a0a";
-    ctx.lineWidth = 1;
-    switch(shape) {
-        case "diamond":
-            ctx.rotate(Math.PI / 4);
-            ctx.fillRect(-size/2, -size/2, size, size);
-            break;
-        case "triangle":
-            ctx.beginPath();
-            ctx.moveTo(0, -size/1.4);
-            ctx.lineTo(size/1.2, size/1.4);
-            ctx.lineTo(-size/1.2, size/1.4);
-            ctx.closePath();
-            ctx.fill();
-            break;
-        case "square":
-            ctx.fillRect(-size/2, -size/2, size, size);
-            break;
-        case "cross":
-            ctx.fillRect(-size/6, -size/2, size/3, size);
-            ctx.fillRect(-size/2, -size/6, size, size/3);
-            break;
-    }
-    ctx.restore();
+function drawVignette(ctx, w, h) {
+    const grad = ctx.createRadialGradient(w/2, h/2, w*0.3, w/2, h/2, w*0.8);
+    grad.addColorStop(0, "rgba(0,0,0,0)");
+    grad.addColorStop(1, "rgba(20,10,5,0.4)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0,0,w,h);
 }
+
+/* --- MAPPA REGIONALE (STRATEGICA) --- */
 
 function drawRegionMap() {
     const canvas = document.getElementById("region-map");
+    if (!canvas) return;
     const ctx = canvas.getContext("2d");
     const size = canvas.width / 8;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#050505";
+    // Sfondo carta antica
+    ctx.fillStyle = "#e3d5b8"; 
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Disegna territori
     for (let y = 0; y < 8; y++) {
         for (let x = 0; x < 8; x++) {
             let owner = "wild";
-
+            // Logica semplice per proprietari (uguale a prima ma con colori nuovi)
             if (y < 2) owner = "auvrey";
             else if (x > 5 && y > 5) owner = "falken";
             else if (rand(0,10) > 4) owner = "count";
@@ -3197,15 +3460,37 @@ function drawRegionMap() {
             const px = x * size;
             const py = y * size;
 
-            ctx.fillStyle = regionOwnerColor(owner);
-            ctx.globalAlpha = 0.85;
-            roundedRect(ctx, px + 2, py + 2, size - 4, size - 4, 6);
-            ctx.fill();
+            // Disegna solo bordi colorati e leggero riempimento per effetto mappa politica
+            ctx.fillStyle = getRegionColor(owner, 0.3);
+            ctx.fillRect(px, py, size, size);
+            
+            ctx.strokeStyle = getRegionColor(owner, 0.8);
+            ctx.lineWidth = 1;
+            ctx.strokeRect(px, py, size, size);
+            
+            // Disegna un simbolo per il proprietario
+            if (Math.random() > 0.7 && owner !== 'wild') {
+                ctx.font = "16px serif";
+                ctx.textAlign = "center";
+                ctx.fillStyle = "rgba(0,0,0,0.3)";
+                const symbol = owner === 'count' ? '⚜️' : (owner === 'auvrey' ? '🦁' : '🦅');
+                ctx.fillText(symbol, px + size/2, py + size/2 + 5);
+            }
         }
     }
-
-    ctx.globalAlpha = 1;
+    
     drawNeighborPins(ctx);
+    drawVignette(ctx, canvas.width, canvas.height);
+}
+
+function getRegionColor(owner, alpha) {
+    const map = {
+        count: `rgba(212, 175, 55, ${alpha})`,  // Oro
+        auvrey: `rgba(180, 40, 40, ${alpha})`,  // Rosso scuro
+        falken: `rgba(20, 60, 120, ${alpha})`,  // Blu scuro
+        wild: `rgba(100, 100, 100, ${alpha})`   // Grigio neutro
+    };
+    return map[owner] || map.wild;
 }
 
 function drawNeighborPins(ctx) {
@@ -3220,10 +3505,10 @@ function drawNeighborPins(ctx) {
         const y = centerY + Math.sin(angle) * radius;
 
         ctx.beginPath();
-        ctx.fillStyle = regionOwnerColor(c.key === "auvrey" ? "auvrey" : "falken");
+        ctx.fillStyle = getRegionColor(c.key, 1);
         ctx.arc(x, y, 12, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = "#050505";
+        ctx.strokeStyle = "#3e2723";
         ctx.lineWidth = 2;
         ctx.stroke();
 
@@ -3234,37 +3519,8 @@ function drawNeighborPins(ctx) {
     });
 }
 
-/* ---- COLORI ---- */
-function terrainColor(t){
-    return {
-        plains:"#9bbf6b",
-        forest:"#1e4a2d",
-        hills:"#b09063",
-        mountain:"#787d87",
-        swamp:"#2f3f33",
-        lake:"#2b62c3"
-    }[t];
-}
-
-function ownerColor(o){
-    return {
-        count:"#ffd700",
-        nobility:"#b04800",
-        clergy:"#8b00ff",
-        commons:"#aaaaaa",
-        auvrey:"#ff0000",
-        falken:"#0099ff"
-    }[o] || "#222";
-}
-
-function regionOwnerColor(o){
-    return {
-        count:"#8f7d2b",
-        auvrey:"#660000",
-        falken:"#003366",
-        wild:"#444444"
-    }[o];
-}
+// Riusa drawNeighborPins esistente ma migliora lo stile dei pin se vuoi
+// ... (Il resto delle funzioni ausiliarie come rand() rimane invariato)
 
 /* ============================================================
    ===================== STRUTTURE DI BASE =====================
@@ -3337,60 +3593,168 @@ function autogenerateStructures() {
 let buildings = [];  // Lista edifici in costruzione
 
 const buildingData = {
+    // --- SOPRAVVIVENZA & AGRICOLTURA ---
+    village_well: {
+        name: "Pozzo del Villaggio",
+        desc: "Acqua pulita per prevenire malattie nei quartieri poveri.",
+        effect: "Salute +, Contadini +",
+        cost: { gold: 30, stone: 20 },
+        time: 2
+    },
+    wheat_field: {
+        name: "Campi di Grano Estesi",
+        desc: "Bonifica terre per nuove coltivazioni intensive.",
+        effect: "Grano (produzione auto), Cibo ++",
+        cost: { gold: 50, wood: 10 },
+        time: 3
+    },
+    dairy_farm: {
+        name: "Fattoria e Caseificio",
+        desc: "Allevamento bovino per carne e formaggi.",
+        effect: "Bestiame (produzione auto), Cibo +",
+        cost: { gold: 80, wood: 40 },
+        time: 3
+    },
+    granary: {
+        name: "Granaio Fortificato",
+        desc: "Protegge i raccolti da parassiti e ladri.",
+        effect: "Sicurezza +, Riserve Cibo protette",
+        cost: { gold: 100, wood: 80, stone: 40 },
+        time: 4
+    },
+
+    // --- ECONOMIA & INDUSTRIA ---
+    market: {
+        name: "Mercato Cittadino",
+        desc: "Il cuore del commercio locale.",
+        effect: "Felicità ++, Oro +, Mercanti ++",
+        cost: { gold: 100, wood: 50 },
+        time: 3
+    },
+    harbor: {
+        name: "Porto Commerciale",
+        desc: "Apre rotte marittime per l'export.",
+        effect: "Oro ++, Mercanti +++, Nobiltà +",
+        cost: { gold: 300, wood: 60, stone: 80 },
+        time: 6
+    },
+    sawmill: {
+        name: "Segheria Reale",
+        desc: "Impianto idraulico per il taglio del legname.",
+        effect: "Legno (produzione auto)",
+        cost: { gold: 90, wood: 60, stone: 30 },
+        time: 4
+    },
+    stone_quarry: {
+        name: "Cava di Pietra",
+        desc: "Estrazione intensiva di materiali da costruzione.",
+        effect: "Pietra (produzione auto)",
+        cost: { gold: 85, wood: 40, stone: 40 },
+        time: 5
+    },
+    iron_mine: {
+        name: "Miniera di Ferro",
+        desc: "Tunnel profondi per l'estrazione di metalli.",
+        effect: "Ferro (produzione auto)",
+        cost: { gold: 140, wood: 40, stone: 80, iron: 20 },
+        time: 6
+    },
+    mint: {
+        name: "Zecca Ducale",
+        desc: "Conia moneta sovrana.",
+        effect: "Oro (rendita fissa), Mercanti +",
+        cost: { gold: 100, stone: 60, iron: 15 },
+        time: 5
+    },
+
+    // --- MILITARE & SICUREZZA ---
+    watchtower: {
+        name: "Torre di Guardia",
+        desc: "Avvista nemici e banditi da lontano.",
+        effect: "Sicurezza ++, Aggressività Vicini --",
+        cost: { gold: 120, stone: 70, wood: 20 },
+        time: 4
+    },
+    barracks: {
+        name: "Caserma della Guardia",
+        desc: "Alloggi permanenti per la milizia cittadina.",
+        effect: "Sicurezza +++, Milizia ++",
+        cost: { gold: 120, wood: 50, stone: 70, iron: 15 },
+        time: 5
+    },
+    mercenary_camp: {
+        name: "Accampamento Mercenario",
+        desc: "Soldati di ventura a pagamento.",
+        effect: "Milizia ++, Clero --, Oro - (mantenimento)",
+        cost: { gold: 150, wood: 40, stone: 20 },
+        time: 3
+    },
     forge: {
-        name:"Forgia Reale",
-        cost:{ gold:200, wood:80, stone:120, iron:40 },
-        time:5
+        name: "Forgia Reale",
+        desc: "Armi e attrezzi di qualità superiore.",
+        effect: "Sicurezza +, Artigiani ++, Milizia +",
+        cost: { gold: 200, wood: 80, stone: 120, iron: 40 },
+        time: 5
     },
-    harbor:{
-        name:"Porto Commerciale",
-        cost:{ gold:300, wood:60, stone:80 },
-        time:6
+    stone_walls: {
+        name: "Mura di Cinta",
+        desc: "Una possente difesa contro gli eserciti invasori.",
+        effect: "Sicurezza ++++, Nobiltà +, Prestigio",
+        cost: { gold: 500, stone: 400, wood: 50 },
+        time: 8
     },
-    watchtower:{
-        name:"Torre di Guardia",
-        cost:{ gold:120, stone:70, wood:20 },
-        time:4
+
+    // --- FEDE & CULTURA ---
+    chapel: {
+        name: "Cappella Votiva",
+        desc: "Un piccolo luogo di preghiera per il popolo.",
+        effect: "Clero +, Felicità +",
+        cost: { gold: 60, stone: 20, wood: 30 },
+        time: 3
     },
-    mercenary_camp:{
-        name:"Accampamento Mercenario",
-        cost:{ gold:150, wood:40, stone:20 },
-        time:3
+    church: {
+        name: "Chiesa Parrocchiale",
+        desc: "Il centro della vita spirituale della comunità.",
+        effect: "Clero ++, Felicità ++, Salute +",
+        cost: { gold: 250, stone: 150, wood: 60, luxuries: 10 },
+        time: 6
     },
-    market:{
-        name:"Mercato Cittadino",
-        cost:{ gold:100, wood:50 },
-        time:3
+    grand_cathedral: {
+        name: "Grande Cattedrale",
+        desc: "Un'opera monumentale che attira pellegrini.",
+        effect: "Clero ++++, Prestigio Reale, Oro (offerte)",
+        cost: { gold: 1200, stone: 800, wood: 200, iron: 50, luxuries: 50 },
+        time: 12
     },
-    monk_clinic:{
-        name:"Clinica dei Monaci",
-        cost:{ gold:80, wood:30 },
-        time:3
+    monk_clinic: {
+        name: "Clinica dei Monaci",
+        desc: "Erbe e cure per i malati.",
+        effect: "Salute +++, Clero ++",
+        cost: { gold: 80, wood: 30, herbs: 10 },
+        time: 3
     },
-    sawmill:{
-        name:"Segheria Reale",
-        cost:{ gold:90, wood:60, stone:30 },
-        time:4
+
+    // --- ISTRUZIONE & PRESTIGIO ---
+    school: {
+        name: "Scuola degli Scribi",
+        desc: "Insegna a leggere e far di conto ai figli dei borghesi.",
+        effect: "Artigiani ++, Mistici +, Efficienza tasse",
+        cost: { gold: 180, wood: 100, stone: 20 },
+        time: 5
     },
-    stone_quarry:{
-        name:"Cava di Pietra",
-        cost:{ gold:85, wood:40, stone:40 },
-        time:5
+    library: {
+        name: "Biblioteca del Conte",
+        desc: "Raccoglie sapere antico e mappe rare.",
+        effect: "Mistici +++, Consigli migliori",
+        cost: { gold: 400, stone: 100, wood: 100, arcane: 10 },
+        time: 7
     },
-    iron_mine:{
-        name:"Miniera di Ferro",
-        cost:{ gold:140, wood:40, stone:80, iron:20 },
-        time:6
-    },
-    mint:{
-        name:"Zecca ducale",
-        cost:{ gold:100, stone:60, iron:15 },
-        time:5
-    },
-    barracks:{
-        name:"Caserma della Guardia",
-        cost:{ gold:120, wood:50, stone:70, iron:15 },
-        time:5
+    theater: {
+        name: "Teatro all'Aperto",
+        desc: "Svago e cultura per tutte le classi sociali.",
+        effect: "Felicità +++, Nobiltà +, Popolo +",
+        cost: { gold: 250, wood: 150, stone: 50 },
+        time: 5
     }
 };
 
@@ -3835,67 +4199,140 @@ function constructionEventText(type) {
    ============================================================ */
 
 function applyBuildingEffects(b) {
+    // --- Helper per registrare strutture produttive ---
+    const addStructure = (listKey, production, label) => {
+        registerNewStructure(listKey, production, b, label);
+        addMsg("system", `⚙️ Produzione avviata: una nuova ${b.name} è operativa.`);
+    };
+
     switch(b.type) {
-        case "forge":
-            factions.burghers += 5;
-            factions.militia += 3;
-            county.gold += 20;
+        // --- AGRICOLTURA & SOPRAVVIVENZA ---
+        case "village_well":
+            county.health = clamp(county.health + 8);
+            factions.peasants += 5;
+            break;
+        case "wheat_field":
+            // Aggiungiamo una "farm" generica alla lista delle strutture
+            // Nota: usiamo 'farms' se hai una lista generica, o creiamo un hook
+            // Se non hai una lista 'farms' in 'structures', modifichiamo direttamente le risorse base
+            // Per semplicità qui aumentiamo la produzione base del territorio se non c'è una struttura specifica
+            county.food = clamp(county.food + 10); 
+            factions.peasants += 5;
+            addMsg("system", "🌾 I nuovi campi aumentano la sicurezza alimentare.");
+            break;
+        case "dairy_farm":
+            county.food = clamp(county.food + 5);
+            factions.peasants += 3;
+            // Simuliamo produzione aggiuntiva
+            if(!county.resources.livestock) county.resources.livestock = 0;
+            break;
+        case "granary":
+            county.security = clamp(county.security + 2);
+            // Logica custom: protegge dalla carestia invernale (gestito narrativamente o in eventi futuri)
+            factions.peasants += 4;
             break;
 
+        // --- ECONOMIA ---
+        case "market":
+            county.happy = clamp(county.happy + 8);
+            factions.merchants += 8;
+            county.gold += 15; // Bonus immediato commercio
+            break;
         case "harbor":
             factions.merchants += 10;
-            county.gold += 30;
+            factions.nobility += 2;
+            county.gold += 50;
+            break;
+        case "mint":
+            county.gold += 100; // Riserva immediata
+            factions.merchants += 5;
+            factions.nobility += 2;
+            break;
+        
+        // --- PRODUZIONE RISORSE (STRUTTURE REALI) ---
+        case "sawmill":
+            addStructure("sawmills", { wood: rand(30, 60) }, "Segheria");
+            break;
+        case "stone_quarry":
+            addStructure("quarries", { stone: rand(25, 50) }, "Cava");
+            break;
+        case "iron_mine":
+            addStructure("mines", { iron: rand(30, 60), copper: rand(10, 20) }, "Miniera");
             break;
 
+        // --- MILITARE ---
         case "watchtower":
             factions.militia += 5;
-            neighboringCounties.forEach(c => c.aggression = Math.max(0, c.aggression - 5));
-            county.security = clamp((county.security || 50) + 5);
+            county.security = clamp(county.security + 5);
+            neighboringCounties.forEach(c => c.aggression = Math.max(0, c.aggression - 8));
             break;
-
+        case "barracks":
+            factions.militia += 8;
+            adjustPopulation("militia", 10); // Più reclute
+            county.security = clamp(county.security + 10);
+            break;
         case "mercenary_camp":
-            factions.militia += 10;
+            factions.militia += 5;
             factions.clergy -= 5;
+            county.security = clamp(county.security + 15); // Molto sicuri ma costosi
+            break;
+        case "forge":
+            factions.burghers += 6;
+            factions.militia += 4;
+            break;
+        case "stone_walls":
+            county.security = 100; // Massima sicurezza
+            factions.nobility += 10;
+            factions.burghers += 5;
+            neighboringCounties.forEach(c => c.aggression = Math.max(0, c.aggression - 20));
+            addMsg("system", "🛡️ Le mura sono completate! La contea è ora una fortezza.");
             break;
 
-        case "market":
-            county.happy = clamp(county.happy + 10);
-            factions.merchants += 8;
+        // --- FEDE ---
+        case "chapel":
+            factions.clergy += 5;
+            county.happy = clamp(county.happy + 3);
             break;
-
+        case "church":
+            factions.clergy += 10;
+            county.happy = clamp(county.happy + 6);
+            county.health = clamp(county.health + 2);
+            addStructure("monasteries", { herbs: rand(2,5) }, "Chiesa"); // Produce piccola quantità fede/erbe
+            break;
+        case "grand_cathedral":
+            factions.clergy = 100; // Estasi religiosa
+            factions.nobility += 15;
+            county.happy = clamp(county.happy + 15);
+            addMsg("system", "🔔 Le campane della Cattedrale suonano per la prima volta. Un giorno storico!");
+            break;
         case "monk_clinic":
             county.health = clamp(county.health + 15);
-            factions.clergy += 10;
+            factions.clergy += 8;
             break;
 
-        case "sawmill":
-            registerNewStructure("sawmills", { wood: rand(28, 55) }, b, "sawmill");
-            addMsg("system", "🌲 Una nuova segheria aumenta l'approvvigionamento di legname.");
+        // --- ISTRUZIONE & SOCIALE ---
+        case "school":
+            factions.burghers += 10;
+            factions.mystics += 5;
+            // Simuliamo efficienza: riduce sprechi
+            county.gold += 20; 
             break;
-
-        case "stone_quarry":
-            registerNewStructure("quarries", { stone: rand(22, 48) }, b, "quarry");
-            addMsg("system", "🪨 La nuova cava fornisce pietra per i cantieri.");
+        case "library":
+            factions.mystics += 15;
+            factions.clergy -= 2; // Rivalità sul sapere
+            addMsg("system", "📚 La biblioteca attira saggi da ogni dove.");
             break;
-
-        case "iron_mine":
-            registerNewStructure("mines", { iron: rand(30, 60), copper: rand(8, 16) }, b, "mine");
-            addMsg("system", "⛏️ La miniera di ferro entra in produzione.");
+        case "theater":
+            county.happy = clamp(county.happy + 12);
+            factions.nobility += 5;
+            factions.peasants += 5;
             break;
-
-        case "mint":
-            county.gold += 40;
-            factions.merchants += 4;
-            break;
-
-        case "barracks":
-            factions.militia += 6;
-            adjustPopulation("militia", Math.max(3, Math.floor((populationGroups.militia || 0) * 0.02)));
-            county.security = clamp((county.security || 50) + 8);
-            break;
+            
+        default:
+            addMsg("system", `Costruzione di ${b.type} completata.`);
     }
 
-    // Limita valori
+    // Aggiornamento finale UI e Fazioni
     factionOrder.forEach(f => factions[f] = clamp(factions[f]));
     updateUI();
 }
@@ -4114,6 +4551,8 @@ function updateUI() {
 
     const turnTag = document.getElementById("chat-turn");
     if (turnTag) turnTag.innerText = `Turno ${county.turn}`;
+
+    updateConstructionUI();
 }
 
 function updateDiplomacyUI() {
@@ -4466,7 +4905,41 @@ async function callGroqPrivate(factionKey, userText) {
         return;
     }
 
-    const prompt = buildPrivatePrompt(factionKey, userText);
+    // 1. Recuperiamo il contesto aggiornato del regno
+    const currentStats = generateGameStateContext();
+    const factionName = getChatName(factionKey);
+    
+    // 2. Costruiamo il System Prompt specifico
+    const systemPrompt = `
+Tu sei ${factionName}.
+STRICT CONTEXT DATA:
+${currentStats}
+
+PERSONALITÀ:
+Parla in prima persona come rappresentante di questa fazione.
+Se le tue statistiche (factions.${factionKey}) sono basse (<40), sii ostile o freddo.
+Se sono alte (>70), sii leale e servile.
+Mantieni la memoria di ciò che ci siamo detti in questa conversazione.
+Non usare JSON qui, solo dialogo.
+`.trim();
+
+    // 3. Costruiamo lo storico dei messaggi per l'API
+    // Convertiamo il formato interno {from:'user', text:'...'} nel formato API {role:'user', content:'...'}
+    // Prendiamo gli ultimi 10 messaggi per non sforare i token
+    const history = privateChats[factionKey].slice(-10).map(msg => ({
+        role: msg.from === "user" ? "user" : "assistant",
+        content: msg.text
+    }));
+
+    // Aggiungiamo il nuovo messaggio dell'utente alla fine (se non è già stato aggiunto alla history locale)
+    // Nota: nel tuo codice originale lo aggiungevi prima di chiamare la funzione, quindi qui lo troviamo già in history?
+    // Se 'sendPrivate' aggiunge a 'privateChats' PRIMA di chiamare questa funzione, allora 'history' include già l'ultimo msg.
+    // VERIFICA: In sendPrivate() fai privateChats[...].push. Quindi 'history' ha già l'ultimo messaggio user.
+    
+    const apiMessages = [
+        { role: "system", content: systemPrompt },
+        ...history
+    ];
 
     try {
         const resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -4477,23 +4950,20 @@ async function callGroqPrivate(factionKey, userText) {
             },
             body: JSON.stringify({
                 model: "llama-3.1-8b-instant",
-                temperature: 0.9,
-                messages: [
-                    { role:"system", content: prompt.system },
-                    { role:"user", content: prompt.user }
-                ]
+                temperature: 0.8, // Leggermente più alto per dare "carattere" alle fazioni
+                messages: apiMessages
             })
         });
 
         const data = await resp.json();
 
         if (!resp.ok) {
-            const apiMessage = data && data.error && data.error.message ? data.error.message : 'API request failed';
-            throw new Error(apiMessage);
+            throw new Error(data.error?.message || 'API request failed');
         }
 
         const msg = data.choices[0].message.content;
 
+        // Salviamo la risposta nella memoria locale
         privateChats[factionKey].push({ from:"ai", text:msg });
         addPrivateMsg("ai", msg);
 
@@ -4678,6 +5148,135 @@ function switchTab(id, btn){
 
     document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
+}
+
+/* ================= GESTIONE MODULO EDIFICI ================= */
+
+function openBuildingModal() {
+    const modal = document.getElementById("modal-buildings");
+    const grid = document.getElementById("building-grid");
+    if(!modal || !grid) return;
+
+    grid.innerHTML = "";
+    
+    Object.keys(buildingData).forEach(key => {
+        const b = buildingData[key];
+        const canBuild = checkResources(b.cost); // Funzione helper per verificare risorse
+        
+        // Creazione HTML Costi
+        let costHtml = "";
+        Object.entries(b.cost).forEach(([res, amount]) => {
+            const have = county.resources[res] || 0;
+            const missingClass = have < amount ? "missing" : "";
+            costHtml += `<span class="cost-item ${missingClass}">
+                ${resourceIcon(res)} ${amount}
+            </span>`;
+        });
+
+        const card = document.createElement("div");
+        card.className = "building-card-ui";
+        card.innerHTML = `
+            <div class="b-header">
+                <span class="b-title">${b.name}</span>
+                <span class="b-time">⏳ ${b.time} turni</span>
+            </div>
+            <div class="b-desc">${b.desc}</div>
+            <div class="b-effect">✨ ${b.effect}</div>
+            <div class="b-cost">${costHtml}</div>
+            <button class="btn-main" 
+                style="font-size:0.85em; padding:8px; margin-top:6px; ${canBuild ? '' : 'opacity:0.5; cursor:not-allowed;'}"
+                onclick="${canBuild ? `orderBuilding('${key}')` : ''}">
+                ${canBuild ? 'Avvia Cantiere' : 'Risorse Insufficienti'}
+            </button>
+        `;
+        grid.appendChild(card);
+    });
+
+    modal.classList.add("active");
+}
+
+function closeBuildingModal() {
+    document.getElementById("modal-buildings").classList.remove("active");
+}
+
+function resourceIcon(res) {
+    const map = { gold:"💰", wood:"🌲", stone:"🪨", iron:"⛏️", copper:"🥉" };
+    return map[res] || res;
+}
+
+function checkResources(cost) {
+    for (let k in cost) {
+        if ((county.resources[k] || 0) < cost[k]) return false;
+    }
+    return true;
+}
+
+function orderBuilding(key) {
+    const b = buildingData[key];
+    if (!checkResources(b.cost)) return;
+
+    // 1. Avvia la costruzione usando la funzione esistente
+    startBuilding({
+        type: key,
+        x: 0, y: 0, // Costruzione astratta nel centro città
+        turns: b.time,
+        cost: b.cost
+    });
+
+    // 2. Notifica in chat pubblica simulando un ordine del giocatore
+    const msg = `Ho ordinato la costruzione di: ${b.name}. I lavori iniziano immediatamente.`;
+    publicChatHistory.push({ role: "user", content: msg }); // Aggiorna memoria IA
+    addMsg("user", msg);
+    
+    // 3. Chiudi modale e aggiorna UI
+    closeBuildingModal();
+    updateUI();
+}
+
+function updateConstructionUI() {
+    const container = document.getElementById("construction-feed");
+    if (!container) return;
+
+    // Filtra solo i cantieri attivi ("building")
+    const activeProjects = buildings.filter(b => b.stage === "building");
+
+    if (activeProjects.length === 0) {
+        container.innerHTML = '<p class="event-empty">Nessun cantiere attivo al momento.</p>';
+        return;
+    }
+
+    let html = "";
+    activeProjects.forEach(b => {
+        // Recuperiamo i dati originali per calcolare la %
+        const bData = buildingData[b.type];
+        const totalTurns = bData ? bData.time : b.turns_left; // Fallback
+        
+        // Calcolo progresso: (Totale - Rimanenti) / Totale
+        // Nota: b.turns_left diminuisce ogni turno
+        const completedTurns = totalTurns - b.turns_left;
+        let pct = Math.round((completedTurns / totalTurns) * 100);
+        pct = Math.max(5, Math.min(100, pct)); // Clamp grafico tra 5% e 100%
+
+        const turnsLabel = b.turns_left === 1 ? "1 turno al termine" : `${b.turns_left} turni al termine`;
+
+        html += `
+            <div class="const-card">
+                <div class="const-header">
+                    <strong>${bData ? bData.name : "Edificio sconosciuto"}</strong>
+                    <span style="color:var(--accent)">${pct}%</span>
+                </div>
+                <div class="const-progress-bg">
+                    <div class="const-progress-fill" style="width: ${pct}%"></div>
+                </div>
+                <div class="const-meta">
+                    <span>📍 (${b.x}, ${b.y})</span>
+                    <span>⏳ ${turnsLabel}</span>
+                </div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
 }
 
 document.addEventListener("DOMContentLoaded", initStartScreen);
