@@ -1,124 +1,4547 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Il Conte - Mobile RPG</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Il Conte – Simulatore Medievale Completo</title>
+
+    <!-- ===================== STILI BASE + ESPANSIONI ===================== -->
+    <style>
+        :root {
+            --bg-main: #050505;
+            --bg-panel: #0f0f0f;
+            --bg-panel-alt: #171717;
+            --border-soft: #2a2a2a;
+            --border-strong: #3a3a3a;
+            --accent: #d4af37;
+            --accent-muted: #b68a1f;
+            --text: #f2f2f2;
+            --text-soft: #b3b3b3;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Georgia', serif;
+            background: radial-gradient(circle at top, #171717, var(--bg-main));
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        h1, h2, h3 {
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 0;
+        }
+
+        .screen {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: clamp(16px, 4vw, 28px);
+            background: linear-gradient(145deg, rgba(15,15,15,0.95), rgba(8,8,8,0.9));
+        }
+        .screen.active { display: flex; flex-direction: column; }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            background: #121212;
+            border: 1px solid var(--border-soft);
+            border-radius: 6px;
+            color: var(--text);
+            margin-bottom: 15px;
+        }
+
+        .btn-main {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(120deg, var(--accent), #a7720d);
+            color: black;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 6px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+        }
+
+        .btn-sec {
+            padding: 8px 12px;
+            background: var(--bg-panel-alt);
+            border: 1px solid var(--border-soft);
+            border-radius: 8px;
+            color: var(--text-soft);
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+
+        .btn-sec:hover { border-color: var(--accent-muted); }
+
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-soft);
+            border-radius: 18px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+        }
+
+        #screen-start {
+            background: radial-gradient(circle at top, #101010, #030303);
+        }
+
+        .start-hero {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .start-hero h1 {
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            margin-bottom: 6px;
+        }
+
+        .start-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+        }
+
+        .start-card {
+            background: rgba(8,8,8,0.92);
+            border: 1px solid var(--border-soft);
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .start-card h3 {
+            margin: 0;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9em;
+        }
+
+        .save-entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            background: rgba(6,6,6,0.9);
+            gap: 10px;
+        }
+
+        .save-entry-details {
+            display: flex;
+            flex-direction: column;
+            font-size: 0.8em;
+            color: var(--text-soft);
+        }
+
+        .save-entry-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .save-empty {
+            font-size: 0.85em;
+            color: var(--text-soft);
+        }
+
+        .game-toolbar {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .toolbar-status {
+            font-size: 0.75em;
+            color: var(--text-soft);
+        }
+
+        .season-banner {
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            padding: 8px 14px;
+            margin-bottom: 18px;
+            background: rgba(12,12,12,0.85);
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            font-size: 0.85em;
+            color: var(--text);
+        }
+
+        .season-highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .resource-grid .stat-card {
+            position: relative;
+        }
+
+        .res-delta {
+            position: absolute;
+            right: 10px;
+            bottom: 8px;
+            font-size: 0.75em;
+            color: var(--text-soft);
+        }
+
+        .res-delta.positive { color: #6ada91; }
+        .res-delta.negative { color: #ff7c7c; }
+
+        .faction-effects {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .faction-effect-card {
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            padding: 12px;
+            background: rgba(10,10,10,0.85);
+            font-size: 0.85em;
+        }
+
+        .faction-effect-card strong {
+            color: var(--accent);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .tax-panel {
+            border: 1px solid var(--border-soft);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 20px;
+            background: rgba(6,6,6,0.9);
+        }
+
+        .tax-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .tax-card {
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 10px;
+            background: rgba(12,12,12,0.85);
+        }
+
+        .tax-card label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            color: var(--text-soft);
+        }
+
+        .tax-card input[type=range] {
+            width: 100%;
+        }
+
+        .tax-summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 0.85em;
+            color: var(--text);
+        }
+
+        .law-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+            gap: 12px;
+        }
+
+        .law-card {
+            border: 1px solid var(--border-soft);
+            border-radius: 14px;
+            padding: 12px;
+            background: rgba(10,10,10,0.88);
+        }
+
+        .law-card h4 {
+            margin: 0 0 6px 0;
+            color: var(--accent);
+        }
+
+        .law-card p {
+            margin: 0 0 10px 0;
+            font-size: 0.85em;
+            color: var(--text-soft);
+        }
+
+        .section-toggle {
+            width: 100%;
+            margin: 12px 0 6px;
+            padding: 10px 14px;
+            text-align: left;
+            background: rgba(12,12,12,0.85);
+            color: var(--text);
+            border: 1px solid var(--border-soft);
+            border-radius: 10px;
+            font-size: 0.95em;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-toggle span {
+            font-size: 0.85em;
+            color: var(--text-soft);
+        }
+
+        .section-panel {
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 14px;
+            padding: 12px;
+            background: rgba(5,5,5,0.85);
+            margin-bottom: 10px;
+        }
+
+        .section-panel.collapsed {
+            display: none;
+        }
+
+        .asset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .asset-card {
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            padding: 12px;
+            background: rgba(8,8,8,0.9);
+            font-size: 0.85em;
+        }
+
+        .asset-card h4 {
+            margin: 0 0 6px 0;
+            color: var(--accent);
+        }
+
+        .asset-flow {
+            font-size: 0.8em;
+            color: var(--text-soft);
+            margin-top: 4px;
+        }
+
+        .law-creator {
+            border-top: 1px dashed rgba(255,255,255,0.08);
+            margin-top: 12px;
+            padding-top: 12px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+            gap: 10px;
+        }
+
+        .law-creator textarea,
+        .law-creator input,
+        .law-creator select {
+            margin: 0;
+        }
+
+        .law-creator button {
+            grid-column: 1 / -1;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 100;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-soft);
+            border-radius: 18px;
+            width: min(520px, 92vw);
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.65);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        .personality-form label {
+            font-size: 0.85em;
+            color: var(--text-soft);
+        }
+
+        .personality-form textarea { min-height: 80px; }
+
+        /* ===================== NAVIGAZIONE ===================== */
+        .bottom-nav {
+            display: flex;
+            height: 60px;
+            background: rgba(5,5,5,0.95);
+            border-top: 1px solid var(--border-soft);
+            align-items: center;
+            justify-content: space-around;
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-soft);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.77em;
+            gap: 3px;
+        }
+        .nav-btn.active { color: #d4af37; }
+
+        .nav-icon { font-size: 1.4em; }
+
+        /* ===================== TAB VIEW ===================== */
+        .tab-view {
+            display: none;
+            height: 100%;
+            overflow-y: auto;
+            padding: clamp(16px, 4vw, 26px);
+            background: linear-gradient(135deg, rgba(12,12,12,0.95), rgba(5,5,5,0.92));
+            border: 1px solid var(--border-soft);
+            border-radius: 20px;
+            margin-bottom: 70px;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.4);
+        }
+        .tab-view.active-tab { display: flex; flex-direction: column; gap: 16px; }
+
+        /* ===================== STATISTICHE ===================== */
+        .grid-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .resource-grid {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        }
+
+        .stat-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-soft);
+            padding: 14px;
+            border-radius: 14px;
+            text-align: center;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+        }
+
+        .stat-val { font-size: 1.3em; font-weight: bold; }
+
+        /* ===================== BARS ===================== */
+        .need-row { margin-bottom: 15px; }
+        .need-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            margin-bottom: 4px;
+        }
+        .need-bar-bg {
+            background: #333;
+            height: 8px;
+            border-radius: 4px;
+            width: 100%;
+        }
+        .need-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        .fill-food { background: #e6bf00; }
+        .fill-health { background: #4caf50; }
+        .fill-happy { background: #2196f3; }
+
+        /* ===================== DIPLOMAZIA ===================== */
+        .diplomacy-card {
+            background: linear-gradient(140deg, rgba(22,22,22,0.95), rgba(12,12,12,0.9));
+            border: 1px solid var(--border-soft);
+            padding: 14px 16px;
+            border-radius: 14px;
+            margin-bottom: 14px;
+            box-shadow: 0 12px 26px rgba(0,0,0,0.4);
+        }
+
+        .relation-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed rgba(255,255,255,0.05);
+            padding: 6px 0;
+            font-size: 0.92em;
+        }
+
+        .relation-row span:first-child { color: var(--text-soft); }
+
+        /* ===================== CHAT ===================== */
+        .chat-panel {
+            background: linear-gradient(135deg, rgba(14,14,14,0.96), rgba(6,6,6,0.9));
+            border: 1px solid var(--border-soft);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.45);
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 18px;
+            border-bottom: 1px solid #1f1f1f;
+            background: linear-gradient(90deg, #141414, #0c0c0c);
+            border-radius: 16px 16px 0 0;
+            color: #f4d88b;
+            font-size: 0.9em;
+            letter-spacing: 1px;
+        }
+
+        .chat-log {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 20px;
+            scroll-behavior: smooth;
+        }
+
+        .faction-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 10px 18px 0;
+        }
+
+        .faction-chip {
+            border: 1px solid var(--border-soft);
+            border-radius: 999px;
+            background: rgba(18,18,18,0.92);
+            color: var(--text);
+            font-size: 0.75em;
+            padding: 4px 10px;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+        }
+
+        .faction-chip.low { border-color: #ff7c7c; color: #ffcccc; }
+        .faction-chip.high { border-color: #6ada91; color: #c8ffd9; }
+
+        .msg {
+            padding: 12px 14px;
+            border-radius: 14px;
+            max-width: 90%;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.35);
+        }
+
+        .msg-text { line-height: 1.45; }
+
+        .msg-user {
+            background: #244b5f;
+            color: #e9f3ff;
+            align-self: flex-end;
+            border: 1px solid rgba(52,152,219,0.6);
+        }
+
+        .msg-ai {
+            background: #1b1b1b;
+            border: 1px solid rgba(212,175,55,0.5);
+            align-self: flex-start;
+        }
+
+        .msg-system {
+            color: #777;
+            font-size: 0.7em;
+            text-align: center;
+        }
+
+        .msg-meta {
+            font-size: 0.7em;
+            color: #a0a0a0;
+            text-align: right;
+        }
+
+        .input-area {
+            position: sticky;
+            bottom: 0;
+            background: rgba(5,5,5,0.92);
+            padding: 14px;
+            border-top: 1px solid var(--border-soft);
+            display: flex;
+            gap: 10px;
+            border-radius: 0 0 20px 20px;
+            backdrop-filter: blur(6px);
+        }
+
+        .send-btn {
+            width: 52px;
+            background: #d4af37;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+
+        .season-advance-btn {
+            margin: 10px 14px 0;
+            padding: 10px 12px;
+            width: calc(100% - 28px);
+            background: rgba(15,15,15,0.92);
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .season-advance-btn:hover { border-color: var(--accent-muted); }
+
+        /* ===================== EVENTI & AZIONI ===================== */
+        .panel-title {
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .event-panel,
+        .action-panel {
+            background: linear-gradient(135deg, rgba(16,16,16,0.92), rgba(8,8,8,0.9));
+            border: 1px solid var(--border-soft);
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+
+        .event-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+
+        .event-card {
+            background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(255,255,255,0.03));
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 14px;
+            padding: 12px 14px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+        }
+
+        .event-time {
+            font-size: 0.7em;
+            color: var(--text-soft);
+            text-align: right;
+            margin-bottom: 6px;
+        }
+
+        .event-empty,
+        .action-empty {
+            color: var(--text-soft);
+            font-size: 0.85em;
+            margin: 0;
+        }
+
+        .action-panel { margin-top: 16px; }
+
+        .action-prompt {
+            margin: 0 0 8px 0;
+            font-size: 0.85em;
+            color: #ccc;
+        }
+
+        .action-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .action-card {
+            border: 1px solid rgba(52,152,219,0.35);
+            background: rgba(36,75,95,0.35);
+            color: #e4f4ff;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+
+        .legend-circle {
+            background: #f4d88b;
+            box-shadow: inset 0 0 4px rgba(0,0,0,0.4);
+        }
+
+        .legend-diamond {
+            background: #c27b26;
+            transform: rotate(45deg);
+        }
+
+        .legend-triangle {
+            display: inline-block;
+            width: 0;
+            height: 0;
+            border-left: 9px solid transparent;
+            border-right: 9px solid transparent;
+            border-bottom: 16px solid #5ba86c;
+            border-radius: 2px;
+        }
+
+        .legend-square {
+            background: #cfcfcf;
+        }
+
+        .legend-cross {
+            position: relative;
+            width: 18px;
+            height: 18px;
+        }
+
+        .legend-cross::before,
+        .legend-cross::after {
+            content: "";
+            position: absolute;
+            background: #f5f0d0;
+            border-radius: 2px;
+        }
+
+        .legend-cross::before {
+            width: 6px;
+            height: 18px;
+            left: 6px;
+        }
+
+        .legend-cross::after {
+            width: 18px;
+            height: 6px;
+            top: 6px;
+        }
+
+        /* ===================== POPOLAZIONE ===================== */
+        .pop-grid {
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 10px;
+        }
+
+        .pop-card {
+            background: linear-gradient(135deg, rgba(28,28,28,0.95), rgba(14,14,14,0.92));
+            border: 1px solid var(--border-soft);
+            padding: 14px;
+            border-radius: 12px;
+            box-shadow: 0 10px 22px rgba(0,0,0,0.35);
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .pop-card strong { color: var(--accent); }
+        .pop-card span { color: var(--text); }
+
+        /* ===================== PERSONAGGI (FAZIONI) ===================== */
+        .person-card {
+            background: linear-gradient(120deg, rgba(20,20,20,0.95), rgba(10,10,10,0.92));
+            border: 1px solid var(--border-soft);
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+        .person-name {
+            color: #d4af37;
+            font-size: 1.1em;
+            margin-bottom: 6px;
+        }
+
+        .private-selector {
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: rgba(8,8,8,0.85);
+            border: 1px solid var(--border-soft);
+            border-radius: 18px;
+            padding: 14px;
+        }
+
+    </style>
 </head>
+
 <body>
 
-    <div id="overlay">
-        <h2 class="title-gold">IL CONTE</h2>
-        <p class="subtitle">RPG Testuale Mobile</p>
-        <input type="password" id="api-key" placeholder="Incolla API Key Groq qui">
-        <button class="btn-main" onclick="startGame()">ENTRA A CORTE</button>
-        
-        <div id="death-msg" style="display:none; margin-top: 20px;">
-            <div class="death-text">SEI STATO ASSASSINATO</div>
-            <p id="death-detail"></p>
-            <button class="btn-main btn-danger" onclick="location.reload()">Rinasci</button>
+<!-- MENU INIZIALE -->
+<div id="screen-start" class="screen active">
+    <div class="start-hero">
+        <h1>Il Conte a Corte</h1>
+        <p>Gestisci il tuo dominio, conserva la memoria delle partite e prepara il tono della corte.</p>
+    </div>
+
+    <div class="start-grid">
+        <div class="start-card">
+            <h3>Chiave API Groq</h3>
+            <p class="toolbar-status">Archivia la chiave per evitarne l'inserimento a ogni avvio.</p>
+            <input id="api-key-start" type="password" placeholder="gsk_xxxxxxxxx" />
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn-main" onclick="saveApiKeyFromStart()">Salva chiave</button>
+                <button class="btn-sec" onclick="clearStoredApiKey()">Rimuovi</button>
+                <button class="btn-sec" onclick="openLoginScreen()">Accedi</button>
+            </div>
+            <span id="api-key-status" class="toolbar-status">Chiave non impostata.</span>
+        </div>
+
+        <div class="start-card">
+            <h3>Nuova Partita</h3>
+            <p class="toolbar-status">Prepara un nuovo regno e configura i tuoi consiglieri.</p>
+            <button class="btn-main" onclick="goToEditorScreen()">Crea nuovo regno</button>
+            <button class="btn-sec" onclick="openLoginScreen()">Gestisci accesso</button>
+        </div>
+
+        <div class="start-card">
+            <h3>Partite Salvate</h3>
+            <div id="save-list"></div>
+            <button class="btn-sec" onclick="openLoadModal()">Gestisci salvataggi</button>
+            <div class="start-nav-icons" style="margin-top:12px; display:flex; gap:18px; justify-content:space-between; align-items:center; padding-top:10px; border-top:1px dashed var(--border-soft);">
+                <div style="text-align:center; flex:1;">
+                    <div style="font-size:20px">🏰</div>
+                    <div style="font-size:12px; color:var(--text-soft);">Dominio</div>
+                </div>
+                <div style="text-align:center; flex:1;">
+                    <div style="font-size:20px">⚖️</div>
+                    <div style="font-size:12px; color:var(--text-soft);">Diplomazia</div>
+                </div>
+                <div style="text-align:center; flex:1;">
+                    <div style="font-size:20px">🗺️</div>
+                    <div style="font-size:12px; color:var(--text-soft);">Mappa</div>
+                </div>
+                <div style="text-align:center; flex:1;">
+                    <div style="font-size:20px">📜</div>
+                    <div style="font-size:12px; color:var(--text-soft);">Cronache</div>
+                </div>
+                <div style="text-align:center; flex:1;">
+                    <div style="font-size:20px">🗣️</div>
+                    <div style="font-size:12px; color:var(--text-soft);">Interlocutori</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="start-card personality-form">
+            <h3>Editor Personalità</h3>
+            <label for="personality-tone">Tono del Consigliere</label>
+            <select id="personality-tone">
+                <option value="saggio">Saggio</option>
+                <option value="pragmatico">Pragmatico</option>
+                <option value="ambizioso">Ambizioso</option>
+                <option value="misterioso">Misterioso</option>
+            </select>
+
+            <label for="personality-mood">Atmosfera della Corte</label>
+            <select id="personality-mood">
+                <option value="prudente">Prudente</option>
+                <option value="bellicosa">Bellicosa</option>
+                <option value="visionaria">Visionaria</option>
+                <option value="ombrosa">Ombrosa</option>
+            </select>
+
+            <label for="personality-notes">Appunti della Corte</label>
+            <textarea id="personality-notes" placeholder="Annota mantra, paure o principi che guidano il regno..."></textarea>
+
+            <button class="btn-main" onclick="savePersonalitySettingsForm()">Salva Personalità</button>
+        </div>
+    </div>
+</div>
+
+<!-- SCHERMATA LOGIN -->
+<div id="screen-login" class="screen">
+    <h2>Accesso al Regno</h2>
+    <label>Chiave API Groq:</label>
+    <input id="api-key-input" type="text" placeholder="gsk_xxxxxxxxx" />
+
+    <button class="btn-main" onclick="loginManual()">Entra</button>
+</div>
+
+<!-- EDITOR INIZIALE -->
+<div id="screen-editor" class="screen">
+    <h2>Crea il tuo Regno</h2>
+
+    <label>Nome del Conte:</label>
+    <input id="hero-name" type="text" placeholder="Es. Conte Alaric" />
+
+    <label>Descrivi la tua Contea iniziale:</label>
+    <textarea id="county-desc-init"></textarea>
+
+    <label>Consigliere – Nome:</label>
+    <input id="adv-name" type="text" placeholder="Es. Ser Dorian" />
+
+    <label>Consigliere – Personalità:</label>
+    <select id="adv-pers">
+        <option value="saggio">Saggio</option>
+        <option value="pragmatico">Pragmatico</option>
+        <option value="ambizioso">Ambizioso</option>
+        <option value="pauroso">Pauroso</option>
+        <option value="corrotto">Corrotto</option>
+    </select>
+
+    <button class="btn-main" onclick="startGame()">Inizia il Regno</button>
+</div>
+
+<!-- SCHERMATA DI GIOCO PRINCIPALE -->
+<div id="screen-game" class="screen">
+    <div class="game-toolbar">
+        <button class="btn-sec" onclick="quickSaveGame()">💾 Salva rapida</button>
+        <button class="btn-sec" onclick="openLoadModal()">📂 Carica</button>
+        <button class="btn-sec" onclick="simulateEconomyTurns(5)">📊 Diagnostica 5 turni</button>
+        <button class="btn-sec" onclick="activateScreen('screen-start')">🏠 Menu iniziale</button>
+        <span id="save-status" class="toolbar-status">Nessun salvataggio registrato.</span>
+        <div class="game-nav-icons" style="margin-left:auto; display:flex; gap:18px; align-items:center;">
+            <div style="text-align:center; padding:0 8px; cursor:pointer;" onclick="document.querySelectorAll('.tab-view').forEach(t=>t.classList.remove('active-tab')); document.getElementById('tab-dominio').classList.add('active-tab');">
+                <div style="font-size:18px">🏰</div>
+                <div style="font-size:11px; color:var(--text-soft);">Dominio</div>
+            </div>
+            <div style="text-align:center; padding:0 8px; cursor:pointer;" onclick="document.querySelectorAll('.tab-view').forEach(t=>t.classList.remove('active-tab')); document.getElementById('tab-diplomacy').classList.add('active-tab');">
+                <div style="font-size:18px">⚖️</div>
+                <div style="font-size:11px; color:var(--text-soft);">Diplomazia</div>
+            </div>
+            <div style="text-align:center; padding:0 8px; cursor:pointer;" onclick="document.querySelectorAll('.tab-view').forEach(t=>t.classList.remove('active-tab')); document.getElementById('tab-map').classList.add('active-tab');">
+                <div style="font-size:18px">🗺️</div>
+                <div style="font-size:11px; color:var(--text-soft);">Mappa</div>
+            </div>
+            <div style="text-align:center; padding:0 8px; cursor:pointer;" onclick="document.querySelectorAll('.tab-view').forEach(t=>t.classList.remove('active-tab')); document.getElementById('tab-chat').classList.add('active-tab');">
+                <div style="font-size:18px">📜</div>
+                <div style="font-size:11px; color:var(--text-soft);">Cronache</div>
+            </div>
+            <div style="text-align:center; padding:0 8px; cursor:pointer;" onclick="document.querySelectorAll('.tab-view').forEach(t=>t.classList.remove('active-tab')); document.getElementById('tab-private').classList.add('active-tab');">
+                <div style="font-size:18px">🗣️</div>
+                <div style="font-size:11px; color:var(--text-soft);">Interlocutori</div>
+            </div>
         </div>
     </div>
 
-    <div class="app-container">
-        
-        <div id="tab-stats" class="tab-view">
-            <h3 class="section-title">Stato del Regno</h3>
-            
-            <div class="health-card">
-                <span class="heart-beat">❤️</span>
-                <div class="hp-text-big" id="hp-text">100%</div>
-                <div class="hp-label">Salute del Conte</div>
-                <div class="hp-bar-bg">
-                    <div id="hp-bar" class="hp-bar-fill"></div>
-                </div>
-            </div>
+    <div class="season-banner">
+        <div>Anno <span class="season-highlight" id="season-year">1325</span> • <span class="season-highlight" id="season-name">Primavera</span></div>
+        <div id="season-effects-text">Il clima è mite, i raccolti prosperano.</div>
+    </div>
 
-            <div class="stat-grid">
-                <div class="stat-box">
-                    <span class="stat-val" id="val-gold">1000</span>
-                    <span class="stat-lbl">Oro</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-val" id="val-guards">50</span>
-                    <span class="stat-lbl">Guardie</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-val" id="val-terror">10%</span>
-                    <span class="stat-lbl">Terrore</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-val" id="val-turn">1</span>
-                    <span class="stat-lbl">Turno</span>
-                </div>
-            </div>
+<!-- ================= TAB: DOMINIO ================= -->
+<div id="tab-dominio" class="tab-view active-tab">
+
+    <h2>Il Dominio del Conte</h2>
+
+    <h3>Descrizione</h3>
+    <p id="visual-desc">Una giovane contea in attesa del suo destino…</p>
+
+    <!-- ===================== STATISTICHE GENERALI ===================== -->
+    <h3>Statistiche</h3>
+    <div class="grid-stats">
+        <div class="stat-card">
+            <div class="stat-val" id="val-pop">0</div>
+            <div class="stat-sub">Popolazione</div>
         </div>
 
-        <div id="tab-chat" class="tab-view active-tab chat-container">
-            <div class="chat-log" id="chat-log">
-                <div class="msg msg-intrigue">Benvenuto, Eccellenza. Toccate le icone in basso per navigare. Parlate qui per comandare.</div>
+        <div class="stat-card">
+            <div class="stat-val" id="val-gold">0</div>
+            <div class="stat-sub">Oro</div>
+        </div>
+    </div>
+
+    <!-- ===================== NEED BARS ===================== -->
+    <div class="need-row">
+        <div class="need-header">
+            <span>Cibo</span>
+            <span id="txt-food">0%</span>
+        </div>
+        <div class="need-bar-bg">
+            <div class="need-bar-fill fill-food" id="bar-food"></div>
+        </div>
+    </div>
+
+    <div class="need-row">
+        <div class="need-header">
+            <span>Salute</span>
+            <span id="txt-health">0%</span>
+        </div>
+        <div class="need-bar-bg">
+            <div class="need-bar-fill fill-health" id="bar-health"></div>
+        </div>
+    </div>
+
+    <div class="need-row">
+        <div class="need-header">
+            <span>Felicità</span>
+            <span id="txt-happy">0%</span>
+        </div>
+        <div class="need-bar-bg">
+            <div class="need-bar-fill fill-happy" id="bar-happy"></div>
+        </div>
+    </div>
+
+    <!-- ===================== TERRITORIO ===================== -->
+    <h3>Territorio</h3>
+
+    <div class="grid-stats">
+        <div class="stat-card">
+            <div class="stat-val" id="land-count">0</div>
+            <div class="stat-sub">Terre del Conte</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-val" id="land-nobility">0</div>
+            <div class="stat-sub">Nobiltà</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-val" id="land-clergy">0</div>
+            <div class="stat-sub">Clero</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-val" id="land-commons">0</div>
+            <div class="stat-sub">Comuni</div>
+        </div>
+    </div>
+
+    <!-- ===================== RISORSE INVENTARIO ===================== -->
+    <button class="section-toggle" onclick="togglePanel('panel-resources')">
+        Risorse e Magazzini
+        <span>Apri/chiudi elenco</span>
+    </button>
+    <div id="panel-resources" class="section-panel">
+        <div class="grid-stats resource-grid">
+            <div class="stat-card">
+                <div class="stat-val" id="res-wood">0</div>
+                <div class="stat-sub">Legno</div>
+                <small class="res-delta" id="res-wood-delta">—</small>
             </div>
+            <div class="stat-card">
+                <div class="stat-val" id="res-stone">0</div>
+                <div class="stat-sub">Pietra</div>
+                <small class="res-delta" id="res-stone-delta">—</small>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="res-iron">0</div>
+                <div class="stat-sub">Ferro</div>
+                <small class="res-delta" id="res-iron-delta">—</small>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="res-copper">0</div>
+                <div class="stat-sub">Rame</div>
+                <small class="res-delta" id="res-copper-delta">—</small>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="res-gold">0</div>
+                <div class="stat-sub">Oro grezzo</div>
+                <small class="res-delta" id="res-gold-delta">—</small>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="res-herbs">0</div>
+                <div class="stat-sub">Erbe medicinali</div>
+                <small class="res-delta" id="res-herbs-delta">—</small>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="res-grain">0</div>
+                <div class="stat-sub">Grano</div>
+                <small class="res-delta" id="res-grain-delta">—</small>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="res-livestock">0</div>
+                <div class="stat-sub">Bestiame</div>
+                <small class="res-delta" id="res-livestock-delta">—</small>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="res-textiles">0</div>
+                <div class="stat-sub">Tessuti</div>
+                <small class="res-delta" id="res-textiles-delta">—</small>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="res-luxuries">0</div>
+                <div class="stat-sub">Beni di pregio</div>
+                <small class="res-delta" id="res-luxuries-delta">—</small>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="res-arcane">0</div>
+                <div class="stat-sub">Essenza arcana</div>
+                <small class="res-delta" id="res-arcane-delta">—</small>
+            </div>
+        </div>
+    </div>
+
+    <button class="section-toggle" onclick="togglePanel('panel-assets')">
+        Sintesi Insediamenti
+        <span>Case, botteghe, campi…</span>
+    </button>
+    <div id="panel-assets" class="section-panel collapsed">
+        <div id="asset-summary" class="asset-grid">
+            <div class="asset-card">I dettagli compariranno dopo l'avvio.</div>
+        </div>
+    </div>
+
+    <button class="section-toggle" onclick="togglePanel('panel-factions')">
+        Influenze delle Fazioni
+        <span>Mostra condizioni correnti</span>
+    </button>
+    <div id="panel-factions" class="section-panel collapsed">
+        <div id="faction-impact-list" class="faction-effects">
+            <div class="faction-effect-card">Le fazioni reagiranno dopo il primo turno.</div>
+        </div>
+    </div>
+
+    <button class="section-toggle" onclick="togglePanel('panel-taxes')">
+        Politica Fiscale
+        <span>Modifica categorie</span>
+    </button>
+    <div id="panel-taxes" class="section-panel collapsed">
+        <div class="tax-panel">
+            <div id="tax-grid" class="tax-grid"></div>
+            <div class="tax-summary">
+                <span>Entrate ultimo turno: <strong id="tax-last">0</strong> oro</span>
+                <span>Trend: <strong id="tax-trend">—</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <button class="section-toggle" onclick="togglePanel('panel-laws')">
+        Leggi e Decreti
+        <span>Gestisci editti</span>
+    </button>
+    <div id="panel-laws" class="section-panel collapsed">
+        <div id="law-list" class="law-list" style="margin-bottom:12px;"></div>
+        <div class="law-creator">
+            <input id="law-custom-name" type="text" placeholder="Nome della legge" />
+            <textarea id="law-custom-desc" placeholder="Descrivi obiettivi e vincoli"></textarea>
+            <select id="law-custom-type">
+                <option value="production">Bonus produzione</option>
+                <option value="taxes">Modifica tassazione</option>
+                <option value="factions">Influenza fazioni</option>
+            </select>
+            <select id="law-custom-target"></select>
+            <input id="law-custom-value" type="number" step="0.5" placeholder="Valore (es. 10)" />
+            <button class="btn-main" onclick="createCustomLaw()">Istituisci nuova legge</button>
+        </div>
+    </div>
+
+    <!-- ===================== POPOLAZIONE PER CATEGORIA ===================== -->
+    <h3>Popolazione per classe</h3>
+    <div class="pop-grid">
+        <div class="pop-card"><strong>Nobiltà:</strong> <span id="pop-nobility">0</span></div>
+        <div class="pop-card"><strong>Clero:</strong> <span id="pop-clergy">0</span></div>
+        <div class="pop-card"><strong>Milizia:</strong> <span id="pop-militia">0</span></div>
+        <div class="pop-card"><strong>Contadini:</strong> <span id="pop-peasants">0</span></div>
+        <div class="pop-card"><strong>Artigiani:</strong> <span id="pop-burghers">0</span></div>
+        <div class="pop-card"><strong>Mercanti:</strong> <span id="pop-merchants">0</span></div>
+        <div class="pop-card"><strong>Mistici:</strong> <span id="pop-mystics">0</span></div>
+        <div class="pop-card"><strong>Emarginati:</strong> <span id="pop-outcasts">0</span></div>
+    </div>
+
+    <!-- ===================== RAPPRESENTANTI DELLE FAZIONI ===================== -->
+    <h3>Rappresentanti delle Fazioni</h3>
+
+    <div class="person-card">
+        <div class="person-name">Lord Emeric di Montferrand</div>
+        <div>Nobiltà — 46 anni. Orgoglioso e ambizioso.</div>
+    </div>
+
+    <div class="person-card">
+        <div class="person-name">Vescovo Aldebrando di Sorenza</div>
+        <div>Clero — 62 anni. Inflessibile e calcolatore.</div>
+    </div>
+
+    <div class="person-card">
+        <div class="person-name">Capitano Ronan il Ferro</div>
+        <div>Milizia — 38 anni. Diretto, leale, irritabile.</div>
+    </div>
+
+    <div class="person-card">
+        <div class="person-name">Odric il Lavoratore</div>
+        <div>Contadini — 33 anni. Paziente ma oppresso.</div>
+    </div>
+
+    <div class="person-card">
+        <div class="person-name">Maestro Bernard Forgiatore</div>
+        <div>Artigiani — 51 anni. Orgoglioso del mestiere.</div>
+    </div>
+
+    <div class="person-card">
+        <div class="person-name">Ser Lothar dei Ponti</div>
+        <div>Mercanti — 42 anni. Subdolo, affabile.</div>
+    </div>
+
+    <div class="person-card">
+        <div class="person-name">Madre Elowen la Veggente</div>
+        <div>Mistici — 67 anni. Enigmatica, calma.</div>
+    </div>
+
+    <div class="person-card">
+        <div class="person-name">Rasko il Senzapatria</div>
+        <div>Emarginati — 29 anni. Imprevedibile e rapido.</div>
+    </div>
+
+</div>
+<!-- ====================== TAB: DIPLOMAZIA ====================== -->
+<div id="tab-diplomacy" class="tab-view">
+
+    <h2>Diplomazia con le Contee Vicine</h2>
+
+    <!-- Contea di Auvrey -->
+    <div class="diplomacy-card">
+        <h3>Contea di Auvrey</h3>
+        <div class="relation-row">
+            <span>Relazioni:</span> <span id="rel-auvrey">0</span>
+        </div>
+        <div class="relation-row">
+            <span>Potenza:</span> <span id="pow-auvrey">0</span>
+        </div>
+        <div class="relation-row">
+            <span>Aggressività:</span> <span id="agg-auvrey">0</span>
+        </div>
+        <div class="relation-row">
+            <span>Territorio:</span> <span id="land-auvrey">0</span>
+        </div>
+    </div>
+
+    <!-- Baronia di Falken -->
+    <div class="diplomacy-card">
+        <h3>Baronia di Falken</h3>
+        <div class="relation-row">
+            <span>Relazioni:</span> <span id="rel-falken">0</span>
+        </div>
+        <div class="relation-row">
+            <span>Potenza:</span> <span id="pow-falken">0</span>
+        </div>
+        <div class="relation-row">
+            <span>Aggressività:</span> <span id="agg-falken">0</span>
+        </div>
+        <div class="relation-row">
+            <span>Territorio:</span> <span id="land-falken">0</span>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ====================== TAB: MAPPA ====================== -->
+<div id="tab-map" class="tab-view">
+
+    <h2>Mappa della Contea</h2>
+    <canvas id="county-map" width="480" height="480"
+            style="border:1px solid #333; width:100%; margin-bottom:20px;"></canvas>
+
+    <div class="map-legend">
+        <div class="legend-item">
+            <span class="legend-marker legend-circle"></span>
+            <span>Villaggi e borghi del Conte</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-marker legend-diamond"></span>
+            <span>Miniere (metalli preziosi)</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-triangle"></span>
+            <span>Segherie e taglialegna</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-marker legend-square"></span>
+            <span>Cave e cantieri di pietra</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-marker legend-cross"></span>
+            <span>Monasteri e luoghi sacri</span>
+        </div>
+    </div>
+
+    <h3>Mappa Regionale</h3>
+    <canvas id="region-map" width="320" height="320"
+            style="border:1px solid #333; width:100%;"></canvas>
+
+</div>
+
+
+<!-- ====================== TAB: CRONACHE (CHAT PUBBLICA) ====================== -->
+<div id="tab-chat" class="tab-view">
+
+    <div class="chat-panel">
+        <div class="chat-header">
+            <span>📜 Cronache della Corte</span>
+            <span id="chat-turn">Turno 1</span>
+        </div>
+
+            <div id="chat-faction-chips" class="faction-chips"></div>
+
+        <div id="chat-log" class="chat-log"></div>
+
+        <div class="input-area">
+            <input type="text" id="u-input"
+                   placeholder="Pronuncia un ordine o una decisione..."
+                   onkeypress="if(event.key==='Enter') send()">
+
+            <button class="send-btn" onclick="send()">➤</button>
+        </div>
+
+        <button class="season-advance-btn" onclick="advanceSeasonManually()">Avanza alla stagione successiva</button>
+    </div>
+
+    <div class="event-panel">
+        <div class="panel-title">📣 Eventi di Corte</div>
+        <div id="event-feed" class="event-feed">
+            <p class="event-empty">Nessun evento registrato.</p>
+        </div>
+    </div>
+
+    <div class="action-panel">
+        <div class="panel-title">🎯 Azioni suggerite</div>
+        <p id="action-prompt" class="action-prompt">In attesa di nuovi suggerimenti dalla corte.</p>
+        <div id="action-list" class="action-list">
+            <p class="action-empty">Nessuna proposta al momento.</p>
+        </div>
+    </div>
+
+    <button class="btn-main" onclick="askAdvisor()" style="margin-top:12px;">Chiedi un consiglio</button>
+
+</div>
+
+
+<!-- ====================== TAB: INTERLOCUTORI (CHAT PRIVATE) ====================== -->
+<div id="tab-private" class="tab-view">
+
+    <h2>Colloqui Privati</h2>
+
+    <!-- Selettori -->
+    <div id="private-selector" class="private-selector">
+
+        <button class="btn-sec" onclick="openPrivateChat('nobility')">Lord Emeric (Nobiltà)</button>
+        <button class="btn-sec" onclick="openPrivateChat('clergy')">Vescovo Aldebrando (Clero)</button>
+        <button class="btn-sec" onclick="openPrivateChat('militia')">Cap. Ronan (Milizia)</button>
+        <button class="btn-sec" onclick="openPrivateChat('peasants')">Odric (Contadini)</button>
+        <button class="btn-sec" onclick="openPrivateChat('burghers')">Bernard Forgiatore (Artigiani)</button>
+        <button class="btn-sec" onclick="openPrivateChat('merchants')">Ser Lothar (Mercanti)</button>
+        <button class="btn-sec" onclick="openPrivateChat('mystics')">Madre Elowen (Mistici)</button>
+        <button class="btn-sec" onclick="openPrivateChat('outcasts')">Rasko (Emarginati)</button>
+
+        <button class="btn-sec" onclick="openPrivateChat('auvrey')">Messo di Auvrey</button>
+        <button class="btn-sec" onclick="openPrivateChat('falken')">Ambasciatrice di Falken</button>
+    </div>
+
+    <!-- Chat privata -->
+    <div id="private-chat-box" style="display:none;">
+        <div class="chat-panel">
+            <div class="chat-header" id="private-chat-title">Colloquio</div>
+
+            <div id="private-chat-log" class="chat-log"></div>
+
             <div class="input-area">
-                <input type="text" id="u-input" placeholder="Ordina..." onkeypress="if(event.key==='Enter') send()">
-                <button class="send-btn" id="btn-send" onclick="send()">➤</button>
+                <input id="private-input"
+                       type="text"
+                       placeholder="Parla privatamente..."
+                       onkeypress="if(event.key==='Enter') sendPrivate()" />
+
+                <button class="send-btn" onclick="sendPrivate()">➤</button>
             </div>
         </div>
 
-        <div id="tab-factions" class="tab-view">
-            <h3 class="section-title">Relazioni</h3>
-            
-            <div class="faction-card active" onclick="selectFaction('nobili')">
-                <div class="faction-header">
-                    <strong>⚜️ Nobiltà</strong>
-                    <span id="rel-nobili-txt" class="gold-text">50%</span>
-                </div>
-                <div class="bar-container"><div id="bar-nobili" class="bar-fill gold-bg" style="width:50%;"></div></div>
-                <small id="stat-nobili" class="status-small">Neutrale</small>
-            </div>
-
-            <div class="faction-card" onclick="selectFaction('clero')">
-                <div class="faction-header">
-                    <strong>✝️ Clero</strong>
-                    <span id="rel-clero-txt" class="gold-text">50%</span>
-                </div>
-                <div class="bar-container"><div id="bar-clero" class="bar-fill gold-bg" style="width:50%;"></div></div>
-                <small id="stat-clero" class="status-small">Neutrale</small>
-            </div>
-
-            <div class="faction-card" onclick="selectFaction('popolo')">
-                <div class="faction-header">
-                    <strong>👥 Popolo</strong>
-                    <span id="rel-popolo-txt" class="gold-text">50%</span>
-                </div>
-                <div class="bar-container"><div id="bar-popolo" class="bar-fill gold-bg" style="width:50%;"></div></div>
-                <small id="stat-popolo" class="status-small">Inquieto</small>
-            </div>
-
-            <div class="faction-card" onclick="selectFaction('spie')">
-                <div class="faction-header">
-                    <strong>👁️ Spie</strong>
-                    <span id="rel-spie-txt" style="color:#0f0">100%</span>
-                </div>
-                <div class="bar-container"><div id="bar-spie" class="bar-fill" style="width:100%; background: #0f0;"></div></div>
-                <small class="status-small">Pagale per info</small>
-            </div>
-        </div>
-
+        <button class="btn-main" style="margin-top:10px;" onclick="closePrivateChat()">
+            Concludi il colloquio
+        </button>
     </div>
+
+</div>
 
     <div class="bottom-nav">
-        <button class="nav-btn" onclick="switchTab('tab-stats', this)">
-            <span>🏰</span> Stato
+        <button class="nav-btn active" onclick="switchTab('tab-dominio', this)">
+            <span class="nav-icon">🏰</span>
+            Dominio
         </button>
-        <button class="nav-btn active" onclick="switchTab('tab-chat', this)">
-            <span>📜</span> Chat
+
+        <button class="nav-btn" onclick="switchTab('tab-diplomacy', this)">
+            <span class="nav-icon">⚖️</span>
+            Diplomazia
         </button>
-        <button class="nav-btn" onclick="switchTab('tab-factions', this)">
-            <span>⚖️</span> Fazioni
+
+        <button class="nav-btn" onclick="switchTab('tab-map', this)">
+            <span class="nav-icon">🗺️</span>
+            Mappa
+        </button>
+
+        <button class="nav-btn" onclick="switchTab('tab-chat', this)">
+            <span class="nav-icon">📜</span>
+            Cronache
+        </button>
+
+        <button class="nav-btn" onclick="switchTab('tab-private', this)">
+            <span class="nav-icon">🤫</span>
+            Interlocutori
         </button>
     </div>
 
-    <script src="script.js"></script>
+</div>
+
+<div id="load-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Salvataggi</h3>
+            <button class="close-btn" onclick="closeLoadModal()">✕</button>
+        </div>
+
+        <label for="save-slot-name">Nome salvataggio</label>
+        <input id="save-slot-name" type="text" placeholder="Es. dopo assedio" />
+        <button class="btn-main" onclick="manualSaveFromModal()">Salva in nuovo slot</button>
+
+        <div id="modal-save-list"></div>
+    </div>
+</div>
+
+<script>
+/* ============================================================
+   =================== VARIABILI PRINCIPALI ====================
+   ============================================================ */
+
+let apiKey = "";
+let heroName = "";
+
+const RESOURCE_KEYS = [
+    "wood","stone","iron","copper","gold",
+    "herbs","grain","livestock","textiles","luxuries","arcane"
+];
+
+const resourceLabels = {
+    wood: "Legno",
+    stone: "Pietra",
+    iron: "Ferro",
+    copper: "Rame",
+    gold: "Oro",
+    herbs: "Erbe",
+    grain: "Grano",
+    livestock: "Bestiame",
+    textiles: "Tessuti",
+    luxuries: "Beni di pregio",
+    arcane: "Essenza arcana"
+};
+
+const SEASON_CYCLE = [
+    {
+        key: "spring",
+        label: "Primavera",
+        description: "Il disgelo porta nuova linfa ai campi.",
+        production: { grain: 1.15, livestock: 1.05, herbs: 1.1 },
+        warCost: 1,
+        morale: { peasants: 2 }
+    },
+    {
+        key: "summer",
+        label: "Estate",
+        description: "I mercati sono colmi e le strade sicure.",
+        production: { grain: 1.05, livestock: 1.1, luxuries: 1.05 },
+        warCost: 1.05,
+        morale: { merchants: 2 }
+    },
+    {
+        key: "autumn",
+        label: "Autunno",
+        description: "Si raccolgono tributi e si preparano le scorte.",
+        production: { grain: 0.85, livestock: 0.9, herbs: 1.05 },
+        warCost: 1.1,
+        morale: { nobility: 1 }
+    },
+    {
+        key: "winter",
+        label: "Inverno",
+        description: "La neve blocca i raccolti e le campagne militari sono dispendiose.",
+        production: { grain: 0.2, livestock: 0.35, herbs: 0.6 },
+        warCost: 1.35,
+        morale: { peasants: -3, militia: -2 }
+    }
+];
+
+function createDefaultWorldTime() {
+    return { year: 1325, seasonIndex: 0 };
+}
+
+let worldTime = createDefaultWorldTime();
+
+const TAX_CATEGORIES = [
+    { key:"nobility", label:"Nobiltà", wealthFactor:6, tolerance:8 },
+    { key:"clergy", label:"Clero", wealthFactor:4, tolerance:6 },
+    { key:"militia", label:"Milizia", wealthFactor:3, tolerance:5 },
+    { key:"peasants", label:"Contadini", wealthFactor:2, tolerance:4 },
+    { key:"burghers", label:"Artigiani", wealthFactor:5, tolerance:7 },
+    { key:"merchants", label:"Mercanti", wealthFactor:7, tolerance:9 },
+    { key:"mystics", label:"Mistici", wealthFactor:3, tolerance:5 },
+    { key:"outcasts", label:"Emarginati", wealthFactor:1, tolerance:3 }
+];
+
+function createDefaultTaxPolicy() {
+    const policy = {};
+    TAX_CATEGORIES.forEach(cat => { policy[cat.key] = 5; });
+    return policy;
+}
+
+let taxPolicy = createDefaultTaxPolicy();
+let taxHistory = [];
+
+const BASE_LAW_LIBRARY = [
+    {
+        key: "grain_subsidy",
+        name: "Sussidi Agricoli",
+        description: "Finanzia sementi e mulini: +produzione grano ma minori entrate fiscali dai contadini.",
+        effects: {
+            production: { grain: 1.25 },
+            taxes: { peasants: -2 },
+            factions: { peasants: 4, nobility: -2 }
+        }
+    },
+    {
+        key: "trade_charter",
+        name: "Carta dei Mercanti",
+        description: "Agevolazioni per i mercanti: aumenta beni di pregio e oro, ma l'artigianato subisce concorrenza.",
+        effects: {
+            production: { luxuries: 1.2, textiles: 0.95 },
+            taxes: { merchants: 2, burghers: -1 },
+            factions: { merchants: 5, burghers: -3 }
+        }
+    },
+    {
+        key: "conscription_edict",
+        name: "Editto di Leva",
+        description: "Arruola contadini e artigiani nella milizia. Più sicurezza, ma malcontento tra i campi.",
+        effects: {
+            production: { grain: 0.9 },
+            military: { manpower: 1.15 },
+            factions: { militia: 5, peasants: -4, burghers: -2 }
+        }
+    }
+];
+
+let customLaws = [];
+let activeLaws = [];
+let lastResourceSnapshot = null;
+let lastResourceDelta = null;
+
+const RESERVED_SAVE_SLOTS = ["autosave", "quick"];
+const DEFAULT_PERSONALITY = { advisorTone:"saggio", courtMood:"prudente", notes:"" };
+let personalitySettings = { ...DEFAULT_PERSONALITY };
+
+function createDefaultResources() {
+    return {
+        wood: 40,
+        stone: 20,
+        iron: 10,
+        copper: 5,
+        gold: 50,
+        herbs: 25,
+        grain: 180,
+        livestock: 80,
+        textiles: 35,
+        luxuries: 20,
+        arcane: 15
+    };
+}
+
+function createDefaultCounty() {
+    return {
+        desc: "",
+        pop: 1200,
+        gold: 500,
+        food: 50,
+        health: 50,
+        happy: 50,
+        security: 50,
+        turn: 1,
+        resources: createDefaultResources()
+    };
+}
+
+let county = createDefaultCounty();
+lastResourceSnapshot = cloneResourceBag(county.resources);
+lastResourceDelta = createEmptyResourceDelta();
+
+/* ===================== TERRITORIO ===================== */
+function createDefaultLand() {
+    return {
+        count: 25,
+        nobility: 55,
+        clergy: 15,
+        commons: 5
+    };
+}
+
+let landOwnership = createDefaultLand();
+
+const TOTAL_LAND = 100;
+
+/* ===================== POPOLAZIONE ===================== */
+function createDefaultPopulation() {
+    return {
+        nobility: 25,
+        clergy: 15,
+        militia: 60,
+        peasants: 900,
+        burghers: 120,
+        merchants: 80,
+        mystics: 10,
+        outcasts: 40
+    };
+}
+
+let populationGroups = createDefaultPopulation();
+
+function adjustPopulation(group, delta, targetState = null) {
+    const groups = targetState ? targetState.populationGroups : populationGroups;
+    if (!groups[group]) groups[group] = 0;
+    groups[group] = Math.max(0, groups[group] + delta);
+    recomputePopulation(targetState);
+}
+
+function recomputePopulation(targetState = null) {
+    const groups = targetState ? targetState.populationGroups : populationGroups;
+    const targetCounty = targetState ? targetState.county : county;
+    targetCounty.pop = Object.values(groups).reduce((sum, val) => sum + val, 0);
+}
+
+/* ===================== FAZIONI ===================== */
+const factionOrder = [
+    "nobility","clergy","militia","peasants",
+    "burghers","merchants","mystics","outcasts"
+];
+
+function createDefaultFactions() {
+    return {
+        nobility: 50,
+        clergy: 50,
+        militia: 50,
+        peasants: 50,
+        burghers: 50,
+        merchants: 50,
+        mystics: 50,
+        outcasts: 50
+    };
+}
+
+let factions = createDefaultFactions();
+
+/* ===================== CONTEE VICINE ===================== */
+function createDefaultNeighbors() {
+    return [
+        { key:"auvrey", name:"Contea di Auvrey", power:65, wealth:50, relations:40, aggression:20, land:30 },
+        { key:"falken", name:"Baronia di Falken", power:40, wealth:30, relations:70, aggression:10, land:18 }
+    ];
+}
+
+let neighboringCounties = createDefaultNeighbors();
+
+/* ===================== CONSIGLIERE ===================== */
+let advisor = { name:"", personality:"" };
+
+/* ===================== CHAT PRIVATE ===================== */
+let activePrivateChat = null;
+function createDefaultPrivateChats() {
+    return {
+        nobility:[], clergy:[], militia:[], peasants:[],
+        burghers:[], merchants:[], mystics:[], outcasts:[],
+        auvrey:[], falken:[]
+    };
+}
+
+let privateChats = createDefaultPrivateChats();
+
+function ensureWorldSystems(targetState = null) {
+    if (targetState) {
+        if (!targetState.worldTime) targetState.worldTime = createDefaultWorldTime();
+        if (!targetState.taxPolicy) targetState.taxPolicy = createDefaultTaxPolicy();
+        if (!Array.isArray(targetState.activeLaws)) targetState.activeLaws = [];
+        if (!Array.isArray(targetState.taxHistory)) targetState.taxHistory = [];
+        if (!targetState.lastResourceSnapshot) targetState.lastResourceSnapshot = captureResourceSnapshot(targetState);
+        if (!targetState.lastResourceDelta) targetState.lastResourceDelta = createEmptyResourceDelta();
+        if (!Array.isArray(targetState.customLaws)) targetState.customLaws = [];
+        if (!targetState.industrySummary) targetState.industrySummary = summarizeIndustry(targetState.structures, targetState.settlements);
+        if (targetState.county && targetState.county.security === undefined) targetState.county.security = 50;
+        return;
+    }
+
+    if (!worldTime) worldTime = createDefaultWorldTime();
+    if (!taxPolicy) taxPolicy = createDefaultTaxPolicy();
+    if (!Array.isArray(activeLaws)) activeLaws = [];
+    if (!Array.isArray(taxHistory)) taxHistory = [];
+    if (!lastResourceSnapshot) lastResourceSnapshot = captureResourceSnapshot();
+    if (!lastResourceDelta) lastResourceDelta = createEmptyResourceDelta();
+    if (!Array.isArray(customLaws)) customLaws = [];
+    if (!industrySummary) industrySummary = summarizeIndustry(structures, settlements);
+    if (county && county.security === undefined) county.security = 50;
+}
+
+const FACTION_EFFECT_DESCRIPTIONS = {
+    nobility: { bonus:"Sostengono opere e portano oro extra.", malus:"Pretendono privilegi, drenano le casse." },
+    clergy: { bonus:"Intercedono per la salute pubblica.", malus:"Condannano il conte, calano devozione." },
+    militia: { bonus:"Sorvegliano le strade, meno disordini.", malus:"Disertano e pretendono paga." },
+    peasants: { bonus:"Coltivano con zelo, raccolti floridi.", malus:"Scioperano nei campi, raccolti scarsi." },
+    burghers: { bonus:"Tessuti di qualità, stabilità urbana.", malus:"Artigiani in protesta, produzione lenta." },
+    merchants: { bonus:"Più lussi e oro nei mercati.", malus:"Fuggono i capitali, calano gli scambi." },
+    mystics: { bonus:"Rinforzano l'arcano e curano.", malus:"Diffondono superstizioni destabilizzanti." },
+    outcasts: { bonus:"Meno crimini e più informatori.", malus:"Disordini e sabotaggi frequenti." }
+};
+
+const RESOURCE_FACTION_MAP = {
+    grain: { faction:"peasants", scale:0.3 },
+    livestock: { faction:"peasants", scale:0.25 },
+    textiles: { faction:"burghers", scale:0.25 },
+    luxuries: { faction:"merchants", scale:0.3 },
+    arcane: { faction:"mystics", scale:0.35 },
+    herbs: { faction:"clergy", scale:0.2 }
+};
+
+const ASSET_RULES = [
+    {
+        key:"housing_poor",
+        label:"Case Povere",
+        getCount: summary => (summary.housing && summary.housing.poor) || 0,
+        consume:{ grain:4, wood:0.4 }
+    },
+    {
+        key:"housing_middle",
+        label:"Case Medie",
+        getCount: summary => (summary.housing && summary.housing.middle) || 0,
+        consume:{ grain:3, livestock:0.8, textiles:0.5 },
+        gold:1.5
+    },
+    {
+        key:"housing_noble",
+        label:"Residenze Nobili",
+        getCount: summary => (summary.housing && summary.housing.noble) || 0,
+        consume:{ grain:2, livestock:1.5, luxuries:1.2 },
+        gold:3
+    },
+    {
+        key:"farms",
+        label:"Campi Coltivati",
+        getCount: summary => summary.farms || 0,
+        produce:{ grain:32 },
+        consume:{ wood:0.6 }
+    },
+    {
+        key:"ranches",
+        label:"Allevamenti",
+        getCount: summary => summary.ranches || 0,
+        produce:{ livestock:11 },
+        consume:{ grain:7, herbs:0.5 }
+    },
+    {
+        key:"shops",
+        label:"Botteghe",
+        getCount: summary => summary.shops || 0,
+        produce:{ textiles:6, luxuries:1.5 },
+        consume:{ grain:1.8, iron:0.6, copper:0.4 },
+        gold:4
+    },
+    {
+        key:"churches",
+        label:"Chiese",
+        getCount: summary => summary.churches || 0,
+        produce:{ herbs:2 },
+        consume:{ grain:0.8 },
+        gold:2
+    }
+];
+
+function getSeason(timeRef = worldTime) {
+    const ref = timeRef || worldTime;
+    if (!ref) return SEASON_CYCLE[0];
+    return SEASON_CYCLE[(ref.seasonIndex || 0) % SEASON_CYCLE.length];
+}
+
+function advanceSeason(targetState = null, options = {}) {
+    const timeRef = targetState ? targetState.worldTime : worldTime;
+    if (!timeRef) return;
+    timeRef.seasonIndex = ((timeRef.seasonIndex || 0) + 1) % SEASON_CYCLE.length;
+    if (timeRef.seasonIndex === 0) timeRef.year = (timeRef.year || 1325) + 1;
+    applySeasonalMorale(timeRef, targetState);
+    if (!targetState && !options.silent) {
+        const season = getSeason(timeRef);
+        addMsg("system", `⏳ Inizia ${season.label}. ${season.description}`);
+        updateSeasonUI();
+    }
+}
+
+function applySeasonalMorale(timeRef, targetState = null) {
+    const season = getSeason(timeRef);
+    if (!season.morale) return;
+    const factionsRef = targetState ? targetState.factions : factions;
+    Object.entries(season.morale).forEach(([key, delta]) => {
+        factionsRef[key] = clamp((factionsRef[key] || 50) + delta);
+    });
+}
+
+function updateSeasonUI() {
+    const season = getSeason();
+    const yearEl = document.getElementById("season-year");
+    const nameEl = document.getElementById("season-name");
+    const textEl = document.getElementById("season-effects-text");
+    if (yearEl) yearEl.innerText = worldTime.year;
+    if (nameEl) nameEl.innerText = season.label;
+    if (textEl) textEl.innerText = season.description;
+}
+
+function getLawLibrary() {
+    return [...BASE_LAW_LIBRARY, ...customLaws];
+}
+
+function getActiveLawKeys(targetState = null) {
+    if (targetState && Array.isArray(targetState.activeLaws)) return targetState.activeLaws;
+    return activeLaws;
+}
+
+function isLawActive(key, targetState = null) {
+    return getActiveLawKeys(targetState).includes(key);
+}
+
+function getLawDefinition(key) {
+    return getLawLibrary().find(l => l.key === key);
+}
+
+function toggleLaw(key) {
+    const idx = activeLaws.indexOf(key);
+    if (idx >= 0) {
+        activeLaws.splice(idx, 1);
+        const def = getLawDefinition(key);
+        if (def) applyLawFactionShift(def, -1);
+    } else {
+        activeLaws.push(key);
+        const def = getLawDefinition(key);
+        if (def) applyLawFactionShift(def, 1);
+    }
+    renderLawList();
+    updateUI();
+}
+
+function applyLawFactionShift(law, direction = 1, targetState = null) {
+    if (!law.effects || !law.effects.factions) return;
+    const factionsRef = targetState ? targetState.factions : factions;
+    Object.entries(law.effects.factions).forEach(([key, delta]) => {
+        factionsRef[key] = clamp((factionsRef[key] || 50) + delta * direction);
+    });
+}
+
+function renderLawList() {
+    const list = document.getElementById("law-list");
+    if (!list) return;
+    list.innerHTML = "";
+    const library = getLawLibrary();
+    library.forEach(law => {
+        const card = document.createElement("div");
+        card.className = "law-card";
+        const title = document.createElement("h4");
+        title.innerText = law.name;
+        const desc = document.createElement("p");
+        desc.innerText = law.description;
+        const active = activeLaws.includes(law.key);
+        const btn = document.createElement("button");
+        btn.className = active ? "btn-main" : "btn-sec";
+        btn.innerText = active ? "Abroga" : "Promulga";
+        btn.addEventListener("click", () => toggleLaw(law.key));
+        card.append(title, desc, btn);
+        list.appendChild(card);
+    });
+    if (!library.length) {
+        list.innerHTML = '<div class="law-card">Nessuna legge disponibile.</div>';
+    }
+}
+
+function ownedStructures(list = [], owner = "count") {
+    if (!Array.isArray(list)) return [];
+    return list.filter(item => (item.owner || "count") === owner);
+}
+
+function summarizeIndustry(structuresRef = structures, settlementsRef = settlements, stateRef = null) {
+    const landRef = stateRef ? stateRef.landOwnership : landOwnership;
+    const popRef = stateRef ? stateRef.populationGroups : populationGroups;
+    const summary = {
+        housing: {
+            poor: Math.max(0, Math.floor((((popRef.peasants || 0) + (popRef.outcasts || 0)) / 80))),
+            middle: Math.max(0, Math.floor((((popRef.burghers || 0) + (popRef.merchants || 0)) / 120))),
+            noble: Math.max(0, Math.floor(((popRef.nobility || 0) / 60)))
+        },
+        shops: Math.max(0, Math.floor((((popRef.burghers || 0) + (popRef.merchants || 0)) / 90))),
+        churches: Math.max(0, Math.floor((((popRef.clergy || 0) + (popRef.mystics || 0)) / 30))),
+        farms: Math.max(0, Math.floor(((landRef.count || 0) / 4))),
+        ranches: Math.max(0, Math.floor(((landRef.count || 0) / 7))),
+        mines: ownedStructures(structuresRef?.mines).length,
+        sawmills: ownedStructures(structuresRef?.sawmills).length,
+        quarries: ownedStructures(structuresRef?.quarries).length,
+        monasteries: ownedStructures(structuresRef?.monasteries).length,
+        settlements: (settlementsRef || []).length
+    };
+    return summary;
+}
+
+function updateIndustrySummary(targetState = null) {
+    if (targetState) {
+        targetState.industrySummary = summarizeIndustry(targetState.structures, targetState.settlements, targetState);
+        if (targetState._cachedAssetFlows) delete targetState._cachedAssetFlows;
+        return targetState.industrySummary;
+    }
+    industrySummary = summarizeIndustry();
+    latestAssetFlows = null;
+    return industrySummary;
+}
+
+function getIndustrySummary(targetState = null) {
+    if (targetState) {
+        if (!targetState.industrySummary) return updateIndustrySummary(targetState);
+        return targetState.industrySummary;
+    }
+    if (!industrySummary) return updateIndustrySummary();
+    return industrySummary;
+}
+
+function calculateAssetFlows(summary, stateRef = null) {
+    const flows = { production:{}, consumption:{}, goldCost:0, detail:[] };
+    if (!summary) return flows;
+    ASSET_RULES.forEach(rule => {
+        const count = Math.max(0, Math.round(rule.getCount(summary)));
+        if (!count) return;
+        const entry = { key:rule.key, label:rule.label, count, production:{}, consumption:{}, gold:0 };
+        if (rule.produce) {
+            Object.entries(rule.produce).forEach(([res, value]) => {
+                const amount = Math.max(0, Math.round(value * count));
+                if (!amount) return;
+                entry.production[res] = amount;
+                flows.production[res] = (flows.production[res] || 0) + amount;
+            });
+        }
+        if (rule.consume) {
+            Object.entries(rule.consume).forEach(([res, value]) => {
+                const amount = Math.max(0, Math.round(value * count));
+                if (!amount) return;
+                entry.consumption[res] = amount;
+                flows.consumption[res] = (flows.consumption[res] || 0) + amount;
+            });
+        }
+        if (rule.gold) {
+            entry.gold = Math.max(0, Math.round(rule.gold * count));
+            flows.goldCost += entry.gold;
+        }
+        flows.detail.push(entry);
+    });
+    if (stateRef) {
+        stateRef._cachedAssetFlows = flows;
+    } else {
+        latestAssetFlows = flows;
+    }
+    return flows;
+}
+
+function getCachedAssetFlows(stateRef = null) {
+    if (stateRef && stateRef._cachedAssetFlows) return stateRef._cachedAssetFlows;
+    return latestAssetFlows;
+}
+
+function formatFlowMap(map) {
+    const entries = Object.entries(map || {}).filter(([, val]) => val && val !== 0);
+    if (!entries.length) return "—";
+    return entries.map(([key, val]) => `${resourceLabels[key] || key}:${val > 0 ? '+' : ''}${val}`).join(", ");
+}
+
+function summarizeStructureOutput(list = []) {
+    const totals = {};
+    list.forEach(item => {
+        Object.entries(item.production || {}).forEach(([key, value]) => {
+            const actual = Math.max(0, Math.floor(value * (item.condition || 100) / 100));
+            totals[key] = (totals[key] || 0) + actual;
+        });
+    });
+    return totals;
+}
+
+function updateAssetSummaryUI(summaryRef = null) {
+    const container = document.getElementById("asset-summary");
+    if (!container) return;
+    const summary = summaryRef || getIndustrySummary();
+    if (!summary) {
+        container.innerHTML = '<div class="asset-card">Dati non disponibili.</div>';
+        return;
+    }
+    const flows = getCachedAssetFlows() || calculateAssetFlows(summary);
+    const cards = [];
+    (flows.detail || []).forEach(entry => {
+        cards.push(`
+            <div class="asset-card">
+                <h4>${entry.label}</h4>
+                <div>Strutture controllate: ${entry.count}</div>
+                <div class="asset-flow">Produzione: ${formatFlowMap(entry.production)}</div>
+                <div class="asset-flow">Consumi: ${formatFlowMap(entry.consumption)}</div>
+                ${entry.gold ? `<div class="asset-flow">Oro necessario: ${entry.gold}</div>` : ""}
+            </div>
+        `);
+    });
+
+    const structuralSets = [
+        { key:"mines", label:"Miniere", list: ownedStructures(structures.mines) },
+        { key:"sawmills", label:"Segherie", list: ownedStructures(structures.sawmills) },
+        { key:"quarries", label:"Cave", list: ownedStructures(structures.quarries) },
+        { key:"monasteries", label:"Monasteri", list: ownedStructures(structures.monasteries) }
+    ];
+
+    structuralSets.forEach(item => {
+        const count = item.list.length;
+        if (!count) return;
+        const output = summarizeStructureOutput(item.list);
+        cards.push(`
+            <div class="asset-card">
+                <h4>${item.label}</h4>
+                <div>Impianti attivi: ${count}</div>
+                <div class="asset-flow">Produzione attesa: ${formatFlowMap(output)}</div>
+                <div class="asset-flow">Consumi: richieste di personale e manutenzione</div>
+            </div>
+        `);
+    });
+
+    if (!cards.length) {
+        container.innerHTML = '<div class="asset-card">Nessun asset controllato al momento.</div>';
+    } else {
+        container.innerHTML = cards.join("");
+    }
+}
+
+function calculateLogisticNeeds(stateRef = null) {
+    const needs = [];
+    const popRef = stateRef ? stateRef.populationGroups : populationGroups;
+    const militia = (popRef && popRef.militia) ? popRef.militia : 0;
+    if (militia > 0) {
+        needs.push({ resource:"iron", amount: Math.ceil(militia * 0.08), tag:"military" });
+        needs.push({ resource:"wood", amount: Math.ceil(militia * 0.04), tag:"military" });
+        needs.push({ resource:"textiles", amount: Math.ceil(militia * 0.02), tag:"military" });
+    }
+
+    const buildingList = stateRef ? (stateRef.buildings || []) : buildings;
+    if (Array.isArray(buildingList)) {
+        const activeSites = buildingList.filter(b => b.stage === "building").length;
+        if (activeSites > 0) {
+            needs.push({ resource:"wood", amount: activeSites * 2, tag:"construction" });
+            needs.push({ resource:"stone", amount: activeSites * 2, tag:"construction" });
+            needs.push({ resource:"iron", amount: activeSites, tag:"construction" });
+        }
+    }
+
+    return needs;
+}
+
+function delayConstructionProjects(targetState = null, extraTurns = 1) {
+    const list = targetState ? (targetState.buildings || []) : buildings;
+    if (!Array.isArray(list) || !extraTurns) return;
+    list.forEach(site => {
+        if (site.stage === "building") site.turns_left += extraTurns;
+    });
+}
+
+function applyLogisticConsequences(needs, deficits, stateRef = null) {
+    const impact = { military:false, construction:false };
+    if (!needs || !needs.length) return impact;
+    const tags = new Set();
+    needs.forEach(entry => {
+        if (deficits[entry.resource]) tags.add(entry.tag);
+    });
+
+    const factionsRef = stateRef ? stateRef.factions : factions;
+    const countyRef = stateRef ? stateRef.county : county;
+
+    if (tags.has("military")) {
+        impact.military = true;
+        factionsRef.militia = clamp((factionsRef.militia || 50) - 4);
+        factionsRef.nobility = clamp((factionsRef.nobility || 50) - 1);
+        countyRef.health = clamp(countyRef.health - 1);
+    }
+
+    if (tags.has("construction")) {
+        impact.construction = true;
+        delayConstructionProjects(stateRef, 1);
+    }
+
+    return impact;
+}
+
+function togglePanel(id) {
+    const panel = document.getElementById(id);
+    if (!panel) return;
+    panel.classList.toggle("collapsed");
+}
+
+function refreshLawTargetOptions() {
+    const typeSelect = document.getElementById("law-custom-type");
+    const targetSelect = document.getElementById("law-custom-target");
+    if (!typeSelect || !targetSelect) return;
+    const type = typeSelect.value;
+    const options = [];
+    if (type === "production") {
+        RESOURCE_KEYS.forEach(key => options.push({ value: key, label: resourceLabels[key] || key }));
+    } else if (type === "taxes") {
+        TAX_CATEGORIES.forEach(cat => options.push({ value: cat.key, label: cat.label }));
+    } else {
+        factionOrder.forEach(key => options.push({ value: key, label: factionLabel(key) }));
+    }
+    targetSelect.innerHTML = options.map(opt => `<option value="${opt.value}">${opt.label}</option>`).join("");
+}
+
+function setupLawCreator() {
+    const typeSelect = document.getElementById("law-custom-type");
+    if (!typeSelect) return;
+    typeSelect.addEventListener("change", refreshLawTargetOptions);
+    refreshLawTargetOptions();
+}
+
+function createCustomLaw() {
+    const nameInput = document.getElementById("law-custom-name");
+    const descInput = document.getElementById("law-custom-desc");
+    const typeSelect = document.getElementById("law-custom-type");
+    const targetSelect = document.getElementById("law-custom-target");
+    const valueInput = document.getElementById("law-custom-value");
+    if (!nameInput || !descInput || !typeSelect || !targetSelect || !valueInput) return;
+
+    const name = nameInput.value.trim();
+    const desc = descInput.value.trim() || "Senza descrizione";
+    const type = typeSelect.value;
+    const target = targetSelect.value;
+    const rawValue = parseFloat(valueInput.value);
+
+    if (!name || !target || Number.isNaN(rawValue)) {
+        addMsg("system", "⚠️ Compila nome, valore e scegli un bersaglio per la legge.");
+        return;
+    }
+
+    const effects = {};
+    if (type === "production") {
+        const multiplier = 1 + rawValue / 100;
+        if (!effects.production) effects.production = {};
+        effects.production[target] = multiplier;
+    } else if (type === "taxes") {
+        if (!effects.taxes) effects.taxes = {};
+        effects.taxes[target] = rawValue;
+    } else if (type === "factions") {
+        if (!effects.factions) effects.factions = {};
+        effects.factions[target] = rawValue;
+    }
+
+    const key = slugify(`${name}_${Date.now()}`);
+    customLaws.push({ key: `custom_${key}`, name, description: desc, effects, custom:true });
+    renderLawList();
+    nameInput.value = "";
+    descInput.value = "";
+    valueInput.value = "";
+}
+
+function getFactionProductionMultiplier(resourceKey, targetState = null) {
+    const map = RESOURCE_FACTION_MAP[resourceKey];
+    if (!map) return 1;
+    const factionsRef = targetState ? targetState.factions : factions;
+    const mood = (factionsRef[map.faction] || 50) - 50;
+    return Math.max(0.5, 1 + (mood / 100) * map.scale);
+}
+
+function getProductionMultiplier(resourceKey, targetState = null) {
+    const season = getSeason(targetState ? targetState.worldTime : worldTime);
+    let mult = 1;
+    if (season.production && season.production[resourceKey]) {
+        mult *= season.production[resourceKey];
+    }
+    getActiveLawKeys(targetState).forEach(key => {
+        const law = getLawDefinition(key);
+        if (law && law.effects && law.effects.production && law.effects.production[resourceKey]) {
+            mult *= law.effects.production[resourceKey];
+        }
+    });
+    mult *= getFactionProductionMultiplier(resourceKey, targetState);
+    return mult;
+}
+
+function renderTaxGrid(force = false) {
+    const grid = document.getElementById("tax-grid");
+    if (!grid) return;
+    if (force) {
+        delete grid.dataset.rendered;
+    }
+    if (grid.dataset.rendered === "1") {
+        syncTaxGridValues();
+        return;
+    }
+    grid.innerHTML = "";
+    TAX_CATEGORIES.forEach(cat => {
+        const card = document.createElement("div");
+        card.className = "tax-card";
+        const label = document.createElement("label");
+        label.innerHTML = `<span>${cat.label}</span><span id="tax-rate-${cat.key}">${taxPolicy[cat.key]}%</span>`;
+        const input = document.createElement("input");
+        input.type = "range";
+        input.id = `tax-slider-${cat.key}`;
+        input.min = 0;
+        input.max = 30;
+        input.step = 1;
+        input.value = taxPolicy[cat.key];
+        input.addEventListener("input", (ev) => setTaxRate(cat.key, Number(ev.target.value)));
+        card.append(label, input);
+        grid.appendChild(card);
+    });
+    grid.dataset.rendered = "1";
+    updateTaxSummary();
+}
+
+function syncTaxGridValues() {
+    TAX_CATEGORIES.forEach(cat => {
+        const slider = document.getElementById(`tax-slider-${cat.key}`);
+        if (slider) slider.value = taxPolicy[cat.key];
+        const label = document.getElementById(`tax-rate-${cat.key}`);
+        if (label) label.innerText = `${taxPolicy[cat.key]}%`;
+    });
+    updateTaxSummary();
+}
+
+function setTaxRate(key, value) {
+    taxPolicy[key] = Number(value);
+    const label = document.getElementById(`tax-rate-${key}`);
+    if (label) label.innerText = `${value}%`;
+    updateTaxSummary();
+}
+
+function getLawTaxModifier(categoryKey, targetState = null) {
+    let delta = 0;
+    getActiveLawKeys(targetState).forEach(key => {
+        const law = getLawDefinition(key);
+        if (law && law.effects && law.effects.taxes && law.effects.taxes[categoryKey]) {
+            delta += law.effects.taxes[categoryKey];
+        }
+    });
+    return delta;
+}
+
+function ensureTaxPolicy(targetState) {
+    if (targetState) {
+        if (!targetState.taxPolicy) targetState.taxPolicy = createDefaultTaxPolicy();
+        return targetState.taxPolicy;
+    }
+    return taxPolicy;
+}
+
+function collectTaxes(targetState = null, options = {}) {
+    const statePop = targetState ? targetState.populationGroups : populationGroups;
+    const stateCounty = targetState ? targetState.county : county;
+    const stateFactions = targetState ? targetState.factions : factions;
+    const policy = ensureTaxPolicy(targetState);
+    let total = 0;
+    TAX_CATEGORIES.forEach(cat => {
+        const pop = statePop[cat.key] || 0;
+        const baseWealth = pop * cat.wealthFactor;
+        const lawDelta = getLawTaxModifier(cat.key, targetState);
+        const effectivePercent = Math.max(0, (policy[cat.key] || 0) + lawDelta);
+        const income = Math.floor(baseWealth * (effectivePercent / 100));
+        total += income;
+        const tolerance = cat.tolerance;
+        if (effectivePercent > tolerance) {
+            const penalty = Math.round((effectivePercent - tolerance) / 2);
+            stateFactions[cat.key] = clamp((stateFactions[cat.key] || 50) - penalty);
+        } else if (effectivePercent < tolerance - 3) {
+            stateFactions[cat.key] = clamp((stateFactions[cat.key] || 50) + 1);
+        }
+    });
+    total = Math.max(0, total);
+    stateCounty.gold += total;
+    if (!targetState) {
+        recordTaxHistory(total);
+        if (!options.silent) addMsg("system", `💰 Entrate fiscali: ${total} oro.`);
+        updateTaxSummary();
+    }
+    return total;
+}
+
+function recordTaxHistory(amount) {
+    taxHistory.push(amount);
+    if (taxHistory.length > 8) taxHistory.shift();
+}
+
+function updateTaxSummary() {
+    const lastEl = document.getElementById("tax-last");
+    const trendEl = document.getElementById("tax-trend");
+    const last = taxHistory[taxHistory.length - 1] || 0;
+    const prev = taxHistory[taxHistory.length - 2] || last;
+    if (lastEl) lastEl.innerText = last;
+    if (trendEl) {
+        if (taxHistory.length < 2 || last === prev) trendEl.innerText = "stabile";
+        else trendEl.innerText = last > prev ? `↑ +${last - prev}` : `↓ ${last - prev}`;
+    }
+}
+
+function applySeasonalUpkeep(targetState = null, options = {}) {
+    const timeRef = targetState ? targetState.worldTime : worldTime;
+    const season = getSeason(timeRef);
+    const stateCounty = targetState ? targetState.county : county;
+    const popRef = targetState ? targetState.populationGroups : populationGroups;
+    const militia = popRef.militia || 0;
+    const upkeep = Math.floor(militia * 0.2 * season.warCost);
+    if (!upkeep) return;
+    stateCounty.gold = Math.max(0, stateCounty.gold - upkeep);
+    if (!targetState && !options.silent) {
+        addMsg("system", `🛡️ Costi stagionali delle truppe: -${upkeep} oro.`);
+    }
+}
+
+function factionLabel(key) {
+    return key.charAt(0).toUpperCase() + key.slice(1);
+}
+
+function getFactionEffectText(key, value) {
+    const ref = FACTION_EFFECT_DESCRIPTIONS[key] || {};
+    if (value >= 65) return ref.bonus || "Sono soddisfatti.";
+    if (value <= 35) return ref.malus || "Sono inquieti.";
+    return "Equilibrati.";
+}
+
+function getFactionChatLine(key, mood) {
+    const ref = FACTION_EFFECT_DESCRIPTIONS[key] || {};
+    if (mood >= 70) return ref.bonus || "Vi onoriamo, Conte.";
+    if (mood <= 30) return ref.malus || "La nostra pazienza è agli sgoccioli.";
+    return "Attendiamo che le promesse diventino fatti.";
+}
+
+function handleFactionChipClick(key) {
+    ensureWorldSystems();
+    const mood = factions[key] || 50;
+    const line = getFactionChatLine(key, mood);
+    addMsg("ai", `<strong>${factionLabel(key)}</strong>: ${line}`);
+}
+
+function renderFactionChips() {
+    const container = document.getElementById("chat-faction-chips");
+    if (!container) return;
+    container.innerHTML = "";
+    factionOrder.forEach(key => {
+        const btn = document.createElement("button");
+        btn.className = "faction-chip";
+        const mood = factions[key] || 50;
+        if (mood <= 35) btn.classList.add("low");
+        else if (mood >= 65) btn.classList.add("high");
+        btn.innerText = factionLabel(key);
+        btn.title = `Lealtà: ${mood}`;
+        btn.addEventListener("click", () => handleFactionChipClick(key));
+        container.appendChild(btn);
+    });
+}
+
+function updateFactionImpactUI(targetState = null) {
+    const container = document.getElementById("faction-impact-list");
+    if (!container) return;
+    container.innerHTML = "";
+    const factionsRef = targetState ? targetState.factions : factions;
+    factionOrder.forEach(key => {
+        const val = factionsRef[key] || 50;
+        const card = document.createElement("div");
+        card.className = "faction-effect-card";
+        card.innerHTML = `<strong>${factionLabel(key)}</strong><div>Loyalty: ${val}</div><div>${getFactionEffectText(key, val)}</div>`;
+        container.appendChild(card);
+    });
+}
+
+/* ============================================================
+   ============ MENU INIZIALE, SALVATAGGI E IMPOSTAZIONI ======
+   ============================================================ */
+
+function initStartScreen() {
+    ensureWorldSystems();
+    loadStoredApiKey();
+    loadPersonalitySettings();
+    renderSaveCollection("save-list", { closeOnLoad:true });
+    updateSaveStatusFromStorage();
+    activateScreen("screen-start");
+}
+
+function activateScreen(id) {
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    const target = document.getElementById(id);
+    if (target) target.classList.add("active");
+    if (id !== "screen-start") closeLoadModal();
+}
+
+function goToEditorScreen() {
+    activateScreen("screen-editor");
+    syncEditorDefaults();
+}
+
+function openLoginScreen() {
+    syncApiKeyInputs(apiKey || safeStorageGet("conte_api_key") || "");
+    activateScreen("screen-login");
+}
+
+function syncEditorDefaults() {
+    const advSelect = document.getElementById("adv-pers");
+    if (advSelect && personalitySettings && personalitySettings.advisorTone) {
+        advSelect.value = personalitySettings.advisorTone;
+    }
+}
+
+function saveApiKeyFromStart() {
+    const startInput = document.getElementById("api-key-start");
+    const key = startInput ? startInput.value.trim() : "";
+    if (!key) {
+        updateApiKeyStatus("Inserisci una chiave valida.", false);
+        return;
+    }
+    setApiKey(key);
+    updateApiKeyStatus("Chiave salvata in locale.");
+}
+
+function clearStoredApiKey() {
+    apiKey = "";
+    safeStorageRemove("conte_api_key");
+    syncApiKeyInputs("");
+    updateApiKeyStatus("Chiave rimossa.");
+}
+
+function setApiKey(key) {
+    apiKey = key ? key.trim() : "";
+    if (apiKey) safeStorageSet("conte_api_key", apiKey);
+    syncApiKeyInputs(apiKey);
+}
+
+function ensureApiKey() {
+    if (apiKey) return apiKey;
+    const stored = safeStorageGet("conte_api_key");
+    if (stored) {
+        apiKey = stored;
+        syncApiKeyInputs(apiKey);
+        updateApiKeyStatus("Chiave caricata automaticamente.");
+    }
+    return apiKey;
+}
+
+function syncApiKeyInputs(value) {
+    const loginInput = document.getElementById("api-key-input");
+    const startInput = document.getElementById("api-key-start");
+    if (loginInput) loginInput.value = value || "";
+    if (startInput) startInput.value = value || "";
+}
+
+function updateApiKeyStatus(text, positive = true) {
+    const status = document.getElementById("api-key-status");
+    if (status) {
+        status.innerText = text;
+        status.style.color = positive ? "var(--text-soft)" : "#ff6b6b";
+    }
+}
+
+function loadStoredApiKey() {
+    const stored = safeStorageGet("conte_api_key");
+    if (stored) {
+        apiKey = stored;
+        syncApiKeyInputs(apiKey);
+        updateApiKeyStatus("Chiave ricordata.");
+    }
+}
+
+function savePersonalitySettingsForm() {
+    const toneInput = document.getElementById("personality-tone");
+    const moodInput = document.getElementById("personality-mood");
+    const notesInput = document.getElementById("personality-notes");
+    personalitySettings = {
+        advisorTone: (toneInput && toneInput.value) || DEFAULT_PERSONALITY.advisorTone,
+        courtMood: (moodInput && moodInput.value) || DEFAULT_PERSONALITY.courtMood,
+        notes: notesInput ? notesInput.value.trim() : ""
+    };
+    safeStorageSet("conte_personality_settings", JSON.stringify(personalitySettings));
+}
+
+function loadPersonalitySettings() {
+    try {
+        const raw = safeStorageGet("conte_personality_settings");
+        if (raw) personalitySettings = JSON.parse(raw);
+    } catch(e) {
+        personalitySettings = { ...DEFAULT_PERSONALITY };
+    }
+    syncPersonalityForm(personalitySettings);
+}
+
+function syncPersonalityForm(settings) {
+    const tone = document.getElementById("personality-tone");
+    const mood = document.getElementById("personality-mood");
+    const notes = document.getElementById("personality-notes");
+    if (tone && settings && settings.advisorTone) tone.value = settings.advisorTone;
+    if (mood && settings && settings.courtMood) mood.value = settings.courtMood;
+    if (notes) notes.value = (settings && settings.notes) ? settings.notes : "";
+}
+
+function openLoadModal() {
+    renderSaveCollection("modal-save-list", { showDelete:true });
+    const modal = document.getElementById("load-modal");
+    if (modal) modal.classList.add("active");
+}
+
+function closeLoadModal() {
+    const modal = document.getElementById("load-modal");
+    if (modal) modal.classList.remove("active");
+}
+
+function manualSaveFromModal() {
+    const input = document.getElementById("save-slot-name");
+    const name = input ? input.value.trim() : "";
+    const slotKey = name ? slugify(name) : `manuale_${Date.now()}`;
+    const label = name || "Salvataggio manuale";
+    saveGame(slotKey, { label });
+    if (input) input.value = "";
+    renderSaveCollection("modal-save-list", { showDelete:true });
+}
+
+function quickSaveGame() {
+    saveGame("quick", { label:"Salvataggio rapido", skipSlug:true });
+}
+
+function autoSaveGame() {
+    saveGame("autosave", { label:"Autosave", silent:true, skipSlug:true });
+}
+
+function saveGame(slotKey = "manuale", options = {}) {
+    const { label = slotKey, silent = false, skipSlug = false } = options;
+    if (typeof localStorage === "undefined") return;
+
+    let finalKey = slotKey || "slot";
+    if (!skipSlug && !RESERVED_SAVE_SLOTS.includes(finalKey)) {
+        finalKey = slugify(finalKey) || `slot_${Date.now()}`;
+    }
+
+    const payload = {
+        meta: {
+            slot: finalKey,
+            label,
+            timestamp: Date.now(),
+            heroName,
+            turn: county.turn
+        },
+        state: captureGameState()
+    };
+
+    safeStorageSet(`conte_save_${finalKey}`, JSON.stringify(payload));
+    const statusText = `${label} – Turno ${county.turn}`;
+    safeStorageSet("conte_last_save_label", statusText);
+    updateSaveStatus(statusText);
+    updateSaveCollections();
+
+    if (!silent) {
+        addMsg("system", `💾 Salvataggio completato (${label}).`);
+    }
+}
+
+function loadGame(slotKey) {
+    if (!slotKey) return;
+    const raw = safeStorageGet(`conte_save_${slotKey}`);
+    if (!raw) {
+        addMsg("system", "❌ Salvataggio non trovato.");
+        return;
+    }
+
+    try {
+        const data = JSON.parse(raw);
+        restoreGameState(data.state || data);
+        updateUI();
+        drawCountyMap();
+        drawRegionMap();
+        activateScreen("screen-game");
+        const loadedLabel = data.meta && data.meta.label ? data.meta.label : slotKey;
+        addMsg("system", `📂 Caricata la partita ${loadedLabel} (Turno ${county.turn}).`);
+        closeLoadModal();
+        updateSaveCollections();
+    } catch(e) {
+        addMsg("system", "⚠️ Impossibile caricare il salvataggio.");
+    }
+}
+
+function deleteSave(slotKey) {
+    safeStorageRemove(`conte_save_${slotKey}`);
+    updateSaveCollections();
+}
+
+function updateSaveCollections() {
+    renderSaveCollection("save-list", { closeOnLoad:true });
+    const loadModal = document.getElementById("load-modal");
+    if (loadModal && loadModal.classList.contains("active")) {
+        renderSaveCollection("modal-save-list", { showDelete:true });
+    }
+}
+
+function renderSaveCollection(containerId, options = {}) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const slots = getSaveSlots();
+
+    if (!slots.length) {
+        container.innerHTML = '<p class="save-empty">Nessun salvataggio disponibile.</p>';
+        return;
+    }
+
+    container.innerHTML = "";
+    slots.forEach(slot => {
+        const row = document.createElement("div");
+        row.className = "save-entry";
+
+        const details = document.createElement("div");
+        details.className = "save-entry-details";
+        const title = document.createElement("strong");
+        title.innerText = slot.meta.label || slot.slot;
+        const subtitle = document.createElement("span");
+        subtitle.innerText = `${slot.meta.heroName || "Conte"} — Turno ${slot.meta.turn || 1}`;
+        const time = document.createElement("small");
+        time.innerText = new Date(slot.meta.timestamp || Date.now()).toLocaleString("it-IT");
+        details.append(title, subtitle, time);
+
+        const actions = document.createElement("div");
+        actions.className = "save-entry-actions";
+        const loadBtn = document.createElement("button");
+        loadBtn.className = "btn-sec";
+        loadBtn.innerText = "Carica";
+        loadBtn.addEventListener("click", () => loadGame(slot.slot));
+        actions.appendChild(loadBtn);
+
+        if (options.showDelete) {
+            const delBtn = document.createElement("button");
+            delBtn.className = "btn-sec";
+            delBtn.innerText = "Elimina";
+            delBtn.addEventListener("click", () => {
+                if (confirm(`Eliminare ${slot.meta.label || slot.slot}?`)) {
+                    deleteSave(slot.slot);
+                    renderSaveCollection(containerId, options);
+                }
+            });
+            actions.appendChild(delBtn);
+        }
+
+        row.append(details, actions);
+        container.appendChild(row);
+    });
+}
+
+function getSaveSlots() {
+    if (typeof localStorage === "undefined") return [];
+    const slots = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key || !key.startsWith("conte_save_")) continue;
+        try {
+            const payload = JSON.parse(localStorage.getItem(key));
+            slots.push({
+                slot: key.replace("conte_save_", ""),
+                meta: payload.meta || { timestamp: Date.now(), label: key }
+            });
+        } catch(e) {
+            continue;
+        }
+    }
+    return slots.sort((a,b) => (b.meta.timestamp || 0) - (a.meta.timestamp || 0));
+}
+
+function captureGameState() {
+    ensureWorldSystems();
+    const snapshot = JSON.parse(JSON.stringify({
+        heroName,
+        advisor,
+        county,
+        landOwnership,
+        populationGroups,
+        factions,
+        neighboringCounties,
+        structures,
+        buildings,
+        settlements,
+        worldMap,
+        privateChats,
+        personalitySettings,
+        worldTime,
+        taxPolicy,
+        taxHistory,
+        activeLaws,
+        lastResourceSnapshot,
+        lastResourceDelta,
+        industrySummary,
+        customLaws
+    }));
+    snapshot.county.resources = normalizeResourceBag(snapshot.county.resources);
+    return snapshot;
+}
+
+function restoreGameState(state) {
+    county = state.county ? JSON.parse(JSON.stringify(state.county)) : createDefaultCounty();
+    const sourceResources = (state.county && state.county.resources) ? state.county.resources : {};
+    county.resources = normalizeResourceBag(sourceResources);
+    landOwnership = state.landOwnership ? JSON.parse(JSON.stringify(state.landOwnership)) : createDefaultLand();
+    populationGroups = state.populationGroups ? JSON.parse(JSON.stringify(state.populationGroups)) : createDefaultPopulation();
+    factions = state.factions ? JSON.parse(JSON.stringify(state.factions)) : createDefaultFactions();
+    neighboringCounties = state.neighboringCounties ? JSON.parse(JSON.stringify(state.neighboringCounties)) : createDefaultNeighbors();
+    structures = state.structures ? JSON.parse(JSON.stringify(state.structures)) : createEmptyStructures();
+    buildings = state.buildings ? JSON.parse(JSON.stringify(state.buildings)) : [];
+    settlements = state.settlements ? JSON.parse(JSON.stringify(state.settlements)) : [];
+    worldMap = state.worldMap ? JSON.parse(JSON.stringify(state.worldMap)) : worldMap;
+    privateChats = state.privateChats ? JSON.parse(JSON.stringify(state.privateChats)) : createDefaultPrivateChats();
+    personalitySettings = state.personalitySettings || personalitySettings;
+    heroName = state.heroName || heroName;
+    worldTime = state.worldTime ? JSON.parse(JSON.stringify(state.worldTime)) : createDefaultWorldTime();
+    taxPolicy = state.taxPolicy ? JSON.parse(JSON.stringify(state.taxPolicy)) : createDefaultTaxPolicy();
+    taxHistory = Array.isArray(state.taxHistory) ? [...state.taxHistory] : [];
+    activeLaws = Array.isArray(state.activeLaws) ? [...state.activeLaws] : [];
+    lastResourceSnapshot = state.lastResourceSnapshot ? JSON.parse(JSON.stringify(state.lastResourceSnapshot)) : captureResourceSnapshot();
+    lastResourceDelta = state.lastResourceDelta ? JSON.parse(JSON.stringify(state.lastResourceDelta)) : createEmptyResourceDelta();
+    industrySummary = state.industrySummary ? JSON.parse(JSON.stringify(state.industrySummary)) : null;
+    customLaws = Array.isArray(state.customLaws) ? JSON.parse(JSON.stringify(state.customLaws)) : [];
+    ensureWorldSystems();
+    recomputePopulation();
+}
+
+function normalizeResourceBag(source = {}) {
+    const bag = {};
+    RESOURCE_KEYS.forEach(key => bag[key] = Number(source[key] ?? 0));
+    return bag;
+}
+
+function cloneResourceBag(source = {}) {
+    return JSON.parse(JSON.stringify(normalizeResourceBag(source)));
+}
+
+function createEmptyResourceDelta() {
+    const bag = {};
+    RESOURCE_KEYS.forEach(key => bag[key] = 0);
+    return bag;
+}
+
+function captureResourceSnapshot(targetState = null) {
+    if (targetState && targetState.county && targetState.county.resources) {
+        return cloneResourceBag(targetState.county.resources);
+    }
+    if (county && county.resources) return cloneResourceBag(county.resources);
+    return createEmptyResourceDelta();
+}
+
+function computeResourceDelta(startSnapshot, endSnapshot) {
+    const delta = {};
+    RESOURCE_KEYS.forEach(key => {
+        const startVal = startSnapshot && startSnapshot[key] !== undefined ? startSnapshot[key] : 0;
+        const endVal = endSnapshot && endSnapshot[key] !== undefined ? endSnapshot[key] : 0;
+        delta[key] = endVal - startVal;
+    });
+    return delta;
+}
+
+function resetResourceTracking(targetState = null) {
+    if (targetState) {
+        targetState.lastResourceSnapshot = captureResourceSnapshot(targetState);
+        targetState.lastResourceDelta = createEmptyResourceDelta();
+        return;
+    }
+    lastResourceSnapshot = captureResourceSnapshot();
+    lastResourceDelta = createEmptyResourceDelta();
+}
+
+function resetGameState() {
+    county = createDefaultCounty();
+    landOwnership = createDefaultLand();
+    populationGroups = createDefaultPopulation();
+    factions = createDefaultFactions();
+    neighboringCounties = createDefaultNeighbors();
+    structures = createEmptyStructures();
+    buildings = [];
+    settlements = [];
+    worldMap.tiles = [];
+    privateChats = createDefaultPrivateChats();
+    activePrivateChat = null;
+    county.turn = 1;
+    worldTime = createDefaultWorldTime();
+    taxPolicy = createDefaultTaxPolicy();
+    taxHistory = [];
+    activeLaws = [];
+    resetResourceTracking();
+    ensureWorldSystems();
+    clearInterfaceLogs();
+}
+
+function updateSaveStatus(text) {
+    const el = document.getElementById("save-status");
+    if (el) el.innerText = text || "Nessun salvataggio registrato.";
+}
+
+function updateSaveStatusFromStorage() {
+    const stored = safeStorageGet("conte_last_save_label");
+    if (stored) updateSaveStatus(stored);
+}
+
+function slugify(str) {
+    return str.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+function safeStorageGet(key) {
+    try { return localStorage.getItem(key); } catch(e) { return null; }
+}
+
+function safeStorageSet(key, value) {
+    try { localStorage.setItem(key, value); } catch(e) {}
+}
+
+function safeStorageRemove(key) {
+    try { localStorage.removeItem(key); } catch(e) {}
+}
+
+/* ============================================================
+   =================== GENERAZIONE MAPPA =======================
+   ============================================================ */
+
+let worldMap = {
+    width: 20,
+    height: 20,
+    tiles: []
+};
+
+let settlements = [];
+
+/* ---- FUNZIONE PRINCIPALE ---- */
+function generateWorldMap() {
+    worldMap.tiles = [];
+
+    for (let y = 0; y < worldMap.height; y++) {
+        for (let x = 0; x < worldMap.width; x++) {
+
+            const terrain = randomTerrain();
+            const fertility = baseFertility(terrain) + rand(-10,10);
+            const resources = generateResources(terrain);
+            const owner = assignOwner(x, y);
+
+            worldMap.tiles.push({
+                x, y,
+                terrain,
+                fertility: clamp(fertility),
+                resources,
+                owner
+            });
+        }
+    }
+}
+
+function getTile(x, y) {
+    if (x < 0 || y < 0 || x >= worldMap.width || y >= worldMap.height) return null;
+    return worldMap.tiles[y * worldMap.width + x];
+}
+
+/* ---- TIPO DI TERRENO ---- */
+function randomTerrain() {
+    const r = Math.random();
+    if (r < 0.30) return "plains";
+    if (r < 0.50) return "forest";
+    if (r < 0.70) return "hills";
+    if (r < 0.82) return "mountain";
+    if (r < 0.92) return "swamp";
+    return "lake";
+}
+
+/* ---- FERTILITÀ BASE ---- */
+function baseFertility(t) {
+    switch(t){
+        case "plains": return 70;
+        case "forest": return 50;
+        case "hills": return 40;
+        case "mountain": return 20;
+        case "swamp": return 25;
+        case "lake": return 60;
+    }
+}
+
+/* ---- GENERAZIONE RISORSE ---- */
+function generateResources(terrain) {
+    let r = {
+        wood:0, stone:0, iron:0, copper:0, gold:0, herbs:0,
+        gems:0, silver:0, mystic_crystals:0
+    };
+
+    if (terrain === "forest") r.wood = rand(50,100);
+    if (terrain === "hills") { r.stone = rand(40,80); r.copper = rand(20,50); }
+    if (terrain === "mountain") { r.iron = rand(40,100); }
+
+    if (terrain === "swamp") r.herbs = rand(30,60);
+
+    // RARI
+    if (Math.random() < 0.03) r.gold = rand(10,30);
+    if (Math.random() < 0.03) r.gems = rand(5,20);
+    if (Math.random() < 0.03) r.silver = rand(10,30);
+    if (Math.random() < 0.02) r.mystic_crystals = rand(5,15);
+
+    return r;
+}
+
+/* ---- ASSEGNAZIONE TERRITORIO ---- */
+function assignOwner(x, y) {
+    if (x > 7 && x < 12 && y > 7 && y < 12) return "count";
+    if (y < 4) return "auvrey";
+    if (x > 13 && y > 13) return "falken";
+
+    const r = Math.random();
+    if (r < 0.33) return "nobility";
+    if (r < 0.66) return "clergy";
+    return "commons";
+}
+
+function generateSettlements() {
+    settlements = worldMap.tiles
+        .filter(t => t.owner === "count" && t.fertility > 50)
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 10)
+        .map(t => ({ x: t.x, y: t.y }));
+}
+
+function assignInitialStructures() {
+    updateIndustrySummary();
+}
+
+/* ---- UTILS ---- */
+function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+function clamp(v){ return Math.max(0, Math.min(100,v)); }
+
+/* ============================================================
+   ===================== DISEGNO MAPPE =========================
+   ============================================================ */
+
+function drawCountyMap() {
+    const canvas = document.getElementById("county-map");
+    const ctx = canvas.getContext("2d");
+    const size = canvas.width / worldMap.width;
+    const patch = 4;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let y = 0; y < worldMap.height; y += patch) {
+        for (let x = 0; x < worldMap.width; x += patch) {
+            const terrain = dominantTerrain(x, y, patch);
+            const width = Math.min(patch, worldMap.width - x) * size;
+            const height = Math.min(patch, worldMap.height - y) * size;
+
+            roundedRect(ctx, x * size, y * size, width, height, size * 0.6);
+            ctx.fillStyle = terrainColor(terrain);
+            ctx.fill();
+        }
+    }
+
+    drawSettlements(ctx, size);
+    drawStructureMarkers(ctx, size);
+}
+
+function dominantTerrain(startX, startY, block) {
+    const counts = {};
+    for (let y = startY; y < Math.min(worldMap.height, startY + block); y++) {
+        for (let x = startX; x < Math.min(worldMap.width, startX + block); x++) {
+            const tile = getTile(x, y);
+            if (!tile) continue;
+            counts[tile.terrain] = (counts[tile.terrain] || 0) + 1;
+        }
+    }
+    const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]);
+    return sorted.length && sorted[0] ? sorted[0][0] : "plains";
+}
+
+function roundedRect(ctx, x, y, w, h, r) {
+    const radius = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + w - radius, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+    ctx.lineTo(x + w, y + h - radius);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+    ctx.lineTo(x + radius, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+}
+
+function drawSettlements(ctx, size) {
+    const radius = Math.max(3, size * 0.35);
+    settlements.forEach(s => {
+        const cx = (s.x + 0.5) * size;
+        const cy = (s.y + 0.5) * size;
+        ctx.fillStyle = "#f4d88b";
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#4c2a00";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+    });
+}
+
+function drawStructureMarkers(ctx, size) {
+    const markerSize = Math.max(4, size * 0.4);
+    const markers = [
+        ...structures.mines.map(s => ({ ...s, shape:"diamond", color:"#c27b26" })),
+        ...structures.sawmills.map(s => ({ ...s, shape:"triangle", color:"#5ba86c" })),
+        ...structures.quarries.map(s => ({ ...s, shape:"square", color:"#c4c4c4" })),
+        ...structures.monasteries.map(s => ({ ...s, shape:"cross", color:"#f5f0d0" }))
+    ];
+
+    markers.forEach(m => {
+        const cx = (m.x + 0.5) * size;
+        const cy = (m.y + 0.5) * size;
+        drawMarkerShape(ctx, cx, cy, markerSize, m.shape, m.color);
+    });
+}
+
+function drawMarkerShape(ctx, x, y, size, shape, color) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.fillStyle = color;
+    ctx.strokeStyle = "#0a0a0a";
+    ctx.lineWidth = 1;
+    switch(shape) {
+        case "diamond":
+            ctx.rotate(Math.PI / 4);
+            ctx.fillRect(-size/2, -size/2, size, size);
+            break;
+        case "triangle":
+            ctx.beginPath();
+            ctx.moveTo(0, -size/1.4);
+            ctx.lineTo(size/1.2, size/1.4);
+            ctx.lineTo(-size/1.2, size/1.4);
+            ctx.closePath();
+            ctx.fill();
+            break;
+        case "square":
+            ctx.fillRect(-size/2, -size/2, size, size);
+            break;
+        case "cross":
+            ctx.fillRect(-size/6, -size/2, size/3, size);
+            ctx.fillRect(-size/2, -size/6, size, size/3);
+            break;
+    }
+    ctx.restore();
+}
+
+function drawRegionMap() {
+    const canvas = document.getElementById("region-map");
+    const ctx = canvas.getContext("2d");
+    const size = canvas.width / 8;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#050505";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    for (let y = 0; y < 8; y++) {
+        for (let x = 0; x < 8; x++) {
+            let owner = "wild";
+
+            if (y < 2) owner = "auvrey";
+            else if (x > 5 && y > 5) owner = "falken";
+            else if (rand(0,10) > 4) owner = "count";
+
+            const px = x * size;
+            const py = y * size;
+
+            ctx.fillStyle = regionOwnerColor(owner);
+            ctx.globalAlpha = 0.85;
+            roundedRect(ctx, px + 2, py + 2, size - 4, size - 4, 6);
+            ctx.fill();
+        }
+    }
+
+    ctx.globalAlpha = 1;
+    drawNeighborPins(ctx);
+}
+
+function drawNeighborPins(ctx) {
+    const canvas = ctx.canvas;
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = canvas.width * 0.35;
+
+    neighboringCounties.forEach((c, idx) => {
+        const angle = (idx / neighboringCounties.length) * Math.PI * 2;
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
+
+        ctx.beginPath();
+        ctx.fillStyle = regionOwnerColor(c.key === "auvrey" ? "auvrey" : "falken");
+        ctx.arc(x, y, 12, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#050505";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = "#fff";
+        ctx.font = "10px Georgia";
+        ctx.textAlign = "center";
+        ctx.fillText(c.name.split(" ")[0], x, y + 3);
+    });
+}
+
+/* ---- COLORI ---- */
+function terrainColor(t){
+    return {
+        plains:"#9bbf6b",
+        forest:"#1e4a2d",
+        hills:"#b09063",
+        mountain:"#787d87",
+        swamp:"#2f3f33",
+        lake:"#2b62c3"
+    }[t];
+}
+
+function ownerColor(o){
+    return {
+        count:"#ffd700",
+        nobility:"#b04800",
+        clergy:"#8b00ff",
+        commons:"#aaaaaa",
+        auvrey:"#ff0000",
+        falken:"#0099ff"
+    }[o] || "#222";
+}
+
+function regionOwnerColor(o){
+    return {
+        count:"#8f7d2b",
+        auvrey:"#660000",
+        falken:"#003366",
+        wild:"#444444"
+    }[o];
+}
+
+/* ============================================================
+   ===================== STRUTTURE DI BASE =====================
+   ============================================================ */
+
+function createEmptyStructures() {
+    return {
+        mines: [],
+        sawmills: [],
+        quarries: [],
+        monasteries: []
+    };
+}
+
+let structures = createEmptyStructures();
+let industrySummary = null;
+let latestAssetFlows = null;
+
+/* ---- GENERAZIONE AUTOMATICA ---- */
+function autogenerateStructures() {
+    worldMap.tiles.forEach(t => {
+
+        // Miniera
+        if (t.terrain === "mountain" && Math.random() < 0.15) {
+            structures.mines.push({
+                x:t.x, y:t.y, owner:t.owner,
+                type:"mine", condition:100,
+                workers:rand(5,15),
+                production:t.resources
+            });
+        }
+
+        // Segheria
+        if (t.terrain === "forest" && Math.random() < 0.10) {
+            structures.sawmills.push({
+                x:t.x, y:t.y, owner:t.owner,
+                type:"sawmill", condition:100,
+                workers:rand(5,12),
+                production:{ wood: rand(20,50) }
+            });
+        }
+
+        // Cava
+        if (t.terrain === "hills" && Math.random() < 0.08) {
+            structures.quarries.push({
+                x:t.x, y:t.y, owner:t.owner,
+                type:"quarry", condition:100,
+                workers:rand(8,20),
+                production:{ stone: rand(15,40) }
+            });
+        }
+
+        // Monastero
+        if ((t.terrain === "plains" || t.terrain === "forest") && Math.random() < 0.05) {
+            structures.monasteries.push({
+                x:t.x, y:t.y, owner:"clergy",
+                type:"monastery", condition:100,
+                workers:rand(6,14),
+                production:{ herbs: rand(5,15) }
+            });
+        }
+    });
+    assignInitialStructures();
+}
+
+/* ============================================================
+   =================== EDIFICI AVANZATI ========================
+   ============================================================ */
+
+let buildings = [];  // Lista edifici in costruzione
+
+const buildingData = {
+    forge: {
+        name:"Forgia Reale",
+        cost:{ gold:200, wood:80, stone:120, iron:40 },
+        time:5
+    },
+    harbor:{
+        name:"Porto Commerciale",
+        cost:{ gold:300, wood:60, stone:80 },
+        time:6
+    },
+    watchtower:{
+        name:"Torre di Guardia",
+        cost:{ gold:120, stone:70, wood:20 },
+        time:4
+    },
+    mercenary_camp:{
+        name:"Accampamento Mercenario",
+        cost:{ gold:150, wood:40, stone:20 },
+        time:3
+    },
+    market:{
+        name:"Mercato Cittadino",
+        cost:{ gold:100, wood:50 },
+        time:3
+    },
+    monk_clinic:{
+        name:"Clinica dei Monaci",
+        cost:{ gold:80, wood:30 },
+        time:3
+    },
+    sawmill:{
+        name:"Segheria Reale",
+        cost:{ gold:90, wood:60, stone:30 },
+        time:4
+    },
+    stone_quarry:{
+        name:"Cava di Pietra",
+        cost:{ gold:85, wood:40, stone:40 },
+        time:5
+    },
+    iron_mine:{
+        name:"Miniera di Ferro",
+        cost:{ gold:140, wood:40, stone:80, iron:20 },
+        time:6
+    },
+    mint:{
+        name:"Zecca ducale",
+        cost:{ gold:100, stone:60, iron:15 },
+        time:5
+    },
+    barracks:{
+        name:"Caserma della Guardia",
+        cost:{ gold:120, wood:50, stone:70, iron:15 },
+        time:5
+    }
+};
+
+function buildingName(type){
+    return buildingData[type].name;
+}
+
+</script>
+<script>
+
+/* ============================================================
+   ====================== PRODUZIONE PER TURNO =================
+   ============================================================ */
+
+function applyProduction(targetState = null, options = {}) {
+    const { silent = false, skipUI = false } = options;
+    const stateStruct = targetState ? targetState.structures : structures;
+    const stateCounty = targetState ? targetState.county : county;
+    stateCounty.resources = normalizeResourceBag(stateCounty.resources);
+    const notifyStructures = !targetState && !silent;
+
+    const total = {
+        wood:0, stone:0, iron:0, copper:0, gold:0, herbs:0,
+        grain:0, livestock:0, textiles:0, luxuries:0, arcane:0
+    };
+
+    const mines = ownedStructures(stateStruct && stateStruct.mines ? stateStruct.mines : []);
+    mines.forEach(m => {
+        for (let k in m.production) {
+            const amount = Math.floor(m.production[k] * (m.condition / 100));
+            if (k === "gems" || k === "silver") {
+                total.luxuries += amount;
+            } else if (k === "mystic_crystals") {
+                total.arcane += amount;
+            } else {
+                total[k] = (total[k] || 0) + amount;
+            }
+        }
+        degradeStructure(m, { notify: notifyStructures });
+    });
+
+    const sawmills = ownedStructures(stateStruct && stateStruct.sawmills ? stateStruct.sawmills : []);
+    sawmills.forEach(s => {
+        const amount = Math.floor(s.production.wood * (s.condition / 100));
+        total.wood += amount;
+        degradeStructure(s, { notify: notifyStructures });
+    });
+
+    const quarries = ownedStructures(stateStruct && stateStruct.quarries ? stateStruct.quarries : []);
+    quarries.forEach(q => {
+        const amount = Math.floor(q.production.stone * (q.condition / 100));
+        total.stone += amount;
+        degradeStructure(q, { notify: notifyStructures });
+    });
+
+    const monasteries = ownedStructures(stateStruct && stateStruct.monasteries ? stateStruct.monasteries : []);
+    monasteries.forEach(m => {
+        const amount = Math.floor(m.production.herbs * (m.condition / 100));
+        total.herbs += amount;
+        degradeStructure(m, { notify: notifyStructures });
+    });
+
+    Object.keys(total).forEach(k => {
+        stateCounty.resources[k] = (stateCounty.resources[k] || 0) + total[k];
+    });
+
+    if (!targetState && !silent) {
+        addMsg("system", `⛏️ Produzione del turno: ${formatResourceReport(total)}`);
+        if (!skipUI) updateResourceUI();
+    }
+
+    return total;
+}
+
+function degradeStructure(s, options = {}) {
+    const notify = options.notify !== false;
+    s.condition -= rand(0, 2);
+    if (notify && s.condition < 35 && Math.random() < 0.12) {
+        addMsg("ai", `⚠️ La struttura (${s.type}) in ${s.x},${s.y} è in pessime condizioni.`);
+    }
+}
+
+function updateResourceUI() {
+    const bag = county.resources || {};
+    RESOURCE_KEYS.forEach(key => {
+        const valEl = document.getElementById(`res-${key}`);
+        if (valEl) valEl.innerText = bag[key] || 0;
+        const deltaEl = document.getElementById(`res-${key}-delta`);
+        if (!deltaEl) return;
+        const deltaValue = lastResourceDelta ? (lastResourceDelta[key] || 0) : 0;
+        deltaEl.innerText = formatDeltaValue(deltaValue);
+        deltaEl.classList.remove("positive", "negative");
+        if (deltaValue > 0) deltaEl.classList.add("positive");
+        else if (deltaValue < 0) deltaEl.classList.add("negative");
+    });
+}
+
+function formatDeltaValue(value) {
+    if (!value) return "—";
+    return value > 0 ? `+${value}` : `${value}`;
+}
+
+function processVillageEconomy(targetState = null, options = {}) {
+    const { silent = false, skipUI = false } = options;
+    const stateRef = targetState || null;
+    const summary = updateIndustrySummary(stateRef);
+    const flows = calculateAssetFlows(summary, stateRef);
+    const production = calculateVillageProduction(stateRef);
+    const consumption = calculateVillageConsumption(stateRef);
+    const logisticNeeds = calculateLogisticNeeds(stateRef);
+    logisticNeeds.forEach(need => {
+        consumption[need.resource] = (consumption[need.resource] || 0) + need.amount;
+    });
+    const deficits = {};
+    const stateCounty = stateRef ? stateRef.county : county;
+    stateCounty.resources = normalizeResourceBag(stateCounty.resources);
+    const resourceBag = stateCounty.resources;
+
+    if (flows.goldCost) {
+        const need = flows.goldCost;
+        const available = stateCounty.gold || 0;
+        if (available >= need) {
+            stateCounty.gold = available - need;
+        } else {
+            const paidRatio = available / need;
+            stateCounty.gold = 0;
+            Object.keys(production).forEach(key => {
+                production[key] = Math.floor(production[key] * paidRatio);
+            });
+            Object.keys(consumption).forEach(key => {
+                consumption[key] = Math.floor((consumption[key] || 0) * paidRatio);
+            });
+            deficits.gold = Math.ceil(need - available);
+        }
+    }
+
+    Object.keys(production).forEach(key => {
+        resourceBag[key] = (resourceBag[key] || 0) + production[key];
+    });
+
+    Object.keys(consumption).forEach(key => {
+        const available = resourceBag[key] || 0;
+        const finalAmount = available - consumption[key];
+        if (finalAmount < 0) {
+            deficits[key] = Math.abs(finalAmount);
+            resourceBag[key] = 0;
+        } else {
+            resourceBag[key] = finalAmount;
+        }
+    });
+
+    applyEconomicEffects(production, consumption, deficits, stateRef);
+    const logisticImpact = applyLogisticConsequences(logisticNeeds, deficits, stateRef);
+
+    if (!targetState && !silent) {
+        const upkeepNote = flows.goldCost ? ` | Manutenzione: ${flows.goldCost} oro` : "";
+        addMsg("system", `⚖️ Economia locale — Prodotti: ${formatResourceReport(production)} | Consumi: ${formatResourceReport(consumption)}${upkeepNote}`);
+        if (Object.keys(deficits).length) {
+            addMsg("system", `⚠️ Carenze critiche: ${formatResourceReport(deficits)}`);
+        }
+        if (logisticImpact.military) {
+            addMsg("system", "⚔️ Le forniture militari sono insufficienti: la disciplina cala e la salute pubblica ne risente.");
+        }
+        if (logisticImpact.construction) {
+            addMsg("system", "🏗️ I cantieri rallentano per mancanza di materiali: alcuni lavori slittano.");
+        }
+        if (!skipUI) updateUI();
+    }
+
+    return { production, consumption, deficits };
+}
+
+function calculateVillageProduction(stateRef = null) {
+    const summary = getIndustrySummary(stateRef);
+    const flows = getCachedAssetFlows(stateRef) || calculateAssetFlows(summary, stateRef);
+    const production = { ...flows.production };
+    Object.keys(production).forEach(key => {
+        const mult = getProductionMultiplier(key, stateRef);
+        production[key] = Math.max(0, Math.floor(production[key] * mult));
+    });
+    return production;
+}
+
+function calculateVillageConsumption(stateRef = null) {
+    const popRef = stateRef ? stateRef.populationGroups : populationGroups;
+    const flows = getCachedAssetFlows(stateRef) || calculateAssetFlows(getIndustrySummary(stateRef), stateRef);
+    const consumption = { ...flows.consumption };
+    const grainExtra = Math.floor(((popRef.militia || 0) + (popRef.peasants || 0)) * 0.05);
+    const livestockExtra = Math.floor((popRef.nobility || 0) * 0.02);
+    const textilesExtra = Math.floor((popRef.burghers || 0) * 0.02);
+    const herbsExtra = Math.floor((popRef.mystics || 0) * 0.05);
+    if (grainExtra) consumption.grain = (consumption.grain || 0) + grainExtra;
+    if (livestockExtra) consumption.livestock = (consumption.livestock || 0) + livestockExtra;
+    if (textilesExtra) consumption.textiles = (consumption.textiles || 0) + textilesExtra;
+    if (herbsExtra) consumption.herbs = (consumption.herbs || 0) + herbsExtra;
+    return consumption;
+}
+
+function applyEconomicEffects(production, consumption, deficits, stateRef = null) {
+    const countyRef = stateRef ? stateRef.county : county;
+    const factionsRef = stateRef ? stateRef.factions : factions;
+    const prodGrain = production.grain || 0;
+    const consGrain = consumption.grain || 0;
+    const prodLivestock = production.livestock || 0;
+    const consLivestock = consumption.livestock || 0;
+    const prodTextiles = production.textiles || 0;
+    const consTextiles = consumption.textiles || 0;
+    const prodLuxuries = production.luxuries || 0;
+    const consLuxuries = consumption.luxuries || 0;
+    const prodArcane = production.arcane || 0;
+    const consArcane = consumption.arcane || 0;
+    const foodShortage = deficits.grain || deficits.livestock;
+    const textileShortage = deficits.textiles;
+    const luxuryShortage = deficits.luxuries;
+    const arcaneShortage = deficits.arcane || deficits.herbs;
+    const goldShortage = deficits.gold;
+
+    if (foodShortage) {
+        countyRef.food = clamp(countyRef.food - 6);
+        countyRef.happy = clamp(countyRef.happy - 4);
+        factionsRef.peasants -= 4;
+        factionsRef.militia -= 2;
+        const loss = Math.max(1, Math.floor(((deficits.grain || 0) + (deficits.livestock || 0)) / 120));
+        adjustPopulation("peasants", -loss, stateRef);
+    } else if (prodGrain > consGrain) {
+        countyRef.food = clamp(countyRef.food + 3);
+        factionsRef.peasants += 1;
+    }
+
+    if (textileShortage) {
+        factionsRef.burghers -= 3;
+        countyRef.happy = clamp(countyRef.happy - 2);
+    } else if (prodTextiles > consTextiles) {
+        factionsRef.burghers += 1;
+    }
+
+    if (luxuryShortage) {
+        factionsRef.nobility -= 3;
+        factionsRef.merchants -= 2;
+        countyRef.happy = clamp(countyRef.happy - 3);
+    } else if (prodLuxuries > consLuxuries) {
+        factionsRef.nobility += 1;
+        factionsRef.merchants += 1;
+        const delta = Math.max(0, Math.floor((prodLuxuries - consLuxuries) / 200));
+        if (delta) adjustPopulation("merchants", delta, stateRef);
+    }
+
+    if (arcaneShortage) {
+        factionsRef.mystics -= 3;
+        factionsRef.clergy -= 1;
+        countyRef.health = clamp(countyRef.health - 4);
+    } else if (prodArcane > consArcane) {
+        factionsRef.mystics += 1;
+        countyRef.health = clamp(countyRef.health + 2);
+    }
+
+    if (goldShortage) {
+        countyRef.happy = clamp(countyRef.happy - 2);
+        factionsRef.merchants -= 3;
+        factionsRef.burghers -= 2;
+    }
+
+    factionOrder.forEach(f => factionsRef[f] = clamp(factionsRef[f]));
+}
+
+function formatResourceReport(obj) {
+    const entries = Object.entries(obj)
+        .filter(([, value]) => value && value !== 0)
+        .map(([key, value]) => `${resourceLabels[key] || key}:${value}`);
+    return entries.length ? entries.join(", ") : "nessuno";
+}
+
+function diffResources(start, end) {
+    const result = {};
+    RESOURCE_KEYS.forEach(key => {
+        const endVal = (end && end[key] !== undefined) ? end[key] : 0;
+        const startVal = (start && start[key] !== undefined) ? start[key] : 0;
+        result[key] = endVal - startVal;
+    });
+    return result;
+}
+
+function diffFactions(start, end) {
+    const result = {};
+    const keys = new Set([...(Object.keys(start || {})), ...(Object.keys(end || {}))]);
+    keys.forEach(key => {
+        const endVal = (end && end[key] !== undefined) ? end[key] : 0;
+        const startVal = (start && start[key] !== undefined) ? start[key] : 0;
+        result[key] = endVal - startVal;
+    });
+    return result;
+}
+
+function formatResourceDelta(delta) {
+    const entries = Object.entries(delta)
+        .filter(([, val]) => val !== 0)
+        .map(([key, val]) => `${resourceLabels[key] || key}:${val > 0 ? "+" + val : val}`);
+    return entries.length ? entries.join(", ") : "nessuna variazione";
+}
+
+function formatFactionDelta(delta) {
+    const entries = Object.entries(delta)
+        .filter(([, val]) => val !== 0)
+        .map(([key, val]) => `${key}:${val > 0 ? "+" + val : val}`);
+    return entries.length ? entries.join(", ") : "stabili";
+}
+
+function simulateEconomyTurns(turns = 5) {
+    const simState = captureGameState();
+    ensureWorldSystems(simState);
+    const startResources = cloneResourceBag(simState.county.resources);
+    const startFactions = JSON.parse(JSON.stringify(simState.factions));
+
+    for (let i = 0; i < turns; i++) {
+        advanceSeason(simState, { silent:true });
+        applyProduction(simState, { silent:true });
+        processVillageEconomy(simState, { silent:true });
+        collectTaxes(simState, { silent:true });
+        applySeasonalUpkeep(simState, { silent:true });
+    }
+
+    const resourceDelta = diffResources(startResources, simState.county.resources);
+    const factionDelta = diffFactions(startFactions, simState.factions);
+
+    addMsg("system", `📊 Simulazione ${turns} turni — Risorse: ${formatResourceDelta(resourceDelta)} | Fazioni: ${formatFactionDelta(factionDelta)}`);
+}
+
+
+/* ============================================================
+   ======================= COSTRUZIONI =========================
+   ============================================================ */
+
+// Chiamata da parte dell’IA (parte 6 la utilizzerà)
+function startBuilding(data) {
+    const type = data.type;
+    const name = buildingData[type].name;
+
+    // COSTI
+    const cost = data.cost;
+    if (!hasResources(cost)) {
+        addMsg("ai", `❌ Mancano le risorse per costruire ${name}.`);
+        return;
+    }
+
+    payResources(cost);
+
+    buildings.push({
+        id: crypto.randomUUID(),
+        type: type,
+        x: data.x,
+        y: data.y,
+        owner: "count",
+        turns_left: data.turns,
+        condition: 100,
+        stage: "building",
+        resources_needed: cost
+    });
+
+    addMsg("ai", `🏗️ Avviata la costruzione di <b>${name}</b> in (${data.x}, ${data.y}). Sarà completata in ${data.turns} turni.`);
+}
+
+function hasResources(cost) {
+    for (let k in cost) {
+        if (county.resources[k] === undefined) continue;
+        if (county.resources[k] < cost[k]) return false;
+    }
+    return true;
+}
+
+function payResources(cost) {
+    for (let k in cost) {
+        if (county.resources[k] !== undefined)
+            county.resources[k] -= cost[k];
+    }
+    updateResourceUI();
+}
+
+function registerNewStructure(collectionKey, production, sourceBuilding, typeLabel = null) {
+    if (!structures[collectionKey]) structures[collectionKey] = [];
+    const entry = {
+        x: sourceBuilding.x,
+        y: sourceBuilding.y,
+        owner: sourceBuilding.owner || "count",
+        type: typeLabel || collectionKey,
+        condition: 100,
+        workers: rand(6, 14),
+        production: production
+    };
+    structures[collectionKey].push(entry);
+    updateIndustrySummary();
+}
+
+function processBuildings() {
+    buildings.forEach(b => {
+        if (b.stage === "building") {
+
+            b.turns_left--;
+
+            if (b.turns_left <= 0) {
+                b.stage = "complete";
+                addMsg("ai", `🏰 L'edificio <b>${buildingName(b.type)}</b> è stato completato!`);
+                applyBuildingEffects(b);
+            } else {
+                maybeConstructionEvent(b);
+            }
+        }
+    });
+}
+
+
+/* ============================================================
+   ================== EVENTI DURANTE COSTRUZIONI ===============
+   ============================================================ */
+
+function maybeConstructionEvent(b) {
+    if (Math.random() < 0.15) {
+        const txt = constructionEventText(b.type);
+        addMsg("ai", txt);
+        b.turns_left += rand(1, 2); // ritardo lavori
+    }
+}
+
+function constructionEventText(type) {
+    switch(type) {
+        case "forge": return "⛓️ Un apprendista si è ferito: la Forgia subirà un ritardo.";
+        case "harbor": return "🌊 Una tempesta ha danneggiato i lavori del Porto.";
+        case "watchtower": return "🏚️ Una sezione della Torre di Guardia è crollata.";
+        case "mercenary_camp": return "⚔️ I mercenari hanno iniziato una rissa, lavori sospesi.";
+        case "market": return "💰 Dispute tra mercanti hanno rallentato la costruzione del Mercato.";
+        case "monk_clinic": return "🙏 I monaci attendono nuove erbe: lavori rallentati.";
+        case "sawmill": return "🌲 Le inondazioni hanno bloccato il cantiere della segheria.";
+        case "stone_quarry": return "🪨 Cedimenti nel terreno rallentano lo scavo della cava.";
+        case "iron_mine": return "⛏️ Falda instabile: servono puntelli aggiuntivi.";
+        case "mint": return "💰 Difetti negli stampi delle monete hanno fermato la zecca.";
+        case "barracks": return "⚔️ Reclute indisciplinate rallentano l'addestramento.";
+    }
+}
+
+
+/* ============================================================
+   ================== EFFETTI EDIFICI COMPLETATI ===============
+   ============================================================ */
+
+function applyBuildingEffects(b) {
+    switch(b.type) {
+        case "forge":
+            factions.burghers += 5;
+            factions.militia += 3;
+            county.gold += 20;
+            break;
+
+        case "harbor":
+            factions.merchants += 10;
+            county.gold += 30;
+            break;
+
+        case "watchtower":
+            factions.militia += 5;
+            neighboringCounties.forEach(c => c.aggression = Math.max(0, c.aggression - 5));
+            county.security = clamp((county.security || 50) + 5);
+            break;
+
+        case "mercenary_camp":
+            factions.militia += 10;
+            factions.clergy -= 5;
+            break;
+
+        case "market":
+            county.happy = clamp(county.happy + 10);
+            factions.merchants += 8;
+            break;
+
+        case "monk_clinic":
+            county.health = clamp(county.health + 15);
+            factions.clergy += 10;
+            break;
+
+        case "sawmill":
+            registerNewStructure("sawmills", { wood: rand(28, 55) }, b, "sawmill");
+            addMsg("system", "🌲 Una nuova segheria aumenta l'approvvigionamento di legname.");
+            break;
+
+        case "stone_quarry":
+            registerNewStructure("quarries", { stone: rand(22, 48) }, b, "quarry");
+            addMsg("system", "🪨 La nuova cava fornisce pietra per i cantieri.");
+            break;
+
+        case "iron_mine":
+            registerNewStructure("mines", { iron: rand(30, 60), copper: rand(8, 16) }, b, "mine");
+            addMsg("system", "⛏️ La miniera di ferro entra in produzione.");
+            break;
+
+        case "mint":
+            county.gold += 40;
+            factions.merchants += 4;
+            break;
+
+        case "barracks":
+            factions.militia += 6;
+            adjustPopulation("militia", Math.max(3, Math.floor((populationGroups.militia || 0) * 0.02)));
+            county.security = clamp((county.security || 50) + 8);
+            break;
+    }
+
+    // Limita valori
+    factionOrder.forEach(f => factions[f] = clamp(factions[f]));
+    updateUI();
+}
+
+
+/* ============================================================
+   ========== STRUTTURE EVENTI RANDOM (MINIERE, ECC.) ==========
+   ============================================================ */
+
+function triggerStructureEvents(options = {}) {
+    const { skipUI = false } = options;
+
+    // Crollo miniere
+    structures.mines.forEach(m => {
+        if (Math.random() < 0.02) {
+            m.condition -= 30;
+            addMsg("ai", `💥 Crollo nella miniera (${m.x},${m.y}): feriti e produzione ridotta.`);
+            county.pop -= rand(1,4);
+        }
+    });
+
+    // Incendio Segherie
+    structures.sawmills.forEach(s => {
+        if (Math.random() < 0.015) {
+            s.condition -= 40;
+            addMsg("ai", `🔥 Incendio nella segheria (${s.x},${s.y}): perdita di legno.`);
+            county.resources.wood = Math.max(0, county.resources.wood - rand(20,60));
+        }
+    });
+
+    // Frane Cave
+    structures.quarries.forEach(q => {
+        if (Math.random() < 0.01) {
+            q.condition -= 20;
+            addMsg("ai", `🪨 Frana nella cava (${q.x},${q.y}): lavori sospesi.`);
+        }
+    });
+
+    // Miracoli Monasteri
+    structures.monasteries.forEach(m => {
+        if (Math.random() < 0.02) {
+            addMsg("ai", `✨ I monaci di (${m.x},${m.y}) hanno guarito dei malati.`);
+            county.health = clamp(county.health + 5);
+        }
+    });
+
+    if (!skipUI) updateUI();
+}
+
+
+/* ============================================================
+   =================== EFFETTI SULLE FAZIONI ===================
+   ============================================================ */
+
+function structureFactionEffect() {
+
+    structures.mines.forEach(() => {
+        factions.nobility += 1;
+        factions.militia += 1;
+        factions.peasants -= 1;
+    });
+
+    structures.sawmills.forEach(() => {
+        factions.merchants += 1;
+        factions.commons += 1;
+        factions.mystics -= 1;
+    });
+
+    structures.quarries.forEach(() => {
+        factions.burghers += 1;
+        factions.nobility -= 1;
+    });
+
+    structures.monasteries.forEach(() => {
+        factions.clergy += 1;
+        factions.merchants -= 1;
+    });
+
+    factionOrder.forEach(f => factions[f] = clamp(factions[f]));
+}
+
+
+/* ============================================================
+   ==================== CHAT PRIVATA ===========================
+   ============================================================ */
+
+function openPrivateChat(key) {
+    activePrivateChat = key;
+    document.getElementById("private-chat-box").style.display = "block";
+    document.getElementById("private-chat-title").innerText =
+        "Colloquio con " + getChatName(key);
+
+    loadPrivateChat();
+}
+
+function closePrivateChat() {
+    const key = activePrivateChat;
+
+    addMsg("ai",
+        `🤫 Il colloquio privato con ${getChatName(key)} è terminato. `
+        + `Le intenzioni della fazione saranno ora valutate.`);
+
+    // Quando si chiude → IA elabora conseguenze (parte 6)
+    callGroq(
+        `Il colloquio privato con ${getChatName(key)} è concluso. `
+        + `Considera ciò che è stato detto e genera conseguenze.`,
+        "action"
+    );
+
+    activePrivateChat = null;
+    document.getElementById("private-chat-box").style.display = "none";
+}
+
+function getChatName(key) {
+    const map = {
+        nobility:"Lord Emeric (Nobiltà)",
+        clergy:"Vescovo Aldebrando (Clero)",
+        militia:"Capitano Ronan (Milizia)",
+        peasants:"Odric (Contadini)",
+        burghers:"Maestro Bernard (Artigiani)",
+        merchants:"Ser Lothar (Mercanti)",
+        mystics:"Madre Elowen (Mistici)",
+        outcasts:"Rasko (Emarginati)",
+        auvrey:"Messo di Auvrey",
+        falken:"Ambasciatrice di Falken"
+    };
+    return map[key] || key;
+}
+
+function loadPrivateChat() {
+    const log = document.getElementById("private-chat-log");
+    log.innerHTML = "";
+    privateChats[activePrivateChat].forEach(m => addPrivateMsg(m.from, m.text));
+}
+
+function addPrivateMsg(type, text) {
+    const log = document.getElementById("private-chat-log");
+    const div = document.createElement("div");
+    div.className = `msg msg-${type}`;
+    const time = timestamp();
+    div.innerHTML = `<div class="msg-text">${text}</div><div class="msg-meta">${time}</div>`;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+}
+
+function sendPrivate() {
+    const input = document.getElementById("private-input");
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = "";
+
+    privateChats[activePrivateChat].push({ from:"user", text:text });
+    addPrivateMsg("user", text);
+
+    // Call IA (parte 6 gestisce privateDialog)
+    callGroqPrivate(activePrivateChat, text);
+}
+
+
+/* ============================================================
+   ==================== AGGIORNAMENTO UI =======================
+   ============================================================ */
+
+function clearInterfaceLogs() {
+    const chatLog = document.getElementById("chat-log");
+    if (chatLog) chatLog.innerHTML = "";
+
+    const eventFeed = document.getElementById("event-feed");
+    if (eventFeed) eventFeed.innerHTML = '<p class="event-empty">Nessun evento registrato.</p>';
+
+    const actionList = document.getElementById("action-list");
+    if (actionList) actionList.innerHTML = '<p class="action-empty">Nessuna proposta al momento.</p>';
+
+    const actionPrompt = document.getElementById("action-prompt");
+    if (actionPrompt) actionPrompt.innerText = "In attesa di nuovi suggerimenti dalla corte.";
+}
+
+function updateUI() {
+    ensureWorldSystems();
+    const summary = updateIndustrySummary();
+    document.getElementById("visual-desc").innerText = `"${county.desc}"`;
+
+    document.getElementById("val-pop").innerText = county.pop;
+    document.getElementById("val-gold").innerText = county.gold;
+
+    updateBar("food", county.food);
+    updateBar("health", county.health);
+    updateBar("happy", county.happy);
+
+    document.getElementById("land-count").innerText = landOwnership.count;
+    document.getElementById("land-nobility").innerText = landOwnership.nobility;
+    document.getElementById("land-clergy").innerText = landOwnership.clergy;
+    document.getElementById("land-commons").innerText = landOwnership.commons;
+
+    document.getElementById("pop-nobility").innerText = populationGroups.nobility;
+    document.getElementById("pop-clergy").innerText = populationGroups.clergy;
+    document.getElementById("pop-militia").innerText = populationGroups.militia;
+    document.getElementById("pop-peasants").innerText = populationGroups.peasants;
+    document.getElementById("pop-burghers").innerText = populationGroups.burghers;
+    document.getElementById("pop-merchants").innerText = populationGroups.merchants;
+    document.getElementById("pop-mystics").innerText = populationGroups.mystics;
+    document.getElementById("pop-outcasts").innerText = populationGroups.outcasts;
+
+    updateResourceUI();
+    updateDiplomacyUI();
+    updateFactionImpactUI();
+    renderFactionChips();
+    updateAssetSummaryUI(summary);
+    renderTaxGrid();
+    renderLawList();
+    updateTaxSummary();
+    updateSeasonUI();
+
+    const turnTag = document.getElementById("chat-turn");
+    if (turnTag) turnTag.innerText = `Turno ${county.turn}`;
+}
+
+function updateDiplomacyUI() {
+    neighboringCounties.forEach(c => {
+        document.getElementById(`rel-${c.key}`).innerText = c.relations;
+        document.getElementById(`pow-${c.key}`).innerText = c.power;
+        document.getElementById(`agg-${c.key}`).innerText = c.aggression;
+        document.getElementById(`land-${c.key}`).innerText = c.land;
+    });
+}
+
+function ensureNeighborResources(countyRef) {
+    if (!countyRef.resources) {
+        countyRef.resources = {
+            grain: rand(80, 160),
+            wood: rand(60, 120),
+            stone: rand(50, 110),
+            iron: rand(30, 80),
+            gold: rand(40, 120),
+            textiles: rand(20, 60)
+        };
+    }
+    return countyRef.resources;
+}
+
+function simulateNeighborEconomy(countyRef, options = {}) {
+    const { silent = false } = options;
+    ensureNeighborResources(countyRef);
+    const production = {
+        grain: Math.max(20, Math.floor(countyRef.land * 1.2 + rand(5, 20))),
+        wood: Math.max(10, Math.floor(countyRef.land * 0.8 + rand(4, 12))),
+        stone: Math.max(6, Math.floor(countyRef.land * 0.5 + rand(2, 8))),
+        iron: Math.max(4, Math.floor(countyRef.power * 0.4 + rand(1, 6))),
+        textiles: Math.max(3, Math.floor(countyRef.wealth * 0.25 + rand(1, 4)))
+    };
+    const consumption = {
+        grain: Math.max(25, Math.floor(countyRef.power * 0.6 + rand(5, 15))),
+        wood: Math.max(12, Math.floor(countyRef.land * 0.6 + rand(3, 10))),
+        stone: Math.max(8, Math.floor(countyRef.land * 0.4 + rand(1, 6))),
+        iron: Math.max(6, Math.floor(countyRef.power * 0.25 + rand(0, 4))),
+        gold: Math.max(10, Math.floor(countyRef.wealth * 0.3 + rand(2, 8))),
+        textiles: Math.max(4, Math.floor(countyRef.wealth * 0.2 + rand(1, 4)))
+    };
+
+    Object.entries(production).forEach(([key, value]) => {
+        countyRef.resources[key] = (countyRef.resources[key] || 0) + value;
+    });
+
+    const deficits = [];
+    Object.entries(consumption).forEach(([key, value]) => {
+        const current = countyRef.resources[key] || 0;
+        const final = current - value;
+        if (final < 0) {
+            deficits.push(key);
+            countyRef.resources[key] = 0;
+        } else {
+            countyRef.resources[key] = final;
+        }
+    });
+
+    if (deficits.length) {
+        countyRef.wealth = clamp((countyRef.wealth || 50) - deficits.length * 2);
+        countyRef.relations = Math.max(0, countyRef.relations - deficits.length * 2);
+        countyRef.aggression = Math.min(100, countyRef.aggression + deficits.length * 3);
+        if (!silent) {
+            addMsg("system", `🌫️ ${countyRef.name} è in crisi (${deficits.join(", ")}). Le relazioni peggiorano.`);
+        }
+    } else {
+        countyRef.wealth = clamp((countyRef.wealth || 50) + 1);
+        countyRef.relations = Math.min(100, countyRef.relations + 1);
+        countyRef.aggression = Math.max(0, countyRef.aggression - 1);
+        if (!silent && Math.random() < 0.15) {
+            addMsg("system", `${countyRef.name} registra un avanzo commerciale e potrebbe cercare accordi.`);
+        }
+    }
+
+    if (countyRef.aggression > 80 && !silent) {
+        addMsg("system", `⚠️ ${countyRef.name} accumula truppe al confine: l'economia li spinge alla guerra.`);
+    }
+
+    countyRef.lastEconomy = { production, consumption, deficits };
+}
+
+function processNeighborEconomies(options = {}) {
+    const { silent = false } = options;
+    neighboringCounties.forEach(neigh => simulateNeighborEconomy(neigh, { silent }));
+}
+
+function updateBar(id,val){
+    const bar = document.getElementById(`bar-${id}`);
+    const txt = document.getElementById(`txt-${id}`);
+    bar.style.width = val + "%";
+    txt.innerText = val + "%";
+}
+
+
+/* ============================================================
+   ==================== INVIO MESSAGGI PUBBLICI =================
+   ============================================================ */
+
+function progressSeason(options = {}) {
+    const { silent = false } = options;
+    ensureWorldSystems();
+    county.turn++;
+    const turnTag = document.getElementById("chat-turn");
+    if (turnTag) turnTag.innerText = `Turno ${county.turn}`;
+
+    const startSnapshot = captureResourceSnapshot();
+    const startGold = county.gold;
+    const startHappy = county.happy;
+
+    advanceSeason(null, { silent });
+    applyProduction(null, { skipUI:true, silent });
+    processVillageEconomy(null, { skipUI:true, silent });
+    collectTaxes(null, { silent });
+    applySeasonalUpkeep(null, { silent });
+    processBuildings();
+    triggerStructureEvents({ skipUI:true });
+    structureFactionEffect();
+    processNeighborEconomies({ silent });
+
+    const endSnapshot = captureResourceSnapshot();
+    lastResourceDelta = computeResourceDelta(startSnapshot, endSnapshot);
+    lastResourceSnapshot = cloneResourceBag(endSnapshot);
+
+    updateUI();
+    autoSaveGame();
+
+    if (!silent) {
+        const goldDelta = county.gold - startGold;
+        const happyDelta = county.happy - startHappy;
+        addMsg("system", `📅 Resoconto stagione: ${formatResourceDelta(lastResourceDelta)} | Oro:${formatDeltaValue(goldDelta)} | Felicità:${county.happy}% (Δ${formatDeltaValue(happyDelta)})`);
+    }
+}
+
+function advanceSeasonManually() {
+    addMsg("system", "➡️ Il Conte ordina di passare alla stagione successiva.");
+    progressSeason({ silent:false });
+}
+
+function send() {
+    ensureWorldSystems();
+    const input = document.getElementById("u-input");
+    const text = input.value.trim();
+    if (!text) return;
+
+    input.value = "";
+    if (text === "/avanza") {
+        advanceSeasonManually();
+        return;
+    }
+
+    addMsg("user", text);
+
+    // Ora IA (parte 6)
+    callGroq(text, "action");
+}
+
+function timestamp() {
+    return new Date().toLocaleTimeString("it-IT", {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+}
+
+function addMsg(type, text){
+    const log = document.getElementById("chat-log");
+    const div = document.createElement("div");
+    if (type === "system") {
+        div.className = "msg-system";
+        div.innerText = text;
+    } else {
+        div.className = `msg msg-${type}`;
+        div.innerHTML = `<div class="msg-text">${text}</div><div class="msg-meta">${timestamp()}</div>`;
+    }
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+}
+
+function addEventCard(text) {
+    if (!text) return;
+    const feed = document.getElementById("event-feed");
+    if (!feed) return;
+
+    const emptyState = feed.querySelector(".event-empty");
+    if (emptyState) emptyState.remove();
+
+    const card = document.createElement("div");
+    card.className = "event-card";
+    card.innerHTML = `
+        <div class="event-time">${timestamp()}</div>
+        <div class="msg-text">${text}</div>
+    `;
+
+    feed.prepend(card);
+
+    const cards = feed.querySelectorAll(".event-card");
+    if (cards.length > 8) {
+        feed.removeChild(feed.lastElementChild);
+    }
+}
+
+function renderActionSuggestions(actions, promptText = "Scegli un'azione proposta dalla corte.") {
+    const list = document.getElementById("action-list");
+    const promptEl = document.getElementById("action-prompt");
+    if (!list || !promptEl) return;
+
+    promptEl.innerText = promptText || "Scegli un'azione proposta dalla corte.";
+    list.innerHTML = "";
+
+    if (!actions.length) {
+        promptEl.innerText = "In attesa di nuovi suggerimenti dalla corte.";
+        list.innerHTML = '<p class="action-empty">Nessuna proposta al momento.</p>';
+        return;
+    }
+
+    actions.forEach(action => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "action-card";
+        btn.innerHTML = `<strong>${action.title}</strong><span>${action.desc}</span>`;
+        btn.addEventListener("click", () => {
+            const input = document.getElementById("u-input");
+            if (!input) return;
+            input.value = action.command || action.title;
+            input.focus();
+        });
+        list.appendChild(btn);
+    });
+}
+
+function extractActionsFromText(text) {
+    const lower = text.toLowerCase();
+    const idx = lower.indexOf("ecco le azioni");
+    if (idx === -1) {
+        return { remainingText: text, actions: [], prompt: "" };
+    }
+
+    const actionBlock = text.slice(idx).trim();
+    const promptLineMatch = actionBlock.match(/^[^\n]+/);
+    let prompt = promptLineMatch ? promptLineMatch[0].trim() : "Scegli un'azione proposta dalla corte.";
+    const questionMatch = actionBlock.match(/Quale azione[^\n]*/i);
+    if (questionMatch) prompt = questionMatch[0].trim();
+
+    const listText = actionBlock.replace(/^[^\n]+\n?/, "").trim();
+    const regex = /- \*\*(.+?)\*\*:([\s\S]*?)(?=\n- \*\*|$)/g;
+    const actions = [];
+    let match;
+    while ((match = regex.exec(listText)) !== null) {
+        actions.push({
+            title: match[1].trim(),
+            desc: match[2].replace(/\s+/g, " ").trim(),
+            command: match[1].trim()
+        });
+    }
+
+    return {
+        remainingText: text.slice(0, idx).trim(),
+        actions,
+        prompt
+    };
+}
+
+function askAdvisor() {
+    callGroq("Dammi un consiglio politico sulla situazione attuale.", "advice");
+}
+
+</script>
+<script>
+
+/* ============================================================
+   ========================= GROQ ENGINE ========================
+   ============================================================ */
+
+async function callGroq(userText, mode="action") {
+
+    if (!ensureApiKey()) {
+        addMsg("system", "🔐 Inserisci una chiave API prima di consultare la corte.");
+        activateScreen("screen-login");
+        return;
+    }
+
+    const prompt = buildPrompt(userText, mode);
+
+    try {
+        const resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type":"application/json",
+                "Authorization":"Bearer " + apiKey
+            },
+            body: JSON.stringify({
+                model: "llama-3.1-8b-instant",
+                temperature: 0.8,
+                messages: [
+                    { role:"system", content: prompt.system },
+                    { role:"user", content: prompt.user }
+                ]
+            })
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok) {
+            const apiMessage = data && data.error && data.error.message ? data.error.message : 'API request failed';
+            throw new Error(apiMessage);
+        }
+
+        const msg = data.choices[0].message.content;
+        handleAIResponse(msg, mode);
+
+    } catch(e) {
+        addMsg("system", "⚠️ Errore comunicazione IA: " + e);
+    }
+}
+
+
+/* ==================== CHAT PRIVATA ==================== */
+
+async function callGroqPrivate(factionKey, userText) {
+
+    if (!ensureApiKey()) {
+        addPrivateMsg("system", "🔐 Chiave API mancante.");
+        activateScreen("screen-login");
+        return;
+    }
+
+    const prompt = buildPrivatePrompt(factionKey, userText);
+
+    try {
+        const resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                "Authorization":"Bearer " + apiKey
+            },
+            body: JSON.stringify({
+                model: "llama-3.1-8b-instant",
+                temperature: 0.9,
+                messages: [
+                    { role:"system", content: prompt.system },
+                    { role:"user", content: prompt.user }
+                ]
+            })
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok) {
+            const apiMessage = data && data.error && data.error.message ? data.error.message : 'API request failed';
+            throw new Error(apiMessage);
+        }
+
+        const msg = data.choices[0].message.content;
+
+        privateChats[factionKey].push({ from:"ai", text:msg });
+        addPrivateMsg("ai", msg);
+
+    } catch(e) {
+        addPrivateMsg("system", "⚠️ Errore IA privata: " + e);
+    }
+}
+
+
+/* ============================================================
+   ======================= SUPER PROMPT =========================
+   ============================================================ */
+
+function buildPrompt(userText, mode) {
+
+    const systemText = `
+Tu sei il narratore intelligente di un simulatore medievale 
+basato su mappe, territorio, diplomazia, fazioni, economia e fede.
+
+*** REGOLE FONDAMENTALI ***
+- Rispondi sempre come narratore immersivo.
+- Valuta SEMPRE le conseguenze politiche, economiche, sociali e religiose.
+- Le fazioni sono vere persone con nomi e personalità.
+- Se necessario puoi generare EVENTI.
+- Puoi proporre azioni proattive.
+- La corte è viva, le fazioni agiscono anche senza il Conte.
+- Ogni scelta cambia la storia.
+
+Tono del consigliere: ${personalitySettings.advisorTone || "saggio"}.
+Umore della corte: ${personalitySettings.courtMood || "prudente"}.
+Appunti recenti: ${personalitySettings.notes || "Nessuno"}.
+
+*** COSTRUZIONI ***
+Se il Conte ordina una costruzione, restituisci SEMPRE un JSON:
+
+{
+  "start_building":{
+    "type":"forge|harbor|watchtower|mercenary_camp|market|monk_clinic",
+    "x":0,
+    "y":0,
+    "turns":X,
+    "cost":{ "gold":0,"wood":0,"stone":0,"iron":0 }
+  },
+  "story":"testo narrativo"
+}
+
+*** RISPOSTA ***
+Oltre al JSON, includi dialogo narrativo e dettagliato.
+
+Fine regole.
+    `.trim();
+
+    return {
+        system: systemText,
+        user: userText
+    };
+}
+
+function buildPrivatePrompt(factionKey, userText){
+
+    const name = getChatName(factionKey);
+
+    return {
+        system: `
+Tu sei ${name}, figura di spicco della tua fazione.
+Parla come la tua personalità richiede.
+Mantieni segrete le tue vere intenzioni.
+Non generare JSON nelle chat private.
+L'atmosfera della corte attuale è ${personalitySettings.courtMood || "prudente"}.
+`,
+        user: userText
+    };
+}
+
+
+/* ============================================================
+   ======================== AI PARSING ==========================
+   ============================================================ */
+
+function handleAIResponse(text, mode) {
+
+    let displayText = text;
+
+    // 1. Cerca se la risposta contiene JSON
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+
+    if (jsonMatch) {
+        try {
+            const json = JSON.parse(jsonMatch[0]);
+
+            if (json.start_building)
+                startBuilding(json.start_building);
+
+            if (json.story)
+                addEventCard(json.story);
+
+        } catch(e){
+            // Ignora
+        }
+
+        displayText = displayText.replace(jsonMatch[0], "").trim();
+    }
+
+    const { remainingText, actions, prompt } = extractActionsFromText(displayText);
+    if (actions.length) {
+        renderActionSuggestions(actions, prompt);
+    } else {
+        renderActionSuggestions([], "");
+    }
+
+    const cleanedText = remainingText.trim();
+    if (cleanedText)
+        addMsg("ai", cleanedText);
+
+    updateUI();
+}
+
+
+/* ============================================================
+   ============ GESTIONE SCHERMATE E AVVIO GIOCO ===============
+   ============================================================ */
+
+function loginManual() {
+    const key = document.getElementById("api-key-input").value.trim();
+    if (!key) {
+        updateApiKeyStatus("Inserisci una chiave valida.", false);
+        return;
+    }
+    setApiKey(key);
+    activateScreen("screen-editor");
+}
+
+function startGame() {
+    if (!ensureApiKey()) {
+        updateApiKeyStatus("Imposta la chiave API prima di iniziare.", false);
+        activateScreen("screen-login");
+        return;
+    }
+
+    const enteredHero = document.getElementById("hero-name").value.trim();
+    const enteredDesc = document.getElementById("county-desc-init").value.trim();
+    const advisorName = document.getElementById("adv-name").value.trim();
+    const advisorTone = document.getElementById("adv-pers").value;
+
+    resetGameState();
+
+    heroName = enteredHero || "Il Conte";
+    county.desc = enteredDesc || "Una giovane contea in attesa del suo destino…";
+    advisor.name = advisorName || "Consigliere di Corte";
+    advisor.personality = advisorTone || personalitySettings.advisorTone;
+
+    // Genera tutto
+    generateWorldMap();
+    generateSettlements();
+    autogenerateStructures();
+    drawCountyMap();
+    drawRegionMap();
+
+    updateUI();
+
+    activateScreen("screen-game");
+
+    addMsg("ai", `📜 Benvenuto, ${heroName}. Il tuo regno attende le tue decisioni.`);
+    if (personalitySettings && personalitySettings.notes) {
+        addMsg("system", `🖋️ Appunti della corte: ${personalitySettings.notes}`);
+    }
+
+    autoSaveGame();
+}
+
+function switchTab(id, btn){
+    document.querySelectorAll(".tab-view").forEach(t => t.classList.remove("active-tab"));
+    document.getElementById(id).classList.add("active-tab");
+
+    document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+}
+
+document.addEventListener("DOMContentLoaded", initStartScreen);
+
+</script>
+
 </body>
 </html>
