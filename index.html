@@ -6045,15 +6045,27 @@ function extractActionsFromText(text) {
 }
 
 function askAdvisor() {
-    let context = "";
-    if (county.gold < 50) context += "Il tesoro è quasi vuoto. ";
-    if (county.resources.food < 40) context += "C'è carestia. ";
-    if (county.pop < 100) context += "La popolazione è scarsa. ";
-    for (let key in factions) {
-        if (factions[key] < 30) context += `La fazione ${factionLabel(key)} è molto scontenta. `;
-    }
-    if (!context) context = "La situazione sembra stabile, ma potresti aver bisogno di consigli per migliorare il feudo.";
-    callGroq(context, "advice");
+    // 1. Feedback visivo immediato nella chat principale
+    addMsg("system", "🧠 Il Conte ha convocato Ser Dorian per un consulto privato...");
+
+    // 2. Costruzione contesto
+    let problems = [];
+    if (county.gold < 100) problems.push("siamo poveri");
+    if (county.food < 50) problems.push("c'è poca cibo");
+    if (county.security < 40) problems.push("i confini sono deboli");
+    
+    const context = problems.length 
+        ? `Mio signore, ${problems.join(", ")}. Dobbiamo agire.` 
+        : "La situazione è stabile, ma possiamo sempre migliorare.";
+
+    // 3. Chiamata API con modalità 'advice'
+    // Nota: usiamo un prompt specifico per evitare conflitti con la chat
+    const prompt = `
+    ${context}
+    Analizza la situazione attuale (Anno ${worldTime.year}, ${getSeason().label}) e dammi 2 consigli strategici brevi e diretti.
+    `;
+    
+    callGroq(prompt, "advice");
 }
 
 function openBudgetModal() {
@@ -6395,27 +6407,57 @@ Non usare liste puntate qui, usa solo il dialogo diretto.
    ======================== AI PARSING ==========================
    ============================================================ */
 
-function handleAIResponse(text, mode) {
-    // Rimuovi eventuali residui JSON
-    text = text.replace(/\{[\s\S]*\}/g, "").trim();
+function handleAIResponse(response, mode) {
+    // Rimuovi residui JSON
+    response = response.replace(/\{[\s\S]*\}/g, "").trim();
 
-    // Separa il blocco azioni finale (se esiste)
-    const parts = text.split("AZIONI:");
+    // ======================================================
+    // 1. GESTIONE CONSIGLIERE (Barra Laterale)
+    // ======================================================
+    if (mode === "advice") {
+        const feed = document.getElementById("advice-feed");
+        if (!feed) return;
+
+        // Rimuovi il messaggio "vuoto" se c'è
+        const empty = feed.querySelector(".advice-empty");
+        if (empty) empty.remove();
+
+        // Crea la card del consiglio
+        const card = document.createElement("div");
+        card.className = "event-card";
+        // Stile dorato specifico per Ser Dorian
+        card.style.borderLeft = "3px solid #d4af37"; 
+        card.style.background = "rgba(20, 20, 20, 0.9)";
+        card.style.marginBottom = "8px";
+        
+        // Formattazione del testo (grassetto per i punti chiave)
+        const formattedText = response.replace(/\*\*(.*?)\*\*/g, '<strong style="color:#d4af37">$1</strong>');
+
+        card.innerHTML = `
+            <div class="event-time" style="color:#666; font-size:0.7em; margin-bottom:4px;">${timestamp()} - Turno ${county.turn}</div>
+            <div class="msg-text" style="font-size:0.9em; line-height:1.4;">${formattedText}</div>
+        `;
+
+        // Inserisci in cima
+        feed.prepend(card);
+        return; // <--- IMPORTANTE: Ferma qui la funzione!
+    }
+
+    // ======================================================
+    // 2. GESTIONE CHAT PUBBLICA (Scene, Dialoghi, Azioni)
+    // ======================================================
+    
+    const parts = response.split("AZIONI:");
     const scriptContent = parts[0].trim();
     const actionsContent = parts.length > 1 ? parts[1].trim() : "";
-
-    // Dividi per righe
     const lines = scriptContent.split('\n').filter(line => line.trim() !== '');
-    
     const chatLog = document.getElementById("chat-log");
 
-    // Funzione ritardata per effetto "tempo reale"
     lines.forEach((line, index) => {
         setTimeout(() => {
             const cleanLine = line.trim();
             
             if (cleanLine.startsWith("SCENA:")) {
-                // Crea blocco Scena
                 const content = cleanLine.replace("SCENA:", "").trim();
                 const div = document.createElement("div");
                 div.className = "msg-scene";
@@ -6423,7 +6465,6 @@ function handleAIResponse(text, mode) {
                 chatLog.appendChild(div);
             } 
             else if (cleanLine.includes(":")) {
-                // Crea blocco Personaggio (divide Nome e Messaggio)
                 const splitIndex = cleanLine.indexOf(":");
                 const name = cleanLine.substring(0, splitIndex).trim();
                 const msg = cleanLine.substring(splitIndex + 1).trim();
@@ -6434,54 +6475,39 @@ function handleAIResponse(text, mode) {
                 chatLog.appendChild(div);
             }
             else {
-                // Fallback per testo narrativo generico
                 const div = document.createElement("div");
                 div.className = "msg-scene";
                 div.innerText = cleanLine;
                 chatLog.appendChild(div);
             }
-
-            // Scroll automatico
             chatLog.scrollTop = chatLog.scrollHeight;
 
-        }, index * 1200); // 1.2 secondi di pausa tra un messaggio e l'altro
+        }, index * 1200);
     });
 
-    // Gestione Azioni alla fine
     if (actionsContent) {
         setTimeout(() => {
             const { actions } = extractActionsFromRawText(actionsContent);
             
-            // Creiamo un messaggio speciale per le azioni dentro la chat
             const actionDiv = document.createElement("div");
             actionDiv.className = "msg-actions";
             actionDiv.innerHTML = `<div class="action-header">Ordini Disponibili</div>`;
             
-            // Genera i pulsanti dentro la chat stessa (più comodo)
             actions.forEach(act => {
                 const btn = document.createElement("button");
-                btn.className = "btn-sec"; // Usa stile secondario
+                btn.className = "btn-sec";
                 btn.style.width = "100%";
                 btn.style.marginBottom = "5px";
                 btn.style.textAlign = "left";
                 btn.innerHTML = `<strong>${act.title}</strong>: ${act.desc}`;
-                
-                // Al click, inserisce il comando nell'input
                 btn.onclick = () => {
-                    const input = document.getElementById("u-input");
-                    input.value = act.title;
-                    // Opzionale: invia subito
-                    // send(); 
+                    document.getElementById("u-input").value = act.title;
                 };
                 actionDiv.appendChild(btn);
             });
 
             chatLog.appendChild(actionDiv);
             chatLog.scrollTop = chatLog.scrollHeight;
-            
-            // Aggiorna anche la sidebar per ridondanza
-            renderActionSuggestions(actions, "Opzioni Tattiche:");
-
         }, lines.length * 1200 + 500);
     }
 }
