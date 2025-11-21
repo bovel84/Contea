@@ -511,6 +511,7 @@
         .fill-food { background: #e6bf00; }
         .fill-health { background: #4caf50; }
         .fill-happy { background: #2196f3; }
+        .fill-stability { background: #9c27b0; }
 
         /* ===================== DIPLOMAZIA ===================== */
         .diplomacy-card {
@@ -1094,8 +1095,15 @@
     }
 
     .person-card {
-        padding: 12px;
-        margin-bottom: 10px;
+        padding: 8px;
+        margin-bottom: 6px;
+        font-size: 0.9em;
+    }
+
+    .representatives-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
     }
 
     .person-name {
@@ -1885,6 +1893,225 @@
     margin-bottom: 8px;
 }
 
+.market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
+}
+
+.market-item {
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 12px;
+    background: var(--bg-panel);
+}
+
+.market-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.market-prices {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.market-stats {
+    font-size: 0.8em;
+    color: var(--text-soft);
+}
+
+.resource-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+}
+
+.resource-stat-item {
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 8px;
+    background: var(--bg-panel);
+}
+
+.resource-stat-header {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.resource-stat-values {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8em;
+}
+
+.resource-stat-values .positive { color: #6ada91; }
+.resource-stat-values .negative { color: #ff7c7c; }
+
+.market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
+}
+
+.market-item {
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 12px;
+    background: var(--bg-panel);
+}
+
+.market-item.special {
+    border-color: var(--accent);
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.market-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.market-prices {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.market-stats {
+    font-size: 0.8em;
+    color: var(--text-soft);
+}
+
+.market-desc {
+    font-size: 0.8em;
+    color: var(--text-soft);
+    margin-top: 4px;
+}
+
+.diplomacy-actions {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.market-section {
+    margin-bottom: 20px;
+}
+
+.market-section h5 {
+    color: var(--accent);
+    margin-bottom: 8px;
+    font-size: 0.9em;
+}
+
+.market-item.surplus {
+    border-color: #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+}
+
+.market-item.deficit {
+    border-color: #f44336;
+    background: rgba(244, 67, 54, 0.1);
+}
+
+.market-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.market-table th {
+    background: var(--bg-panel-alt);
+    color: var(--accent);
+    padding: 12px 8px;
+    text-align: left;
+    font-weight: bold;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.market-table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: middle;
+}
+
+.market-table tr:hover {
+    background: rgba(212, 175, 55, 0.05);
+}
+
+.market-table .btn-sec {
+    margin: 0 2px;
+    padding: 4px 8px;
+    font-size: 0.8em;
+}
+
+/* ===================== CLASSI SOCIALI ===================== */
+.social-classes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.social-class-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.social-class-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.social-class-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.social-class-icon {
+    font-size: 1.2em;
+}
+
+.social-class-name {
+    color: var(--text);
+}
+
+.social-class-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.social-class-count {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: var(--text);
+}
+
+.social-class-wealth {
+    font-size: 0.8em;
+    color: var(--text-soft);
+}
+
     </style>
 </head>
 
@@ -2027,6 +2254,10 @@
                 <div style="font-size:18px">🗺️</div>
                 <div style="font-size:11px; color:var(--text-soft);">Mappa</div>
             </div>
+            <div style="text-align:center; padding:0 8px; cursor:pointer;" onclick="document.querySelectorAll('.tab-view').forEach(t=>t.classList.remove('active-tab')); document.getElementById('tab-market').classList.add('active-tab');">
+                <div style="font-size:18px">🏪</div>
+                <div style="font-size:11px; color:var(--text-soft);">Mercato</div>
+            </div>
             <div style="text-align:center; padding:0 8px; cursor:pointer;" onclick="document.querySelectorAll('.tab-view').forEach(t=>t.classList.remove('active-tab')); document.getElementById('tab-chat').classList.add('active-tab');">
                 <div style="font-size:18px">📜</div>
                 <div style="font-size:11px; color:var(--text-soft);">Cronache</div>
@@ -2096,7 +2327,109 @@
         </div>
     </div>
 
-    <!-- ===================== TERRITORIO ===================== -->
+    <div class="need-row">
+        <div class="need-header">
+            <span>Stabilità Sociale</span>
+            <span id="txt-stability">0%</span>
+        </div>
+        <div class="need-bar-bg">
+            <div class="need-bar-fill fill-stability" id="bar-stability"></div>
+        </div>
+    </div>
+
+    <!-- ===================== CLASSI SOCIALI ===================== -->
+    <h3>Classi Sociali</h3>
+    <div class="social-classes-grid">
+        <div class="social-class-card">
+            <div class="social-class-header">
+                <span class="social-class-icon">👑</span>
+                <span class="social-class-name">Nobiltà</span>
+            </div>
+            <div class="social-class-stats">
+                <div class="social-class-count" id="nobility-count">0</div>
+                <div class="social-class-wealth" id="nobility-wealth">0💰</div>
+            </div>
+        </div>
+        
+        <div class="social-class-card">
+            <div class="social-class-header">
+                <span class="social-class-icon">⛪</span>
+                <span class="social-class-name">Clero</span>
+            </div>
+            <div class="social-class-stats">
+                <div class="social-class-count" id="clergy-count">0</div>
+                <div class="social-class-wealth" id="clergy-wealth">0💰</div>
+            </div>
+        </div>
+        
+        <div class="social-class-card">
+            <div class="social-class-header">
+                <span class="social-class-icon">⚔️</span>
+                <span class="social-class-name">Milizia</span>
+            </div>
+            <div class="social-class-stats">
+                <div class="social-class-count" id="militia-count">0</div>
+                <div class="social-class-wealth" id="militia-wealth">0💰</div>
+            </div>
+        </div>
+        
+        <div class="social-class-card">
+            <div class="social-class-header">
+                <span class="social-class-icon">🏛️</span>
+                <span class="social-class-name">Borghesi</span>
+            </div>
+            <div class="social-class-stats">
+                <div class="social-class-count" id="burghers-count">0</div>
+                <div class="social-class-wealth" id="burghers-wealth">0💰</div>
+            </div>
+        </div>
+        
+        <div class="social-class-card">
+            <div class="social-class-header">
+                <span class="social-class-icon">👥</span>
+                <span class="social-class-name">Contadini</span>
+            </div>
+            <div class="social-class-stats">
+                <div class="social-class-count" id="peasants-count">0</div>
+                <div class="social-class-wealth" id="peasants-wealth">0💰</div>
+            </div>
+        </div>
+        
+        <div class="social-class-card">
+            <div class="social-class-header">
+                <span class="social-class-icon">🔮</span>
+                <span class="social-class-name">Mistici</span>
+            </div>
+            <div class="social-class-stats">
+                <div class="social-class-count" id="mystics-count">0</div>
+                <div class="social-class-wealth" id="mystics-wealth">0💰</div>
+            </div>
+        </div>
+        
+        <div class="social-class-card">
+            <div class="social-class-header">
+                <span class="social-class-icon">🏚️</span>
+                <span class="social-class-name">Emarginati</span>
+            </div>
+            <div class="social-class-stats">
+                <div class="social-class-count" id="outcasts-count">0</div>
+                <div class="social-class-wealth" id="outcasts-wealth">0💰</div>
+            </div>
+        </div>
+        
+        <div class="social-class-card">
+            <div class="social-class-header">
+                <span class="social-class-icon">⚖️</span>
+                <span class="social-class-name">Mercanti</span>
+            </div>
+            <div class="social-class-stats">
+                <div class="social-class-count" id="merchants-count">0</div>
+                <div class="social-class-wealth" id="merchants-wealth">0💰</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== RISORSE INVENTARIO ===================== -->
     <h3>Territorio</h3>
 
     <div class="grid-stats">
@@ -2237,60 +2570,49 @@
         </div>
     </div>
 
-    <!-- ===================== POPOLAZIONE PER CATEGORIA ===================== -->
-    <h3>Popolazione per classe</h3>
-    <div class="pop-grid">
-        <div class="pop-card"><strong>Nobiltà:</strong> <span id="pop-nobility">0</span></div>
-        <div class="pop-card"><strong>Clero:</strong> <span id="pop-clergy">0</span></div>
-        <div class="pop-card"><strong>Milizia:</strong> <span id="pop-militia">0</span></div>
-        <div class="pop-card"><strong>Contadini:</strong> <span id="pop-peasants">0</span></div>
-        <div class="pop-card"><strong>Artigiani:</strong> <span id="pop-burghers">0</span></div>
-        <div class="pop-card"><strong>Mercanti:</strong> <span id="pop-merchants">0</span></div>
-        <div class="pop-card"><strong>Mistici:</strong> <span id="pop-mystics">0</span></div>
-        <div class="pop-card"><strong>Emarginati:</strong> <span id="pop-outcasts">0</span></div>
-    </div>
-
     <!-- ===================== RAPPRESENTANTI DELLE FAZIONI ===================== -->
     <h3>Rappresentanti delle Fazioni</h3>
 
-    <div class="person-card">
-        <div class="person-name">Lord Emeric di Montferrand</div>
-        <div>Nobiltà — 46 anni. Orgoglioso e ambizioso.</div>
-    </div>
+    <div class="representatives-grid">
+        <div class="person-card">
+            <div class="person-name">Lord Emeric di Montferrand</div>
+            <div>Nobiltà — 46 anni. Orgoglioso e ambizioso.</div>
+        </div>
 
-    <div class="person-card">
-        <div class="person-name">Vescovo Aldebrando di Sorenza</div>
-        <div>Clero — 62 anni. Inflessibile e calcolatore.</div>
-    </div>
+        <div class="person-card">
+            <div class="person-name">Vescovo Aldebrando di Sorenza</div>
+            <div>Clero — 62 anni. Inflessibile e calcolatore.</div>
+        </div>
 
-    <div class="person-card">
-        <div class="person-name">Capitano Ronan il Ferro</div>
-        <div>Milizia — 38 anni. Diretto, leale, irritabile.</div>
-    </div>
+        <div class="person-card">
+            <div class="person-name">Capitano Ronan il Ferro</div>
+            <div>Milizia — 38 anni. Diretto, leale, irritabile.</div>
+        </div>
 
-    <div class="person-card">
-        <div class="person-name">Odric il Lavoratore</div>
-        <div>Contadini — 33 anni. Paziente ma oppresso.</div>
-    </div>
+        <div class="person-card">
+            <div class="person-name">Odric il Lavoratore</div>
+            <div>Contadini — 33 anni. Paziente ma oppresso.</div>
+        </div>
 
-    <div class="person-card">
-        <div class="person-name">Maestro Bernard Forgiatore</div>
-        <div>Artigiani — 51 anni. Orgoglioso del mestiere.</div>
-    </div>
+        <div class="person-card">
+            <div class="person-name">Maestro Bernard Forgiatore</div>
+            <div>Artigiani — 51 anni. Orgoglioso del mestiere.</div>
+        </div>
 
-    <div class="person-card">
-        <div class="person-name">Ser Lothar dei Ponti</div>
-        <div>Mercanti — 42 anni. Subdolo, affabile.</div>
-    </div>
+        <div class="person-card">
+            <div class="person-name">Ser Lothar dei Ponti</div>
+            <div>Mercanti — 42 anni. Subdolo, affabile.</div>
+        </div>
 
-    <div class="person-card">
-        <div class="person-name">Madre Elowen la Veggente</div>
-        <div>Mistici — 67 anni. Enigmatica, calma.</div>
-    </div>
+        <div class="person-card">
+            <div class="person-name">Madre Elowen la Veggente</div>
+            <div>Mistici — 67 anni. Enigmatica, calma.</div>
+        </div>
 
-    <div class="person-card">
-        <div class="person-name">Rasko il Senzapatria</div>
-        <div>Emarginati — 29 anni. Imprevedibile e rapido.</div>
+        <div class="person-card">
+            <div class="person-name">Rasko il Senzapatria</div>
+            <div>Emarginati — 29 anni. Imprevedibile e rapido.</div>
+        </div>
     </div>
 
 </div>
@@ -2314,6 +2636,9 @@
         <div class="relation-row">
             <span>Territorio:</span> <span id="land-auvrey">0</span>
         </div>
+        <div class="diplomacy-actions">
+            <button class="btn-sec" onclick="requestTradeMeeting('auvrey')">Chiedi Incontro per Accordi Commerciali</button>
+        </div>
     </div>
 
     <!-- Baronia di Falken -->
@@ -2330,6 +2655,9 @@
         </div>
         <div class="relation-row">
             <span>Territorio:</span> <span id="land-falken">0</span>
+        </div>
+        <div class="diplomacy-actions">
+            <button class="btn-sec" onclick="requestTradeMeeting('falken')">Chiedi Incontro per Accordi Commerciali</button>
         </div>
     </div>
 
@@ -2370,6 +2698,17 @@
     <canvas id="region-map" width="320" height="320"
             style="border:1px solid #333; width:100%;"></canvas>
 
+</div>
+
+
+<!-- ====================== TAB: MERCATO ====================== -->
+<div id="tab-market" class="tab-view">
+    <h3>Mercato Commerciale</h3>
+    <p>Scambia risorse con le contee vicine e gestisci il mercato interno. I prezzi esterni riflettono gli accordi commerciali, mentre il mercato interno mostra surplus e deficit locali.</p>
+    
+    <div id="market-content">
+        <!-- Contenuto popolato da renderMarket() -->
+    </div>
 </div>
 
 
@@ -2496,6 +2835,11 @@
         <button class="nav-btn" onclick="switchTab('tab-map', this)">
             <span class="nav-icon">🗺️</span>
             Mappa
+        </button>
+
+        <button class="nav-btn" onclick="switchTab('tab-market', this)">
+            <span class="nav-icon">🏪</span>
+            Mercato
         </button>
 
         <button class="nav-btn" onclick="switchTab('tab-chat', this)">
@@ -2706,6 +3050,16 @@ function createDefaultCounty() {
 let county = createDefaultCounty();
 lastResourceSnapshot = cloneResourceBag(county.resources);
 lastResourceDelta = createEmptyResourceDelta();
+let industrySummary = null;
+
+// Tracciamento transazioni economiche per il rapporto stagionale
+let seasonalTransactions = {
+    marketPurchases: 0,
+    marketSales: 0,
+    specialPurchases: 0,
+    taxes: 0,
+    maintenance: 0
+};
 
 /* ===================== TERRITORIO ===================== */
 function createDefaultLand() {
@@ -2724,14 +3078,14 @@ const TOTAL_LAND = 100;
 /* ===================== POPOLAZIONE ===================== */
 function createDefaultPopulation() {
     return {
-        nobility: 25,
-        clergy: 15,
-        militia: 60,
-        peasants: 900,
-        burghers: 120,
-        merchants: 80,
-        mystics: 10,
-        outcasts: 40
+        nobility: { count: 25, wealth: 500, resources: createEmptyResourceBag() },
+        clergy: { count: 15, wealth: 200, resources: createEmptyResourceBag() },
+        militia: { count: 60, wealth: 50, resources: createEmptyResourceBag() },
+        peasants: { count: 900, wealth: 10, resources: createEmptyResourceBag() },
+        burghers: { count: 120, wealth: 100, resources: createEmptyResourceBag() },
+        merchants: { count: 80, wealth: 150, resources: createEmptyResourceBag() },
+        mystics: { count: 10, wealth: 30, resources: createEmptyResourceBag() },
+        outcasts: { count: 40, wealth: 5, resources: createEmptyResourceBag() }
     };
 }
 
@@ -2747,7 +3101,7 @@ function adjustPopulation(group, delta, targetState = null) {
 function recomputePopulation(targetState = null) {
     const groups = targetState ? targetState.populationGroups : populationGroups;
     const targetCounty = targetState ? targetState.county : county;
-    targetCounty.pop = Object.values(groups).reduce((sum, val) => sum + val, 0);
+    targetCounty.pop = Object.values(groups).reduce((sum, val) => sum + (val.count || val), 0);
 }
 
 /* ===================== FAZIONI ===================== */
@@ -2774,8 +3128,34 @@ let factions = createDefaultFactions();
 /* ===================== CONTEE VICINE ===================== */
 function createDefaultNeighbors() {
     return [
-        { key:"auvrey", name:"Contea di Auvrey", power:65, wealth:50, relations:40, aggression:20, land:30 },
-        { key:"falken", name:"Baronia di Falken", power:40, wealth:30, relations:70, aggression:10, land:18 }
+        { 
+            key:"auvrey", 
+            name:"Contea di Auvrey", 
+            power:65, 
+            wealth:50, 
+            relations:40, 
+            aggression:20, 
+            land:30,
+            description: "Una contea ambiziosa guidata dal giovane Conte Emeric, che cerca di espandere i suoi confini attraverso alleanze e conquiste.",
+            goals: ["Espandere territorio", "Formare alleanze matrimoniali", "Controllare rotte commerciali"],
+            personality: "Ambizioso e calcolatore, ma impulsivo in battaglia.",
+            specialResource: "textiles",
+            events: []
+        },
+        { 
+            key:"falken", 
+            name:"Baronia di Falken", 
+            power:40, 
+            wealth:30, 
+            relations:70, 
+            aggression:10, 
+            land:18,
+            description: "Una baronia montuosa difesa dal Barone Lothar, noto per le sue miniere e la sua neutralità.",
+            goals: ["Mantenere indipendenza", "Sviluppare miniere", "Proteggere confini"],
+            personality: "Difensivo e pragmatico, preferisce la diplomazia alla guerra.",
+            specialResource: "iron",
+            events: []
+        }
     ];
 }
 
@@ -2906,6 +3286,20 @@ function advanceSeason(targetState = null, options = {}) {
     timeRef.seasonIndex = ((timeRef.seasonIndex || 0) + 1) % SEASON_CYCLE.length;
     if (timeRef.seasonIndex === 0) timeRef.year = (timeRef.year || 1325) + 1;
     applySeasonalMorale(timeRef, targetState);
+    
+    // Sistema di popolazione dinamica
+    if (!targetState) {
+        processDemographicEvents();
+        processCrimeAndStability();
+        processEmigration();
+        processSocialMobility();
+        updateCategoryWealth();
+        
+        // Aggiorna domanda/offerta mercato
+        const marketDynamics = calculateMarketDemand();
+        // Qui possiamo usare marketDynamics per influenzare i prezzi
+    }
+    
     if (!targetState && !options.silent) {
         const season = getSeason(timeRef);
         addMsg("system", `⏳ Inizia ${season.label}. ${season.description}`);
@@ -3998,6 +4392,8 @@ function restoreGameState(state) {
     county.resources = normalizeResourceBag(sourceResources);
     landOwnership = state.landOwnership ? JSON.parse(JSON.stringify(state.landOwnership)) : createDefaultLand();
     populationGroups = state.populationGroups ? JSON.parse(JSON.stringify(state.populationGroups)) : createDefaultPopulation();
+    // Migra vecchi salvataggi alla nuova struttura
+    populationGroups = migratePopulationGroups(populationGroups);
     factions = state.factions ? JSON.parse(JSON.stringify(state.factions)) : createDefaultFactions();
     neighboringCounties = state.neighboringCounties ? JSON.parse(JSON.stringify(state.neighboringCounties)) : createDefaultNeighbors();
     structures = state.structures ? JSON.parse(JSON.stringify(state.structures)) : createEmptyStructures();
@@ -4034,6 +4430,44 @@ function createEmptyResourceDelta() {
     const bag = {};
     RESOURCE_KEYS.forEach(key => bag[key] = 0);
     return bag;
+}
+
+function createEmptyResourceBag() {
+    return createEmptyResourceDelta();
+}
+
+function migratePopulationGroups(groups) {
+    const defaultGroups = createDefaultPopulation();
+    
+    // Se è già nella nuova struttura, restituisci come è
+    if (groups.nobility && typeof groups.nobility === 'object' && 'count' in groups.nobility) {
+        return groups;
+    }
+    
+    // Altrimenti, migra dalla vecchia struttura
+    const migrated = {};
+    Object.keys(defaultGroups).forEach(key => {
+        if (typeof groups[key] === 'number') {
+            // Vecchio formato: nobility: 25
+            migrated[key] = {
+                count: groups[key],
+                wealth: defaultGroups[key].wealth,
+                resources: createEmptyResourceBag()
+            };
+        } else if (groups[key] && typeof groups[key] === 'object') {
+            // Nuovo formato o parzialmente migrato
+            migrated[key] = {
+                count: groups[key].count || defaultGroups[key].count,
+                wealth: groups[key].wealth || defaultGroups[key].wealth,
+                resources: groups[key].resources || createEmptyResourceBag()
+            };
+        } else {
+            // Usa default
+            migrated[key] = defaultGroups[key];
+        }
+    });
+    
+    return migrated;
 }
 
 function captureResourceSnapshot(targetState = null) {
@@ -4459,7 +4893,6 @@ function createEmptyStructures() {
 }
 
 let structures = createEmptyStructures();
-let industrySummary = null;
 let latestAssetFlows = null;
 
 /* ---- GENERAZIONE AUTOMATICA ---- */
@@ -4764,7 +5197,7 @@ function calculateSeasonalBudget() {
     // Spese: militare e manutenzione strutture (sul simulato)
     const expenses = {
         structures: 0,
-        military: Math.floor((simState.populationGroups && simState.populationGroups.militia ? simState.populationGroups.militia : 0) * 0.2 * season.warCost)
+        military: Math.floor((simState.populationGroups && simState.populationGroups.militia ? simState.populationGroups.militia.count || simState.populationGroups.militia : 0) * 0.2 * season.warCost)
     };
 
     (simState.buildings || []).forEach(b => {
@@ -5213,11 +5646,19 @@ function hasResources(cost) {
 
 function payResources(cost) {
     for (let k in cost) {
-        if (county.resources[k] !== undefined)
-            county.resources[k] -= cost[k];
+        // 1. GESTIONE DELL'ORO (assumendo sia la chiave 'gold' o 'oro' e sia in county.gold)
+        if (k === 'gold' || k === 'oro') {
+            if (county.gold !== undefined) {
+                county.gold -= cost[k]; // Sottrae dal Tesoro separato
+            }
+        } 
+        // 2. GESTIONE DELLE ALTRE RISORSE (legno, pietra, etc.)
+        else if (county.resources[k] !== undefined) {
+            county.resources[k] -= cost[k]; // Sottrae dal contenitore generico
+        }
     }
-    updateResourceUI();
 }
+
 
 function registerNewStructure(collectionKey, production, sourceBuilding, typeLabel = null) {
     if (!structures[collectionKey]) structures[collectionKey] = [];
@@ -5647,20 +6088,32 @@ function updateUI() {
     updateBar("food", county.food);
     updateBar("health", county.health);
     updateBar("happy", county.happy);
+    updateBar("stability", calculateStability());
 
     document.getElementById("land-count").innerText = landOwnership.count;
     document.getElementById("land-nobility").innerText = landOwnership.nobility;
     document.getElementById("land-clergy").innerText = landOwnership.clergy;
     document.getElementById("land-commons").innerText = landOwnership.commons;
 
-    document.getElementById("pop-nobility").innerText = populationGroups.nobility;
-    document.getElementById("pop-clergy").innerText = populationGroups.clergy;
-    document.getElementById("pop-militia").innerText = populationGroups.militia;
-    document.getElementById("pop-peasants").innerText = populationGroups.peasants;
-    document.getElementById("pop-burghers").innerText = populationGroups.burghers;
-    document.getElementById("pop-merchants").innerText = populationGroups.merchants;
-    document.getElementById("pop-mystics").innerText = populationGroups.mystics;
-    document.getElementById("pop-outcasts").innerText = populationGroups.outcasts;
+    // Aggiorna classi sociali con ricchezza
+    if (document.getElementById("nobility-count") && populationGroups) {
+        document.getElementById("nobility-count").innerText = populationGroups.nobility?.count || 0;
+        document.getElementById("nobility-wealth").innerText = (populationGroups.nobility?.wealth || 0) + "💰";
+        document.getElementById("clergy-count").innerText = populationGroups.clergy?.count || 0;
+        document.getElementById("clergy-wealth").innerText = (populationGroups.clergy?.wealth || 0) + "💰";
+        document.getElementById("militia-count").innerText = populationGroups.militia?.count || 0;
+        document.getElementById("militia-wealth").innerText = (populationGroups.militia?.wealth || 0) + "💰";
+        document.getElementById("burghers-count").innerText = populationGroups.burghers?.count || 0;
+        document.getElementById("burghers-wealth").innerText = (populationGroups.burghers?.wealth || 0) + "💰";
+        document.getElementById("peasants-count").innerText = populationGroups.peasants?.count || 0;
+        document.getElementById("peasants-wealth").innerText = (populationGroups.peasants?.wealth || 0) + "💰";
+        document.getElementById("mystics-count").innerText = populationGroups.mystics?.count || 0;
+        document.getElementById("mystics-wealth").innerText = (populationGroups.mystics?.wealth || 0) + "💰";
+        document.getElementById("outcasts-count").innerText = populationGroups.outcasts?.count || 0;
+        document.getElementById("outcasts-wealth").innerText = (populationGroups.outcasts?.wealth || 0) + "💰";
+        document.getElementById("merchants-count").innerText = populationGroups.merchants?.count || 0;
+        document.getElementById("merchants-wealth").innerText = (populationGroups.merchants?.wealth || 0) + "💰";
+    }
 
     updateResourceUI();
     updateDiplomacyUI();
@@ -5676,6 +6129,8 @@ function updateUI() {
     if (turnTag) turnTag.innerText = `Turno ${county.turn}`;
 
     updateConstructionUI();
+    renderResourceStats();
+    renderMarket();
 }
 
 function updateDiplomacyUI() {
@@ -5684,6 +6139,248 @@ function updateDiplomacyUI() {
         document.getElementById(`pow-${c.key}`).innerText = c.power;
         document.getElementById(`agg-${c.key}`).innerText = c.aggression;
         document.getElementById(`land-${c.key}`).innerText = c.land;
+    });
+}
+
+function requestTradeMeeting(neighborKey) {
+    const neighbor = neighboringCounties.find(c => c.key === neighborKey);
+    if (!neighbor) return;
+
+    // Costo diplomatico: oro e possibile calo relazioni se rifiuto
+    const cost = 20;
+    if (county.gold < cost) {
+        addMsg("system", "Non hai abbastanza oro per organizzare un incontro diplomatico.");
+        return;
+    }
+
+    county.gold -= cost;
+    addMsg("system", `Hai inviato un emissario alla ${neighbor.name} per discutere accordi commerciali. Costo: ${cost} oro.`);
+
+    // Simula risposta basata su relazioni
+    const successChance = Math.min(90, neighbor.relations + 20); // Base 20% + relazioni
+    const success = rand(1, 100) <= successChance;
+
+    setTimeout(() => {
+        if (success) {
+            neighbor.tradeAgreement = true;
+            neighbor.relations = Math.min(100, neighbor.relations + rand(5, 15));
+            addMsg("system", `🎉 Successo! La ${neighbor.name} accetta l'accordo commerciale. I prezzi nel mercato sono ora ridotti e puoi accedere alle loro merci speciali.`);
+        } else {
+            neighbor.relations = Math.max(0, neighbor.relations - rand(5, 10));
+            addMsg("system", `❌ La ${neighbor.name} rifiuta l'incontro. Le relazioni si deteriorano leggermente.`);
+        }
+        updateUI();
+        renderMarket();
+    }, 2000); // Ritardo per simulare il tempo dell'incontro
+}
+
+// Sistema di domanda/offerta basato sulle categorie sociali
+function calculateMarketDemand() {
+    const demand = createEmptyResourceBag();
+    const supply = createEmptyResourceBag();
+    
+    // Nobiltà: domanda lusso, offerta poco
+    demand.luxuries += populationGroups.nobility.count * 2;
+    demand.arcane += populationGroups.nobility.count * 1;
+    
+    // Clero: domanda cibo e beni sacri, offerta spirituale
+    demand.grain += populationGroups.clergy.count * 3;
+    demand.textiles += populationGroups.clergy.count * 1;
+    
+    // Militia: domanda armi e cibo, offerta protezione
+    demand.iron += populationGroups.militia.count * 2;
+    demand.grain += populationGroups.militia.count * 4;
+    
+    // Peasants: offerta cibo e materie prime, domanda beni essenziali
+    supply.grain += populationGroups.peasants.count * 1;
+    supply.wood += populationGroups.peasants.count * 0.5;
+    supply.stone += populationGroups.peasants.count * 0.3;
+    demand.textiles += populationGroups.peasants.count * 0.5;
+    
+    // Burghers: domanda lusso moderato, offerta artigianato
+    demand.luxuries += populationGroups.burghers.count * 1;
+    supply.textiles += populationGroups.burghers.count * 2;
+    supply.iron += populationGroups.burghers.count * 1;
+    
+    // Merchants: domanda tutto, offerta commercio
+    Object.keys(demand).forEach(key => {
+        demand[key] += populationGroups.merchants.count * 0.5;
+    });
+    
+    // Mystics: domanda arcane, offerta mistica
+    demand.arcane += populationGroups.mystics.count * 3;
+    
+    // Outcasts: offerta lavoro, domanda sopravvivenza
+    supply.wood += populationGroups.outcasts.count * 0.5;
+    demand.grain += populationGroups.outcasts.count * 2;
+    
+    return { demand, supply };
+}
+
+// Mobilità sociale
+function processSocialMobility() {
+    // Borghesi che diventano ricchi -> nobili
+    if (populationGroups.burghers.wealth > 200 && populationGroups.burghers.count > 10) {
+        const promotions = Math.min(2, Math.floor(populationGroups.burghers.count / 20));
+        populationGroups.burghers.count -= promotions;
+        populationGroups.nobility.count += promotions;
+        populationGroups.nobility.wealth += promotions * 100;
+        addMsg("system", `📈 ${promotions} borghesi sono diventati nobili grazie alla loro ricchezza!`);
+    }
+    
+    // Nobili che cadono in disgrazia -> borghesi o outcasts
+    if (populationGroups.nobility.wealth < 100 && populationGroups.nobility.count > 5) {
+        const demotions = Math.min(1, Math.floor(populationGroups.nobility.count / 10));
+        populationGroups.nobility.count -= demotions;
+        populationGroups.burghers.count += demotions;
+        populationGroups.burghers.wealth += demotions * 50;
+        addMsg("system", `📉 ${demotions} nobili sono caduti in disgrazia e sono diventati borghesi.`);
+    }
+}
+
+// Eventi demografici
+function processDemographicEvents() {
+    const events = [];
+    
+    // Nascite (basate su popolazione fertile e condizioni)
+    const fertilePopulation = populationGroups.peasants.count + populationGroups.burghers.count;
+    const birthRate = Math.max(0.01, Math.min(0.05, county.happy / 100 * 0.03));
+    const births = Math.floor(fertilePopulation * birthRate);
+    if (births > 0) {
+        populationGroups.peasants.count += births;
+        events.push(`👶 ${births} nuove nascite nella contea.`);
+    }
+    
+    // Morti per fame
+    if (county.food < county.pop * 0.5) {
+        const starvationDeaths = Math.floor(county.pop * 0.02);
+        populationGroups.peasants.count = Math.max(0, populationGroups.peasants.count - starvationDeaths);
+        events.push(`💀 ${starvationDeaths} morti per fame.`);
+    }
+    
+    // Morti per malattie
+    const diseaseChance = Math.random();
+    if (diseaseChance < 0.1) { // 10% chance di epidemia
+        const diseaseDeaths = Math.floor(county.pop * 0.01);
+        // Colpisci principalmente poveri
+        populationGroups.peasants.count = Math.max(0, populationGroups.peasants.count - Math.floor(diseaseDeaths * 0.7));
+        populationGroups.outcasts.count = Math.max(0, populationGroups.outcasts.count - Math.floor(diseaseDeaths * 0.3));
+        events.push(`🦠 Epidemia! ${diseaseDeaths} morti per malattia.`);
+    }
+    
+    // Morti per guerra/vecchiaia
+    const naturalDeaths = Math.floor(county.pop * 0.015);
+    populationGroups.peasants.count = Math.max(0, populationGroups.peasants.count - Math.floor(naturalDeaths * 0.6));
+    populationGroups.nobility.count = Math.max(0, populationGroups.nobility.count - Math.floor(naturalDeaths * 0.1));
+    populationGroups.clergy.count = Math.max(0, populationGroups.clergy.count - Math.floor(naturalDeaths * 0.1));
+    // Altri gruppi...
+    
+    if (naturalDeaths > 0) {
+        events.push(`⚰️ ${naturalDeaths} morti naturali.`);
+    }
+    
+    // Mostra eventi
+    events.forEach(event => addMsg("system", event));
+}
+
+// Sistema di delinquenza basato sulla soddisfazione
+function processCrimeAndStability() {
+    const events = [];
+    
+    // Calcola livello di delinquenza basato su felicità, cibo e salute
+    const happinessFactor = (100 - county.happy) / 100; // Più felice = meno crimine
+    const foodFactor = Math.max(0, (county.pop * 0.5 - county.food) / (county.pop * 0.5)); // Più fame = più crimine
+    const healthFactor = (100 - county.health) / 100; // Più malattie = più crimine
+    
+    const crimeLevel = (happinessFactor + foodFactor + healthFactor) / 3; // Media dei fattori
+    const crimeRate = Math.min(0.15, crimeLevel * 0.1); // Max 15% di crimine
+    
+    if (crimeRate > 0.05) { // Solo se crimine significativo
+        // Effetti del crimine
+        const crimeIncidents = Math.floor(county.pop * crimeRate);
+        const goldLost = Math.floor(crimeIncidents * 2); // Ogni crimine costa ~2 oro
+        const stabilityLoss = Math.floor(crimeLevel * 10); // Perdita stabilità
+        
+        county.gold = Math.max(0, county.gold - goldLost);
+        county.happy = Math.max(0, county.happy - stabilityLoss);
+        
+        events.push(`🚔 ${crimeIncidents} incidenti criminali! Perdita di ${goldLost}💰 e stabilità ridotta.`);
+    }
+    
+    // Mostra eventi criminali
+    events.forEach(event => addMsg("system", event));
+}
+
+// Sistema di emigrazione
+function processEmigration() {
+    const events = [];
+    
+    // Calcola probabilità di emigrazione basata su condizioni
+    const happinessFactor = (100 - county.happy) / 100; // Più infelice = più emigrazione
+    const foodFactor = Math.max(0, (county.pop * 0.3 - county.food) / (county.pop * 0.3)); // Fame
+    const healthFactor = (100 - county.health) / 100; // Malattie
+    const housingFactor = Math.max(0, (county.pop - calculateHousingCapacity()) / calculateHousingCapacity()); // Sovraffollamento
+    
+    const emigrationRisk = (happinessFactor + foodFactor + healthFactor + housingFactor) / 4;
+    const emigrationRate = Math.min(0.08, emigrationRisk * 0.05); // Max 8% emigrazione
+    
+    if (emigrationRate > 0.02) { // Solo se significativo
+        // Emigrazione colpisce principalmente classi basse
+        const totalEmigrants = Math.floor(county.pop * emigrationRate);
+        
+        // Distribuisci emigrazione tra classi (più poveri emigrano di più)
+        const peasantEmigrants = Math.floor(totalEmigrants * 0.6);
+        const burgherEmigrants = Math.floor(totalEmigrants * 0.25);
+        const outcastEmigrants = Math.floor(totalEmigrants * 0.15);
+        
+        populationGroups.peasants.count = Math.max(0, populationGroups.peasants.count - peasantEmigrants);
+        populationGroups.burghers.count = Math.max(0, populationGroups.burghers.count - burgherEmigrants);
+        populationGroups.outcasts.count = Math.max(0, populationGroups.outcasts.count - outcastEmigrants);
+        
+        // Perdita ricchezza dalle tasse
+        const taxLoss = Math.floor(totalEmigrants * 1.5); // Ogni emigrante valeva ~1.5 oro in tasse
+        county.gold = Math.max(0, county.gold - taxLoss);
+        
+        events.push(`🏃 ${totalEmigrants} persone hanno lasciato la contea per condizioni migliori. Perdita di ${taxLoss}💰 in tasse future.`);
+    }
+    
+    // Mostra eventi di emigrazione
+    events.forEach(event => addMsg("system", event));
+}
+
+// Calcola livello di stabilità sociale
+function calculateStability() {
+    // La stabilità è inversamente proporzionale alla delinquenza
+    const happinessFactor = county.happy / 100; // Più felice = più stabile
+    const foodFactor = Math.min(1, county.food / (county.pop * 0.5)); // Più cibo = più stabile
+    const healthFactor = county.health / 100; // Più salute = più stabile
+    const housingFactor = Math.min(1, calculateHousingCapacity() / county.pop); // Più spazio = più stabile
+    
+    const stability = (happinessFactor + foodFactor + healthFactor + housingFactor) / 4;
+    return Math.floor(stability * 100);
+}
+
+// Aggiorna ricchezze delle categorie
+function updateCategoryWealth() {
+    // Nobiltà: guadagna da tasse e proprietà
+    populationGroups.nobility.wealth += Math.floor(county.gold * 0.1);
+    
+    // Clero: guadagna da donazioni e decime
+    populationGroups.clergy.wealth += Math.floor(county.gold * 0.05);
+    
+    // Merchants: guadagnano dal commercio
+    populationGroups.merchants.wealth += seasonalTransactions.marketSales * 0.1;
+    
+    // Peasants: guadagnano dalla produzione agricola
+    const grainProduction = county.resources.grain || 0;
+    populationGroups.peasants.wealth += Math.floor(grainProduction * 0.01);
+    
+    // Militia: stipendio fisso
+    populationGroups.militia.wealth += populationGroups.militia.count * 2;
+    
+    // Previeni ricchezze negative
+    Object.keys(populationGroups).forEach(key => {
+        populationGroups[key].wealth = Math.max(0, populationGroups[key].wealth);
     });
 }
 
@@ -5790,6 +6487,15 @@ function progressSeason(options = {}) {
     const startHappy = county.happy;
     const budget = calculateSeasonalBudget();
 
+    // Reset transazioni stagionali
+    seasonalTransactions = {
+        marketPurchases: 0,
+        marketSales: 0,
+        specialPurchases: 0,
+        taxes: 0,
+        maintenance: 0
+    };
+
     // --- ELABORAZIONE TURNO ---
     advanceSeason(null, { silent: true }); // Stagione avanza silenziosamente
     applyProduction(null, { skipUI: true, silent: true }); // Produzione silenziosa
@@ -5799,8 +6505,11 @@ function progressSeason(options = {}) {
     
     // Tasse e Manutenzione
     const taxesCollected = collectTaxes(null, { silent: true });
+    seasonalTransactions.taxes += taxesCollected;
     applySeasonalUpkeep(null, { silent: true });
-    county.gold = Math.max(0, county.gold - budget.expenses.structures);
+    const maintenanceCost = budget.expenses.structures;
+    seasonalTransactions.maintenance += maintenanceCost;
+    county.gold = Math.max(0, county.gold - maintenanceCost);
     if (county.gold === 0 && budget.expenses.structures > 0) {
         addMsg("system", "⚠️ Mancanza di fondi per la manutenzione delle strutture! Alcuni edifici potrebbero deteriorarsi.");
     }
@@ -5834,6 +6543,19 @@ function progressSeason(options = {}) {
         reportHTML += `<span style="opacity:0.8">${significantChanges || "Nessuna variazione di risorse."}</span><br>`;
         reportHTML += `💰 Tesoreria: <strong>${county.gold}</strong> (${goldDelta > 0 ? '+'+goldDelta : goldDelta})`;
         
+        // Breakdown dettagliato delle entrate/uscite
+        const totalIncome = seasonalTransactions.taxes;
+        const totalExpenses = seasonalTransactions.maintenance + seasonalTransactions.marketPurchases + seasonalTransactions.specialPurchases;
+        const netMarket = seasonalTransactions.marketSales - seasonalTransactions.marketPurchases - seasonalTransactions.specialPurchases;
+        
+        reportHTML += `<br><small style="opacity:0.7">`;
+        reportHTML += `Entrate: Tasse +${seasonalTransactions.taxes}`;
+        reportHTML += ` | Uscite: Manutenzione -${seasonalTransactions.maintenance}`;
+        if (seasonalTransactions.marketPurchases > 0) reportHTML += `, Acquisti -${seasonalTransactions.marketPurchases}`;
+        if (seasonalTransactions.specialPurchases > 0) reportHTML += `, Merci speciali -${seasonalTransactions.specialPurchases}`;
+        if (seasonalTransactions.marketSales > 0) reportHTML += `, Vendite +${seasonalTransactions.marketSales}`;
+        reportHTML += `</small>`;
+        
         // Aggiungi deficit critici se ci sono
         const deficitKeys = Object.keys(economyReport.deficits || {});
         if (deficitKeys.length > 0) {
@@ -5850,7 +6572,105 @@ function progressSeason(options = {}) {
             happyDelta, 
             deficits: economyReport.deficits 
         });
+
+        // 3. NOTIZIE DAL MONDO ESTERNO
+        const worldNarration = generateWorldNarration();
+        if (worldNarration) {
+            addMsg("system", worldNarration);
+        }
     }
+}
+
+// =======================================
+// CREA IL BLOCCO AZIONI IN CHAT
+// =======================================
+function appendActionsBlock(actions) {
+    const chatLog = document.getElementById("chat-log");
+    const box = document.createElement("div");
+    box.classList.add("msg-actions");
+
+    const header = document.createElement("div");
+    header.classList.add("action-header");
+    header.textContent = "Azioni possibili";
+    box.appendChild(header);
+
+    actions.forEach(a => {
+        const btn = document.createElement("button");
+        btn.classList.add("action-card");
+        btn.innerHTML = a.label;
+        btn.onclick = () => executeAction(a.code);
+        box.appendChild(btn);
+    });
+
+    chatLog.appendChild(box);
+    chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+// =======================================
+// ESEGUI L'AZIONE SCELTA
+// =======================================
+function executeAction(action) {
+    console.log("Azione selezionata:", action);
+    let userMessage = "";
+
+    if (action.startsWith("build_")) {
+        const type = action.split("_")[1];
+        orderBuilding(type);
+        const b = buildingData[type];
+        userMessage = `Ho ordinato la costruzione di ${b.name}.`;
+    } else if (action === "emergency_tax_merchants") {
+        county.gold += 50;
+        factions.burghers = Math.max(0, factions.burghers - 10);
+        addMsg("system", "💰 Tassa straordinaria imposta ai mercanti: +50 oro, ma la loro lealtà cala.");
+        updateUI();
+        userMessage = "Ho imposto una tassa straordinaria ai mercanti per riempire le casse.";
+    } else if (action === "emergency_tax_church") {
+        county.gold += 30;
+        factions.clergy = Math.max(0, factions.clergy - 15);
+        addMsg("system", "⛪ Beni requisiti alla Chiesa: +30 oro, ma i religiosi sono infuriati.");
+        updateUI();
+        userMessage = "Ho requisito beni alla Chiesa per finanziare il regno.";
+    } else if (action === "open_law_modal") {
+        document.getElementById("modal-law-creator").classList.add("active");
+        userMessage = "Voglio creare una nuova legge per il regno.";
+    } else if (action === "recruit_militia") {
+        county.militia = (county.militia || 0) + 10;
+        county.gold -= 20;
+        addMsg("system", "🎖️ Reclutati 10 uomini per la milizia: -20 oro.");
+        updateUI();
+        userMessage = "Ho reclutato nuovi uomini per la milizia.";
+    } else {
+        userMessage = action; // Fallback
+    }
+
+    // Dopo l'azione, fai reagire l'IA
+    if (userMessage) {
+        addMsg("user", userMessage);
+        callGroq(userMessage, "action");
+    }
+}
+
+function generateWorldNarration() {
+    let narration = `<strong>🌍 Notizie dal Mondo Esterno:</strong><br>`;
+
+    neighboringCounties.forEach(c => {
+        const relationLevel = c.relations > 70 ? "alleate" : c.relations > 40 ? "neutra" : "ostile";
+        const activity = c.aggression > 50 ? "prepara incursioni" : c.power > county.power * 1.2 ? "rafforza le difese" : "commercia pacificamente";
+
+        narration += `${c.name} (${relationLevel}): ${c.description.split('.')[0]}. Attualmente ${activity}.<br>`;
+    });
+
+    // Aggiungi eventi casuali mondiali
+    if (rand(0, 10) > 7) {
+        const events = [
+            "Banditi infestano le strade tra le contee, rallentando i commerci.",
+            "Una carestia colpisce regioni lontane, aumentando la domanda di grano.",
+            "Alleanze matrimoniali si formano tra nobili delle contee vicine."
+        ];
+        narration += `<em>${events[Math.floor(Math.random() * events.length)]}</em>`;
+    }
+
+    return narration;
 }
 
 function advanceSeasonManually() {
@@ -6305,6 +7125,60 @@ function getFeasibleActions() {
     return actions.join("\n- ");
 }
 
+function getDynamicActions(response = "") {
+    const actions = [];
+    const lowerResponse = response.toLowerCase();
+
+    // Collega alla narrazione: aggiungi azioni basate su ciò che l'IA ha detto
+    if (lowerResponse.includes("costruzione") || lowerResponse.includes("edificio") || lowerResponse.includes("costruire")) {
+        // Edifici costruibili
+        const buildable = Object.entries(buildingData).filter(([key, data]) => {
+            return checkResources(data.cost);
+        });
+
+        buildable.slice(0, 3).forEach(([key, data]) => {  // Limita a 3
+            const effects = [];
+            if (data.effect) effects.push(data.effect);
+            if (data.housing) effects.push(`+${data.housing} alloggi`);
+            effects.push(`Lealtà contadini +5`);
+            const effectDesc = effects.join(", ");
+            actions.push({
+                label: `🏗️ Costruisci ${data.name} (${data.cost.gold} oro) - ${effectDesc}`,
+                code: `build_${key}`
+            });
+        });
+    }
+
+    if (lowerResponse.includes("oro") || lowerResponse.includes("tesoro") || lowerResponse.includes("soldi") || lowerResponse.includes("povero")) {
+        if (county.gold < 50) {
+            actions.push({
+                label: "💰 Tassa straordinaria ai Mercanti - +50 oro, lealtà mercanti -10, felicità generale -2",
+                code: "emergency_tax_merchants"
+            });
+            actions.push({
+                label: "⛪ Requisire beni alla Chiesa - +30 oro, lealtà chiesa -15, morale nobili -3",
+                code: "emergency_tax_church"
+            });
+        }
+    }
+
+    if (lowerResponse.includes("legge") || lowerResponse.includes("decreto") || lowerResponse.includes("regola")) {
+        actions.push({
+            label: "📜 Crea una nuova legge - Personalizza effetti su tasse, produzione o fazioni",
+            code: "open_law_modal"
+        });
+    }
+
+    if (lowerResponse.includes("milizia") || lowerResponse.includes("soldati") || lowerResponse.includes("sicurezza") || lowerResponse.includes("banditi")) {
+        actions.push({
+            label: "🎖️ Convoca la milizia - +10 milizia, sicurezza +5, -20 oro, lealtà contadini -2",
+            code: "recruit_militia"
+        });
+    }
+
+    return actions;
+}
+
 function generateKingdomSummary() {
     const s = []; // Array di stringhe per il sommario
     
@@ -6510,6 +7384,14 @@ function handleAIResponse(response, mode) {
             chatLog.scrollTop = chatLog.scrollHeight;
         }, lines.length * 1200 + 500);
     }
+
+    // === BLOCCO DI AZIONI GENERATO IN AUTOMATICO ===
+    setTimeout(() => {
+        const dynamicActions = getDynamicActions(response);
+        if (dynamicActions.length > 0) {
+            appendActionsBlock(dynamicActions);
+        }
+    }, lines.length * 1200 + 1000);
 }
 
 function extractActionsFromRawText(text) {
@@ -6876,6 +7758,9 @@ function startGame() {
     updateUI();
 
     activateScreen("screen-game");
+    
+    // Aggiorna nuovamente l'UI dopo che lo schermo è attivo
+    setTimeout(() => updateUI(), 100);
 
     addMsg("ai", `📜 Benvenuto, ${heroName}. Il tuo regno attende le tue decisioni.`);
     if (personalitySettings && personalitySettings.notes) {
@@ -6891,6 +7776,9 @@ function switchTab(id, btn){
 
     document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
+
+    if (id === 'tab-market') renderMarket();
+    if (id === 'tab-dominio') updateUI();
 }
 
 /* ================= GESTIONE MODULO EDIFICI ================= */
@@ -7020,6 +7908,283 @@ function updateConstructionUI() {
     });
 
     container.innerHTML = html;
+}
+
+function getResourceStats() {
+    const stats = {};
+    const lastEco = county.lastEconomy;
+    if (!lastEco) {
+        // Valori di default se non ancora calcolati
+        RESOURCE_KEYS.forEach(key => {
+            stats[key] = {
+                production: Math.floor(Math.random() * 20) + 5,
+                consumption: Math.floor(Math.random() * 15) + 5,
+                net: Math.floor(Math.random() * 10) - 5
+            };
+        });
+    } else {
+        RESOURCE_KEYS.forEach(key => {
+            const production = lastEco.production[key] || 0;
+            const consumption = lastEco.deficits[key] || 0;
+            const net = production - consumption;
+            stats[key] = {
+                production: production,
+                consumption: consumption,
+                net: net
+            };
+        });
+    }
+    return stats;
+}
+
+function renderResourceStats() {
+    const container = document.getElementById("resource-stats");
+    if (!container) return;
+
+    const stats = getResourceStats();
+    let html = `<div class="resource-stats-grid">`;
+
+    RESOURCE_KEYS.forEach(key => {
+        const s = stats[key];
+        const icon = resourceIcon(key);
+        const netClass = s.net > 0 ? 'positive' : s.net < 0 ? 'negative' : '';
+        html += `
+            <div class="resource-stat-item">
+                <div class="resource-stat-header">
+                    ${icon} ${resourceLabels[key] || key}
+                </div>
+                <div class="resource-stat-values">
+                    <span>Prod: ${s.production}</span>
+                    <span>Cons: ${s.consumption}</span>
+                    <span class="${netClass}">Net: ${s.net > 0 ? '+' : ''}${s.net}</span>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+}
+
+function getMarketPrices() {
+    const prices = {
+        wood: 5, stone: 8, iron: 15, copper: 12, gold: 1, // Base prices
+        herbs: 4, grain: 3, livestock: 10, textiles: 20, luxuries: 50, arcane: 100
+    };
+    // Modifica basati su relazioni e accordi commerciali
+    neighboringCounties.forEach(c => {
+        const relation = c.relations || 50;
+        let modifier = 1 + (50 - relation) / 100; // Più alta relazione, prezzi migliori (più bassi per comprare)
+        if (c.tradeAgreement) {
+            modifier *= 0.8; // Ulteriore sconto del 20% con accordo commerciale
+        }
+        Object.keys(prices).forEach(res => {
+            prices[res] *= modifier;
+        });
+    });
+    return prices;
+}
+
+function renderMarket() {
+    const container = document.getElementById("market-content");
+    if (!container) return;
+
+    const prices = getMarketPrices();
+    const stats = getResourceStats();
+    const marketDynamics = calculateMarketDemand();
+
+    let html = `<h4>Risorse Disponibili per Scambio</h4>`;
+    html += `
+        <table class="market-table">
+            <thead>
+                <tr>
+                    <th>Risorsa</th>
+                    <th>Stock</th>
+                    <th>Fabbisogno</th>
+                    <th>Domanda Pop.</th>
+                    <th>Offerta Pop.</th>
+                    <th>Prezzo Acquisto</th>
+                    <th>Prezzo Vendita</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    RESOURCE_KEYS.forEach(key => {
+        const have = county.resources[key] || 0;
+        const demand = Math.round(marketDynamics.demand[key] || 0);
+        const supply = Math.round(marketDynamics.supply[key] || 0);
+        
+        // Modifica prezzi basata su domanda/offerta
+        let priceMultiplier = 1.0;
+        if (demand > supply) priceMultiplier = 1.0 + (demand - supply) * 0.1; // Prezzi più alti se domanda > offerta
+        else if (supply > demand) priceMultiplier = 1.0 - (supply - demand) * 0.05; // Prezzi più bassi se offerta > domanda
+        
+        const basePrice = prices[key];
+        const buyPrice = Math.round(basePrice * priceMultiplier * 1.2);
+        const sellPrice = Math.round(basePrice * priceMultiplier * 0.8);
+        
+        const fabbisogno = stats[key].consumption;
+        const icon = resourceIcon(key);
+
+        html += `
+            <tr>
+                <td>${icon} ${resourceLabels[key] || key}</td>
+                <td>${have}</td>
+                <td>${fabbisogno}</td>
+                <td>${demand}</td>
+                <td>${supply}</td>
+                <td>${buyPrice}💰</td>
+                <td>${sellPrice}💰</td>
+                <td>
+                    <button class="btn-sec" onclick="buyResource('${key}', ${buyPrice})">Compra</button>
+                    <button class="btn-sec" onclick="sellResource('${key}', ${sellPrice})" ${have > 0 ? '' : 'disabled'}>Vendi</button>
+                </td>
+            </tr>
+        `;
+    });
+
+    // Mercato Interno: Surplus e Deficit
+    html += `<h4>Mercato Interno</h4>`;
+    const surplus = [];
+    const deficits = [];
+    RESOURCE_KEYS.forEach(key => {
+        if (stats[key].net > 0) surplus.push(key);
+        if (stats[key].net < 0) deficits.push(key);
+    });
+
+    if (surplus.length > 0) {
+        html += `<div class="market-section"><h5>Surplus - Risorse che Produciamo</h5>`;
+        surplus.forEach(key => {
+            const have = county.resources[key] || 0;
+            const demand = Math.round(marketDynamics.demand[key] || 0);
+            const supply = Math.round(marketDynamics.supply[key] || 0);
+            const priceMultiplier = supply > demand ? 0.8 : 1.0; // Prezzi più bassi se surplus
+            const sellPrice = Math.round(prices[key] * priceMultiplier * 0.6);
+            const icon = resourceIcon(key);
+            html += `
+                <div class="market-item surplus">
+                    <div class="market-header">
+                        <span>${icon} ${resourceLabels[key] || key}</span>
+                        <span>Hai: ${have}</span>
+                    </div>
+                    <div class="market-prices">
+                        <button class="btn-sec" onclick="sellResource('${key}', ${sellPrice})" ${have > 0 ? '' : 'disabled'}>Vendi Interno - ${sellPrice}💰</button>
+                    </div>
+                    <div class="market-stats">
+                        Surplus: +${stats[key].net} | Domanda: ${demand} | Offerta: ${supply}
+                    </div>
+                </div>
+            `;
+        });
+        html += `</div>`;
+    }
+
+    if (deficits.length > 0) {
+        html += `<div class="market-section"><h5>Deficit - Risorse che Ci Mancano</h5>`;
+        deficits.forEach(key => {
+            const have = county.resources[key] || 0;
+            const demand = Math.round(marketDynamics.demand[key] || 0);
+            const supply = Math.round(marketDynamics.supply[key] || 0);
+            const priceMultiplier = demand > supply ? 1.2 : 1.0; // Prezzi più alti se deficit
+            const buyPrice = Math.round(prices[key] * priceMultiplier * 1.4);
+            const icon = resourceIcon(key);
+            html += `
+                <div class="market-item deficit">
+                    <div class="market-header">
+                        <span>${icon} ${resourceLabels[key] || key}</span>
+                        <span>Hai: ${have}</span>
+                    </div>
+                    <div class="market-prices">
+                        <button class="btn-sec" onclick="buyResource('${key}', ${buyPrice})">Compra Interno - ${buyPrice}💰</button>
+                    </div>
+                    <div class="market-stats">
+                        Deficit: ${stats[key].net} | Domanda: ${demand} | Offerta: ${supply}
+                    </div>
+                </div>
+            `;
+        });
+        html += `</div>`;
+    }
+
+    // Merci speciali dai regni vicini (solo con accordo commerciale)
+    const tradePartners = neighboringCounties.filter(c => c.tradeAgreement);
+    if (tradePartners.length > 0) {
+        html += `<h4>Merci Speciali dai Regni Alleati</h4>`;
+        tradePartners.forEach(c => {
+            const special = c.specialResource;
+            if (special) {
+                const relationModifier = c.relations / 100; // 0-1
+                const basePrice = prices[special] || 10;
+                const buyPrice = Math.round(basePrice * 1.2 * (2 - relationModifier)); // Più economico con accordo
+                const icon = resourceIcon(special);
+
+                html += `
+                    <div class="market-item special">
+                        <div class="market-header">
+                            <span>${icon} ${resourceLabels[special] || special} da ${c.name}</span>
+                            <span>Accordo Commerciale</span>
+                        </div>
+                        <div class="market-prices">
+                            <button class="btn-sec" onclick="buySpecialResource('${c.key}', '${special}', ${buyPrice})">Compra (1) - ${buyPrice}💰</button>
+                        </div>
+                        <div class="market-desc">
+                            Risorsa pregiata da ${c.name}. Relazioni: ${c.relations > 50 ? 'Buone' : 'Tese'}. Prezzi ridotti grazie all'accordo.
+                        </div>
+                    </div>
+                `;
+            }
+        });
+    } else {
+        html += `<h4>Merci Speciali</h4><p style="color: var(--text-soft); font-size: 0.9em;">Firma accordi commerciali in diplomazia per accedere alle merci speciali dei regni vicini.</p>`;
+    }
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function buyResource(res, price) {
+    if (county.gold >= price) {
+        county.gold -= price;
+        county.resources[res] = (county.resources[res] || 0) + 1;
+        seasonalTransactions.marketPurchases += price;
+        updateUI();
+        renderMarket();
+        addMsg("system", `Acquistato 1 ${resourceLabels[res] || res} per ${price} oro.`);
+    } else {
+        addMsg("system", "Oro insufficiente per l'acquisto.");
+    }
+}
+
+function sellResource(res, price) {
+    const have = county.resources[res] || 0;
+    if (have > 0) {
+        county.gold += price;
+        county.resources[res] -= 1;
+        seasonalTransactions.marketSales += price;
+        updateUI();
+        renderMarket();
+        addMsg("system", `Venduto 1 ${resourceLabels[res] || res} per ${price} oro.`);
+    } else {
+        addMsg("system", "Risorsa insufficiente per la vendita.");
+    }
+}
+
+function buySpecialResource(neighborKey, res, price) {
+    if (county.gold >= price) {
+        county.gold -= price;
+        county.resources[res] = (county.resources[res] || 0) + 1;
+        seasonalTransactions.specialPurchases += price;
+        // Migliora leggermente relazioni
+        const neighbor = neighboringCounties.find(c => c.key === neighborKey);
+        if (neighbor) neighbor.relations = Math.min(100, neighbor.relations + 2);
+        updateUI();
+        renderMarket();
+        addMsg("system", `Acquistato 1 ${resourceLabels[res] || res} speciale da ${neighbor.name} per ${price} oro. Relazioni migliorate.`);
+    } else {
+        addMsg("system", "Oro insufficiente per l'acquisto.");
+    }
 }
 
 function drawRegionMap() {
