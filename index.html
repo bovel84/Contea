@@ -3951,8 +3951,8 @@ function collectTaxes(targetState = null, options = {}) {
     const policy = ensureTaxPolicy(targetState);
     let total = 0;
     TAX_CATEGORIES.forEach(cat => {
-        const pop = statePop[cat.key] || 0;
-        const baseWealth = pop * cat.wealthFactor;
+    const pop = statePop[cat.key]?.count || 0;  // ✅ Prende il numero di persone
+    const baseWealth = pop * cat.wealthFactor;  // ✅ Ora funziona!
         const lawDelta = getLawTaxModifier(cat.key, targetState);
         const effectivePercent = Math.max(0, (policy[cat.key] || 0) + lawDelta);
         const income = Math.floor(baseWealth * (effectivePercent / 100));
