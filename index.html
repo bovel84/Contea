@@ -8022,8 +8022,11 @@ function renderMarket() {
         else if (supply > demand) priceMultiplier = 1.0 - (supply - demand) * 0.05; // Prezzi più bassi se offerta > domanda
         
         const basePrice = prices[key];
-        const buyPrice = Math.round(basePrice * priceMultiplier * 1.2);
-        const sellPrice = Math.round(basePrice * priceMultiplier * 0.8);
+        // Il prezzo di acquisto non può essere inferiore a 1
+        const buyPrice = Math.max(1, Math.round(basePrice * priceMultiplier * 1.4)); 
+        // Il prezzo di vendita non può essere inferiore a 1
+        const sellPrice = Math.max(1, Math.round(basePrice * priceMultiplier * 0.9)); 
+
         
         const fabbisogno = stats[key].consumption;
         const icon = resourceIcon(key);
