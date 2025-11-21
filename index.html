@@ -532,28 +532,44 @@
 
         .relation-row span:first-child { color: var(--text-soft); }
 
-        /* ===================== CHAT ===================== */
+        /* ===================== SALA DEL TRONO (CHAT) - VERSIONE LEGGIBILE ===================== */
         .chat-panel {
-            background: linear-gradient(135deg, rgba(14,14,14,0.96), rgba(6,6,6,0.9));
-            border: 1px solid var(--border-soft);
-            border-radius: 20px;
+            /* Sfondo schiarito: da nero #111 a grigio scuro #1a1a1a */
+            background: #1a1a1a;
+            border: 1px solid #333; /* Bordo più visibile */
+            border-radius: 12px;
             display: flex;
             flex-direction: column;
             height: 100%;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.45);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* Texture sfondo: Molto più leggera, non copre il testo */
+        .chat-panel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            /* Gradiente ridotto drasticamente: dal 90% di opacità al 20% */
+            background: radial-gradient(circle at 50% 30%, rgba(40, 35, 30, 0.1), rgba(0,0,0,0.4));
+            pointer-events: none;
+            z-index: 0;
         }
 
         .chat-header {
+            z-index: 2;
+            /* Sfondo più chiaro e distinto */
+            background: #252525;
+            border-bottom: 1px solid #444;
+            padding: 12px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 18px;
-            border-bottom: 1px solid #1f1f1f;
-            background: linear-gradient(90deg, #141414, #0c0c0c);
-            border-radius: 16px 16px 0 0;
-            color: #f4d88b;
-            font-size: 0.9em;
-            letter-spacing: 1px;
+            color: #d4af37; /* Oro leggibile */
+            font-family: 'Georgia', serif;
+            font-size: 0.95em;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         .chat-log {
@@ -561,103 +577,108 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 15px;
             padding: 20px;
             scroll-behavior: smooth;
+            z-index: 1;
+            /* Colore testo base molto più chiaro */
+            color: #e0e0e0;
         }
 
+        /* Chips Fazioni (i pulsanti in alto) */
         .faction-chips {
+            z-index: 2;
+            padding: 10px 15px;
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid #333;
             display: flex;
+            gap: 8px;
             flex-wrap: wrap;
-            gap: 6px;
-            padding: 10px 18px 0;
         }
 
         .faction-chip {
-            border: 1px solid var(--border-soft);
-            border-radius: 999px;
-            background: rgba(18,18,18,0.92);
-            color: var(--text);
-            font-size: 0.75em;
+            background: #2a2a2a; /* Sfondo grigio, non nero */
+            border: 1px solid #555; /* Bordo visibile */
+            color: #ccc;
             padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75em;
             cursor: pointer;
-            letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+        .faction-chip:hover {
+            background: #3a3a3a;
+            border-color: #d4af37;
+            color: #fff;
         }
 
-        .faction-chip.low { border-color: #ff7c7c; color: #ffcccc; }
-        .faction-chip.high { border-color: #6ada91; color: #c8ffd9; }
-
-        .msg {
-            padding: 12px 14px;
-            border-radius: 14px;
-            max-width: 90%;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.35);
-        }
-
-        .msg-text { line-height: 1.45; }
-
-        .msg-user {
-            background: #244b5f;
-            color: #e9f3ff;
-            align-self: flex-end;
-            border: 1px solid rgba(52,152,219,0.6);
-        }
-
-        .msg-ai {
-            background: #1b1b1b;
-            border: 1px solid rgba(212,175,55,0.5);
-            align-self: flex-start;
-        }
-
-        .msg-system {
-            color: #777;
-            font-size: 0.7em;
-            text-align: center;
-        }
-
-        .msg-meta {
-            font-size: 0.7em;
-            color: #a0a0a0;
-            text-align: right;
-        }
-
+        /* Area Input (in basso) */
         .input-area {
-            position: sticky;
-            bottom: 0;
-            background: rgba(5,5,5,0.92);
-            padding: 14px;
-            border-top: 1px solid var(--border-soft);
+            z-index: 2;
+            background: #202020; /* Ben distinto dallo sfondo */
+            padding: 15px;
+            border-top: 1px solid #444;
             display: flex;
             gap: 10px;
-            border-radius: 0 0 20px 20px;
-            backdrop-filter: blur(6px);
         }
 
-        .send-btn {
-            width: 52px;
-            background: #d4af37;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1em;
-            cursor: pointer;
+        .input-area input {
+            background: #111;
+            border: 1px solid #555;
+            color: #fff; /* Testo bianco puro */
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+        .input-area input::placeholder {
+            color: #777;
         }
 
+        /* Pulsante "Avanza Stagione" */
         .season-advance-btn {
-            margin: 10px 14px 0;
-            padding: 10px 12px;
-            width: calc(100% - 28px);
-            background: rgba(15,15,15,0.92);
-            border: 1px solid var(--border-soft);
-            border-radius: 12px;
-            color: var(--text);
+            margin: 0; /* Reset margini */
+            width: 100%;
+            padding: 12px;
+            background: #2c2c2c;
+            border: 1px solid #555;
+            color: #e0e0e0;
+            font-weight: bold;
             cursor: pointer;
-            font-size: 0.9em;
+            border-radius: 0; /* Full width style */
+            transition: background 0.2s;
+        }
+        .season-advance-btn:hover {
+            background: #3a3a3a;
+            border-color: #d4af37;
+            color: #fff;
         }
 
-        .season-advance-btn:hover { border-color: var(--accent-muted); }
+        /* Messaggi Chat */
+        .msg-system {
+            background: rgba(255, 255, 255, 0.08); /* Sfondo leggero per contrasto */
+            color: #ddd; /* Testo chiaro */
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.85em;
+        }
+
+        /* Correzione colori Messaggi Fazione per leggibilità */
+        .msg-faction {
+            background: #222;
+            border: 1px solid #444;
+            color: #eee; /* Testo chiaro */
+        }
+        .msg-faction .msg-text {
+            color: #dcdcdc; /* Grigio chiarissimo */
+        }
+        .faction-title {
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            display: block;
+        }
 
         /* ===================== EVENTI & AZIONI ===================== */
         .panel-title {
@@ -918,6 +939,845 @@
     box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
 }
 
+/* ===================== MEDIA QUERIES PER MOBILE ===================== */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+
+    .screen {
+        padding: clamp(8px, 2vw, 16px);
+    }
+
+    .screen.active {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #screen-game {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+        gap: 10px;
+    }
+
+    .start-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .start-card {
+        padding: 12px;
+    }
+
+    .game-toolbar {
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: 0.8em;
+    }
+
+    .toolbar-status {
+        font-size: 0.7em;
+    }
+
+    .season-banner {
+        padding: 6px 10px;
+        font-size: 0.8em;
+        flex-direction: column;
+        gap: 4px;
+        align-items: flex-start;
+    }
+
+    .tab-view {
+        padding: clamp(12px, 3vw, 20px);
+        margin-bottom: 60px;
+    }
+
+    .grid-stats {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .resource-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+
+    .stat-card {
+        padding: 10px;
+        font-size: 0.9em;
+    }
+
+    .stat-val {
+        font-size: 1.1em;
+    }
+
+    .need-row {
+        margin-bottom: 12px;
+    }
+
+    .need-header {
+        font-size: 0.8em;
+    }
+
+    .diplomacy-card {
+        padding: 10px 12px;
+        margin-bottom: 10px;
+    }
+
+    .relation-row {
+        font-size: 0.85em;
+        padding: 4px 0;
+    }
+
+    .chat-panel {
+        height: 60vh;
+    }
+
+    .chat-log {
+        padding: 15px;
+        gap: 10px;
+    }
+
+    .msg {
+        padding: 10px 12px;
+        max-width: 95%;
+        font-size: 0.9em;
+    }
+
+    .input-area {
+        padding: 12px;
+        gap: 8px;
+    }
+
+    .send-btn {
+        width: 44px;
+        font-size: 1em;
+    }
+
+    .season-advance-btn {
+        padding: 8px 10px;
+        font-size: 0.85em;
+    }
+
+    .event-feed {
+        max-height: 250px;
+    }
+
+    .event-card {
+        padding: 10px 12px;
+        font-size: 0.9em;
+    }
+
+    .action-card {
+        padding: 10px;
+        font-size: 0.9em;
+    }
+
+    .pop-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .pop-card {
+        padding: 10px;
+        font-size: 0.9em;
+    }
+
+    .person-card {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+
+    .person-name {
+        font-size: 1em;
+    }
+
+    .private-selector {
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .private-selector button {
+        font-size: 0.8em;
+        padding: 6px 8px;
+    }
+
+    .faction-effects {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .faction-effect-card {
+        padding: 10px;
+        font-size: 0.9em;
+    }
+
+    .tax-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .tax-card {
+        padding: 8px;
+    }
+
+    .law-list {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .law-card {
+        padding: 10px;
+        font-size: 0.9em;
+    }
+
+    .law-creator {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .asset-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .asset-card {
+        padding: 10px;
+        font-size: 0.9em;
+    }
+
+    .modal-content {
+        width: 95vw;
+        max-height: 85vh;
+        padding: 16px;
+    }
+
+    .modal-header {
+        margin-bottom: 4px;
+    }
+
+    .close-btn {
+        font-size: 1.1em;
+    }
+
+    .bottom-nav {
+        height: 50px;
+        font-size: 0.75em;
+    }
+
+    .nav-btn {
+        font-size: 0.7em;
+    }
+
+    .nav-icon {
+        font-size: 1.2em;
+    }
+
+    canvas {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .map-legend {
+        font-size: 0.9em;
+    }
+
+    .legend-item {
+        margin-bottom: 6px;
+    }
+
+    .building-card-ui {
+        padding: 12px;
+        font-size: 0.9em;
+    }
+
+    .b-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .b-title {
+        font-size: 0.95em;
+    }
+
+    .b-time {
+        font-size: 0.75em;
+    }
+
+    .b-desc {
+        font-size: 0.85em;
+    }
+
+    .b-cost {
+        font-size: 0.75em;
+        padding: 6px;
+    }
+
+    .const-card {
+        padding: 8px 10px;
+        font-size: 0.9em;
+    }
+
+    .const-header {
+        font-size: 0.9em;
+    }
+
+    .const-meta {
+        font-size: 0.75em;
+    }
+
+    .save-entry {
+        padding: 8px 10px;
+        font-size: 0.85em;
+    }
+
+    .save-entry-details {
+        font-size: 0.8em;
+    }
+
+    .save-entry-actions {
+        gap: 4px;
+    }
+
+    .panel {
+        border-radius: 12px;
+    }
+
+    .btn-main {
+        padding: 12px;
+        font-size: 0.9em;
+    }
+
+    .btn-sec {
+        padding: 6px 10px;
+        font-size: 0.85em;
+    }
+
+    h1, h2, h3 {
+        font-size: clamp(1.4rem, 4vw, 2.2rem);
+        margin-bottom: 12px;
+    }
+
+    .section-toggle {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+
+    .section-panel {
+        padding: 10px;
+    }
+
+    .faction-chips {
+        padding: 8px 15px 0;
+    }
+
+    .faction-chip {
+        font-size: 0.7em;
+        padding: 3px 8px;
+    }
+
+    .msg-system {
+        font-size: 0.65em;
+    }
+
+    .msg-meta {
+        font-size: 0.65em;
+    }
+
+    .panel-title {
+        font-size: 0.8em;
+    }
+
+    .event-empty,
+    .action-empty {
+        font-size: 0.8em;
+    }
+
+    .action-prompt {
+        font-size: 0.8em;
+    }
+
+    .toolbar-status {
+        font-size: 0.7em;
+    }
+
+    .season-highlight {
+        font-size: 0.9em;
+    }
+
+    .res-delta {
+        font-size: 0.7em;
+    }
+
+    .need-bar-bg {
+        height: 6px;
+    }
+
+    .need-bar-fill {
+        height: 100%;
+    }
+
+    .legend-circle,
+    .legend-diamond,
+    .legend-square,
+    .legend-cross {
+        width: 16px;
+        height: 16px;
+    }
+
+    .legend-triangle {
+        border-left-width: 8px;
+        border-right-width: 8px;
+        border-bottom-width: 14px;
+    }
+
+    .legend-cross::before,
+    .legend-cross::after {
+        width: 5px;
+        height: 16px;
+        left: 5.5px;
+    }
+
+    .legend-cross::after {
+        width: 16px;
+        height: 5px;
+        top: 5.5px;
+    }
+
+    .const-progress-bg {
+        height: 5px;
+    }
+
+    .const-progress-fill {
+        height: 100%;
+    }
+
+    .court-layout {
+        flex-direction: column;
+    }
+
+    .court-main, .court-sidebar {
+        flex: none;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        font-size: 13px;
+    }
+
+    .screen {
+        padding: clamp(6px, 2vw, 12px);
+    }
+
+    .tab-view {
+        padding: clamp(10px, 3vw, 16px);
+        margin-bottom: 55px;
+    }
+
+    .chat-panel {
+        height: 50vh;
+    }
+
+    .chat-log {
+        padding: 12px;
+        gap: 8px;
+    }
+
+    .msg {
+        padding: 8px 10px;
+        max-width: 98%;
+        font-size: 0.85em;
+    }
+
+    .input-area {
+        padding: 10px;
+    }
+
+    .send-btn {
+        width: 40px;
+        font-size: 0.9em;
+    }
+
+    .bottom-nav {
+        height: 45px;
+        font-size: 0.7em;
+    }
+
+    .nav-btn {
+        font-size: 0.65em;
+    }
+
+    .nav-icon {
+        font-size: 1.1em;
+    }
+
+    .modal-content {
+        width: 98vw;
+        padding: 12px;
+    }
+
+    .btn-main {
+        padding: 10px;
+        font-size: 0.85em;
+    }
+
+    .btn-sec {
+        padding: 5px 8px;
+        font-size: 0.8em;
+    }
+
+    h1, h2, h3 {
+        font-size: clamp(1.3rem, 4vw, 2rem);
+        margin-bottom: 10px;
+    }
+
+    .stat-card {
+        padding: 8px;
+    }
+
+    .stat-val {
+        font-size: 1em;
+    }
+
+    .pop-card {
+        padding: 8px;
+    }
+
+    .person-card {
+        padding: 10px;
+    }
+
+    .diplomacy-card {
+        padding: 8px 10px;
+    }
+
+    .law-card {
+        padding: 8px;
+    }
+
+    .asset-card {
+        padding: 8px;
+    }
+
+    .faction-effect-card {
+        padding: 8px;
+    }
+
+    .tax-card {
+        padding: 6px;
+    }
+
+    .event-card {
+        padding: 8px 10px;
+    }
+
+    .action-card {
+        padding: 8px;
+    }
+
+    .building-card-ui {
+        padding: 10px;
+    }
+
+    .save-entry {
+        padding: 6px 8px;
+    }
+
+    .section-toggle {
+        padding: 6px 10px;
+    }
+
+    .section-panel {
+        padding: 8px;
+    }
+
+    .private-selector button {
+        font-size: 0.75em;
+        padding: 5px 6px;
+    }
+
+    .faction-chip {
+        font-size: 0.65em;
+        padding: 2px 6px;
+    }
+
+    .panel-title {
+        font-size: 0.75em;
+    }
+
+    .event-empty,
+    .action-empty {
+        font-size: 0.75em;
+    }
+
+    .action-prompt {
+        font-size: 0.75em;
+    }
+
+    .toolbar-status {
+        font-size: 0.65em;
+    }
+
+    .season-highlight {
+        font-size: 0.85em;
+    }
+
+    .res-delta {
+        font-size: 0.65em;
+    }
+
+    .need-header {
+        font-size: 0.75em;
+    }
+
+    .relation-row {
+        font-size: 0.8em;
+    }
+
+    .const-card {
+        padding: 6px 8px;
+    }
+
+    .const-header {
+        font-size: 0.85em;
+    }
+
+    .const-meta {
+        font-size: 0.7em;
+    }
+
+    .map-legend {
+        font-size: 0.85em;
+    }
+
+    .legend-item {
+        margin-bottom: 4px;
+    }
+
+    .legend-circle,
+    .legend-diamond,
+    .legend-square,
+    .legend-cross {
+        width: 14px;
+        height: 14px;
+    }
+
+    .legend-triangle {
+        border-left-width: 7px;
+        border-right-width: 7px;
+        border-bottom-width: 12px;
+    }
+
+    .legend-cross::before,
+    .legend-cross::after {
+        width: 4px;
+        height: 14px;
+        left: 5px;
+    }
+
+    .legend-cross::after {
+        width: 14px;
+        height: 4px;
+        top: 5px;
+    }
+
+    .const-progress-bg {
+        height: 4px;
+    }
+
+    .const-progress-fill {
+        height: 100%;
+    }
+}
+
+.court-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 20px;
+    align-items: start;
+}
+
+.court-main {
+    min-width: 0;
+}
+
+.court-sidebar {
+    min-width: 0;
+}
+
+.sidebar-panel {
+    background: #161616;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 8px;
+}
+
+.event-feed.compact {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.panel-title {
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.faction-chips-inline {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.faction-chip {
+    font-size: 0.75em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--accent);
+    color: #000;
+}
+
+@media (max-width: 900px) {
+    .court-layout {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .court-sidebar {
+        order: -1;
+    }
+}
+
+/* ===================== MODALE BILANCIO (TESORERIA) ===================== */
+.budget-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.budget-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 600px) {
+    .budget-columns { grid-template-columns: 1fr; }
+}
+
+.budget-col h4 {
+    border-bottom: 1px solid var(--border-soft);
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    color: var(--text-soft);
+    text-transform: uppercase;
+    font-size: 0.85em;
+}
+
+.budget-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px dashed rgba(255,255,255,0.05);
+    font-size: 0.9em;
+}
+
+.budget-row.total {
+    border-top: 1px solid var(--border-soft);
+    border-bottom: none;
+    margin-top: 10px;
+    padding-top: 10px;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.money-plus { color: #6ada91; }
+.money-minus { color: #ff7c7c; }
+
+.net-balance-card {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.net-balance-val {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+#modal-budget {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+#modal-budget.active {
+    display: flex;
+}
+
+#budget-content {
+    background: var(--bg-card);
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.budget-section {
+    margin-bottom: 20px;
+}
+
+.budget-section h3 {
+    margin-bottom: 10px;
+    color: var(--accent);
+}
+
+.budget-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.budget-total {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.money-plus {
+    color: #4caf50;
+}
+
+.money-minus {
+    color: #f44336;
+}
+
+.budget-net {
+    text-align: center;
+    font-size: 1.2em;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    background: var(--bg-hover);
+}
+
     </style>
 </head>
 
@@ -1092,7 +1952,7 @@
             <div class="stat-sub">Popolazione</div>
         </div>
 
-        <div class="stat-card">
+        <div class="stat-card" style="cursor:pointer;" onclick="openBudgetModal()">
             <div class="stat-val" id="val-gold">0</div>
             <div class="stat-sub">Oro</div>
         </div>
@@ -1408,59 +2268,58 @@
 
 <!-- ====================== TAB: CRONACHE (CHAT PUBBLICA) ====================== -->
 <div id="tab-chat" class="tab-view">
+    <div class="court-layout">
+        
+        <div class="court-main">
+            <div class="chat-panel">
+                <div class="chat-header">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span>👑 SALA DEL TRONO</span>
+                        <span id="chat-turn" style="opacity:0.6; font-size:0.8em;">Anno 1325</span>
+                    </div>
+                    <div id="chat-faction-chips" class="faction-chips-inline"></div>
+                </div>
 
-    <div class="chat-panel">
-        <div class="chat-header">
-            <span>📜 Cronache della Corte</span>
-            <span id="chat-turn">Turno 1</span>
+                <div id="chat-log" class="chat-log"></div>
+
+                <div class="input-area">
+                    <input type="text" id="u-input" 
+                           placeholder="Pronuncia un ordine, Conte..." 
+                           autocomplete="off"
+                           onkeypress="if(event.key==='Enter') send()">
+                    <button class="send-btn" onclick="send()">➤</button>
+                </div>
+                
+                <button class="season-advance-btn" onclick="advanceSeasonManually()">
+                    🔔 Suona la campana (Avanza Stagione)
+                </button>
+            </div>
         </div>
 
-            <div id="chat-faction-chips" class="faction-chips"></div>
+        <div class="court-sidebar">
+            
+            <div class="sidebar-panel">
+                <div class="panel-title">🏗️ Cantieri Reali</div>
+                <div id="construction-feed" class="event-feed">
+                    <p class="event-empty">Nessun cantiere.</p>
+                </div>
+            </div>
 
-        <div id="chat-log" class="chat-log"></div>
+            <div class="sidebar-panel">
+                <div class="panel-title">📜 Dispacci</div>
+                <div id="event-feed" class="event-feed compact">
+                    <p class="event-empty">Tutto tace.</p>
+                </div>
+            </div>
 
-        <div class="input-area">
-            <input type="text" id="u-input"
-                   placeholder="Pronuncia un ordine o una decisione..."
-                   onkeypress="if(event.key==='Enter') send()">
+            <div class="sidebar-panel action-wrapper">
+                <div class="panel-title">⚖️ Proposte</div>
+                <div id="action-list" class="action-list compact"></div>
+                <button class="btn-sec small" onclick="askAdvisor()">🧠 Chiedi consiglio</button>
+            </div>
 
-            <button class="send-btn" onclick="send()">➤</button>
         </div>
-
-        <button class="season-advance-btn" onclick="advanceSeasonManually()">Avanza alla stagione successiva</button>
     </div>
-
-    <div class="construction-panel" style="margin-top: 15px;">
-        <div class="panel-title">🏗️ Cantieri in Corso</div>
-        <div id="construction-feed" class="event-feed" style="max-height: 200px;">
-            <p class="event-empty">Nessun cantiere attivo al momento.</p>
-        </div>
-    </div>
-
-    <div class="event-panel">
-        <div class="panel-title">📣 Eventi di Corte</div>
-        <div id="event-feed" class="event-feed">
-            <p class="event-empty">Nessun evento registrato.</p>
-        </div>
-    </div>
-
-    <div class="advice-panel">
-        <div class="panel-title">🧠 Consigli Politici</div>
-        <div id="advice-feed" class="event-feed">
-            <p class="advice-empty">Nessun consiglio registrato.</p>
-        </div>
-    </div>
-
-    <div class="action-panel">
-        <div class="panel-title">🎯 Azioni suggerite</div>
-        <p id="action-prompt" class="action-prompt">In attesa di nuovi suggerimenti dalla corte.</p>
-        <div id="action-list" class="action-list">
-            <p class="action-empty">Nessuna proposta al momento.</p>
-        </div>
-    </div>
-
-    <button class="btn-main" onclick="askAdvisor()" style="margin-top:12px;">Chiedi un consiglio</button>
-
 </div>
 
 
@@ -2331,6 +3190,89 @@ function triggerFactionInterjections(context = {}) {
     });
 }
 
+// Mappa Emoji/Icone per Fazioni
+const FACTION_ICONS = {
+    nobility: "🦁", clergy: "✝️", peasants: "🌾", militia: "⚔️",
+    burghers: "🔨", merchants: "⚖️", mystics: "🔮", outcasts: "🐀"
+};
+
+const COURT_RELATIONSHIPS = {
+    nobility: { friends: ['clergy'], enemies: ['peasants', 'burghers'] },
+    clergy: { friends: ['nobility', 'mystics'], enemies: ['merchants', 'outcasts'] },
+    militia: { friends: ['nobility'], enemies: ['outcasts', 'peasants'] },
+    peasants: { friends: ['outcasts'], enemies: ['nobility', 'militia'] },
+    burghers: { friends: ['merchants'], enemies: ['nobility'] },
+    merchants: { friends: ['burghers'], enemies: ['clergy'] },
+    mystics: { friends: ['clergy'], enemies: ['burghers'] },
+    outcasts: { friends: ['peasants'], enemies: ['militia'] }
+};
+
+function triggerCourtEvent(context) {
+    const deficits = context.deficits || {};
+    let mainActor = null;
+    let antagonist = null;
+    let topic = "la situazione attuale";
+
+    // 1. TROVA IL PROTAGONISTA (Chi ha il problema più grosso)
+    // Ordine di priorità: Fame > Materiali > Oro > Umore basso
+    if (deficits.grain || deficits.food) { mainActor = 'peasants'; topic = "la carestia imminente"; }
+    else if (deficits.wood || deficits.stone) { mainActor = 'burghers'; topic = "la mancanza di materiali per i cantieri"; }
+    else if (deficits.gold) { mainActor = 'merchants'; topic = "le casse vuote e i debiti"; }
+    else if (deficits.herbs) { mainActor = 'mystics'; topic = "l'assenza di cure per i malati"; }
+    
+    // Se non ci sono deficit, prendi la fazione più arrabbiata
+    if (!mainActor) {
+        mainActor = factionOrder.reduce((a, b) => (factions[a] < factions[b] ? a : b));
+        if (factions[mainActor] > 40) {
+             // Se tutti stanno bene, evento casuale: un nobile o un prete parla
+             mainActor = Math.random() > 0.5 ? 'nobility' : 'clergy';
+             topic = "una questione di etichetta o potere";
+        } else {
+            topic = "il loro scontento crescente";
+        }
+    }
+
+    // 2. TROVA UN ANTAGONISTA O ALLEATO (Per creare dialogo)
+    // Cerchiamo prima un nemico naturale per creare conflitto
+    const enemies = COURT_RELATIONSHIPS[mainActor]?.enemies || [];
+    if (enemies.length > 0) {
+        antagonist = enemies[Math.floor(Math.random() * enemies.length)];
+    } else {
+        // Fallback: un amico
+        const friends = COURT_RELATIONSHIPS[mainActor]?.friends || [];
+        antagonist = friends.length > 0 ? friends[0] : 'clergy';
+    }
+
+    // 3. PREPARA IL PROMPT PER L'IA
+    const actorName = getChatName(mainActor).split(" ")[0];
+    const antagName = getChatName(antagonist).split(" ")[0];
+
+    const prompt = `
+    Sei il Regista della Corte.
+    SCENA: ${actorName} (${factionLabel(mainActor)}) solleva il problema: "${topic}".
+    INTERLOCUTORE: ${antagName} (${factionLabel(antagonist)}) interviene.
+    
+    RELAZIONE: ${mainActor} e ${antagonist} sono ${enemies.includes(antagonist) ? 'OSTILI' : 'AMICHEVOLI'}.
+    
+    OBIETTIVO: Genera un breve dialogo (2-3 battute totali) tra loro.
+    Se sono ostili, devono litigare o accusarsi. Se amici, devono supportarsi.
+    
+    FORMATO OBBLIGATORIO (Usa esattamente questo formato per ogni riga):
+    ${factionLabel(mainActor)}: [Frase drammatica]
+    ${factionLabel(antagonist)}: [Risposta pertinente]
+    
+    Non aggiungere altro testo fuori dal dialogo.
+    `;
+
+    callGroq(prompt, "debate"); // Usiamo una modalità speciale 'debate'
+}
+
+
+
+
+
+
+
 function togglePanel(id) {
     const panel = document.getElementById(id);
     if (!panel) return;
@@ -3166,9 +4108,6 @@ function clamp(v){ return Math.max(0, Math.min(100,v)); }
 
 /* ============================================================
 /* ============================================================
-   ===================== DISEGNO MAPPE 2.0 =====================
-   ============================================================ */
-
 // Colori e stili medievali
 const MAP_STYLES = {
     water: "#a3c6d4",
@@ -3203,7 +4142,10 @@ function drawCountyMap() {
         }
     }
 
-    // Disegna bordi griglia leggeri (opzionale, per chiarezza)
+    // Disegna bordi di proprietà terriera
+    drawOwnershipBorders(ctx, tileSize);
+
+    // Disegna griglia leggera (opzionale, per chiarezza)
     ctx.strokeStyle = "rgba(0,0,0,0.05)";
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -3216,227 +4158,88 @@ function drawCountyMap() {
     // Disegna Insediamenti e Strutture
     drawSettlements(ctx, tileSize);
     drawStructureMarkers(ctx, tileSize);
+    drawStructureLabels(ctx, tileSize);
     
     // Effetto vignettatura (ombra ai bordi)
     drawVignette(ctx, canvas.width, canvas.height);
 }
 
-function drawTileVisuals(ctx, x, y, size, tile) {
-    // Sfondo del terreno
-    switch(tile.terrain) {
-        case "lake":
-            ctx.fillStyle = MAP_STYLES.water;
-            ctx.fillRect(x, y, size, size);
-            drawWaves(ctx, x, y, size);
-            break;
-        case "plains":
-            ctx.fillStyle = MAP_STYLES.grass;
-            ctx.fillRect(x, y, size, size);
-            if (Math.random() > 0.7) drawTuft(ctx, x, y, size);
-            break;
-        case "forest":
-            ctx.fillStyle = MAP_STYLES.grass; // Fondo erba
-            ctx.fillRect(x, y, size, size);
-            drawTreeClump(ctx, x, y, size);
-            break;
-        case "hills":
-            ctx.fillStyle = MAP_STYLES.grass;
-            ctx.fillRect(x, y, size, size);
-            drawHillCurve(ctx, x, y, size);
-            break;
-        case "mountain":
-            ctx.fillStyle = "#bdaea1"; // Fondo roccia
-            ctx.fillRect(x, y, size, size);
-            drawMountainPeak(ctx, x, y, size);
-            break;
-        case "swamp":
-            ctx.fillStyle = MAP_STYLES.swamp;
-            ctx.fillRect(x, y, size, size);
-            drawSwampDetails(ctx, x, y, size);
-            break;
+function drawOwnershipBorders(ctx, size) {
+    const ownershipColors = {
+        count: "rgba(212, 175, 55, 0.8)",  // Oro
+        nobility: "rgba(150, 50, 50, 0.8)", // Rosso scuro
+        clergy: "rgba(100, 100, 200, 0.8)", // Blu
+        commons: "rgba(100, 150, 100, 0.8)" // Verde
+    };
+
+    for (let y = 0; y < worldMap.height; y++) {
+        for (let x = 0; x < worldMap.width; x++) {
+            const tile = getTile(x, y);
+            if (!tile || !tile.owner || tile.owner === 'wild') continue;
+
+            const px = x * size;
+            const py = y * size;
+
+            // Controlla se i vicini hanno proprietari diversi
+            const neighbors = [
+                {dx: 0, dy: -1}, {dx: 1, dy: 0}, {dx: 0, dy: 1}, {dx: -1, dy: 0}
+            ];
+
+            neighbors.forEach(n => {
+                const nx = x + n.dx;
+                const ny = y + n.dy;
+                const nTile = getTile(nx, ny);
+                if (nTile && nTile.owner !== tile.owner) {
+                    ctx.strokeStyle = ownershipColors[tile.owner] || "rgba(0,0,0,0.5)";
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    if (n.dx === 0 && n.dy === -1) { // Sopra
+                        ctx.moveTo(px, py); ctx.lineTo(px + size, py);
+                    } else if (n.dx === 1 && n.dy === 0) { // Destra
+                        ctx.moveTo(px + size, py); ctx.lineTo(px + size, py + size);
+                    } else if (n.dx === 0 && n.dy === 1) { // Sotto
+                        ctx.moveTo(px, py + size); ctx.lineTo(px + size, py + size);
+                    } else if (n.dx === -1 && n.dy === 0) { // Sinistra
+                        ctx.moveTo(px, py); ctx.lineTo(px, py + size);
+                    }
+                    ctx.stroke();
+                }
+            });
+        }
     }
 }
 
-/* --- DISEGNO ELEMENTI PROCEDURALI --- */
-
-function drawTreeClump(ctx, x, y, s) {
-    ctx.fillStyle = MAP_STYLES.forest;
-    // Disegna 3 alberelli stilizzati (triangoli/cerchi)
-    const trees = [
-        {ox: 0.2, oy: 0.3}, {ox: 0.7, oy: 0.4}, {ox: 0.4, oy: 0.8}
-    ];
-    trees.forEach(t => {
-        const tx = x + t.ox * s;
-        const ty = y + t.oy * s;
-        const ts = s * 0.4;
-        
-        // Ombra
-        ctx.fillStyle = "rgba(0,0,0,0.1)";
-        ctx.beginPath(); ctx.arc(tx + 2, ty + 2, ts/2, 0, Math.PI*2); ctx.fill();
-
-        // Chioma
-        ctx.fillStyle = MAP_STYLES.forestDark;
-        ctx.beginPath();
-        ctx.moveTo(tx, ty - ts);
-        ctx.lineTo(tx + ts/1.5, ty + ts/2);
-        ctx.lineTo(tx - ts/1.5, ty + ts/2);
-        ctx.fill();
-    });
-}
-
-function drawMountainPeak(ctx, x, y, s) {
-    const mx = x + s/2;
-    const my = y + s/2;
+function drawStructureLabels(ctx, size) {
+    structures.mines.forEach(s => drawLabel(ctx, s, size, "Miniera", "#555"));
+    structures.sawmills.forEach(s => drawLabel(ctx, s, size, "Segheria", "#4caf50"));
+    structures.quarries.forEach(s => drawLabel(ctx, s, size, "Cava", "#795548"));
+    structures.monasteries.forEach(s => drawLabel(ctx, s, size, "Monastero", "#9c27b0"));
     
-    ctx.beginPath();
-    ctx.moveTo(mx, y + s * 0.1);
-    ctx.lineTo(x + s * 0.9, y + s * 0.9);
-    ctx.lineTo(x + s * 0.1, y + s * 0.9);
-    ctx.closePath();
-    
-    // Lato in ombra
-    ctx.fillStyle = MAP_STYLES.mountainShadow;
-    ctx.fill();
-    
-    // Lato in luce
-    ctx.fillStyle = MAP_STYLES.mountain;
-    ctx.beginPath();
-    ctx.moveTo(mx, y + s * 0.1);
-    ctx.lineTo(mx, y + s * 0.9);
-    ctx.lineTo(x + s * 0.1, y + s * 0.9);
-    ctx.fill();
-}
-
-function drawWaves(ctx, x, y, s) {
-    ctx.strokeStyle = MAP_STYLES.waterDeep;
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(x + s*0.2, y + s*0.4);
-    ctx.lineTo(x + s*0.5, y + s*0.4);
-    ctx.moveTo(x + s*0.5, y + s*0.7);
-    ctx.lineTo(x + s*0.8, y + s*0.7);
-    ctx.stroke();
-}
-
-function drawHillCurve(ctx, x, y, s) {
-    ctx.fillStyle = MAP_STYLES.hills;
-    ctx.beginPath();
-    ctx.arc(x + s*0.5, y + s*0.8, s*0.4, Math.PI, 0);
-    ctx.fill();
-    ctx.strokeStyle = "#b0b090";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-}
-
-function drawTuft(ctx, x, y, s) {
-    ctx.strokeStyle = "#aabf80";
-    ctx.beginPath();
-    ctx.moveTo(x+s*0.5, y+s*0.6); ctx.lineTo(x+s*0.5, y+s*0.4);
-    ctx.moveTo(x+s*0.4, y+s*0.6); ctx.lineTo(x+s*0.3, y+s*0.45);
-    ctx.moveTo(x+s*0.6, y+s*0.6); ctx.lineTo(x+s*0.7, y+s*0.45);
-    ctx.stroke();
-}
-
-function drawSwampDetails(ctx, x, y, s) {
-    ctx.fillStyle = "rgba(40,50,40,0.1)";
-    ctx.beginPath();
-    ctx.arc(x+s*0.3, y+s*0.7, s*0.2, 0, Math.PI*2);
-    ctx.arc(x+s*0.7, y+s*0.4, s*0.15, 0, Math.PI*2);
-    ctx.fill();
-}
-
-/* --- STRUTTURE E INSEDIAMENTI --- */
-
-function drawSettlements(ctx, size) {
-    settlements.forEach(s => {
-        const cx = s.x * size + size/2;
-        const cy = s.y * size + size/2;
-        const r = size * 0.35;
-
-        // Casa principale
-        ctx.fillStyle = "#d4af37";
-        ctx.beginPath();
-        ctx.moveTo(cx, cy - r);
-        ctx.lineTo(cx + r, cy);
-        ctx.lineTo(cx + r, cy + r);
-        ctx.lineTo(cx - r, cy + r);
-        ctx.lineTo(cx - r, cy);
-        ctx.closePath();
-        ctx.fill();
-        ctx.strokeStyle = "#3e2723";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        // Tetto
-        ctx.fillStyle = "#8d2d18"; // Rosso tegola
-        ctx.beginPath();
-        ctx.moveTo(cx, cy - r);
-        ctx.lineTo(cx + r + 2, cy);
-        ctx.lineTo(cx - r - 2, cy);
-        ctx.fill();
-    });
-}
-
-function drawStructureMarkers(ctx, size) {
-    const drawIcon = (s, color, label) => {
-        const x = s.x * size + size/2;
-        const y = s.y * size + size/2;
-        
-        // Ombra
-        ctx.fillStyle = "rgba(0,0,0,0.4)";
-        ctx.beginPath(); ctx.arc(x+2, y+2, size*0.3, 0, Math.PI*2); ctx.fill();
-
-        // Cerchio sfondo
-        ctx.fillStyle = color;
-        ctx.beginPath(); ctx.arc(x, y, size*0.3, 0, Math.PI*2); ctx.fill();
-        
-        // Bordo
-        ctx.strokeStyle = "#fff";
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-
-        // Lettera icona
-        ctx.fillStyle = "#fff";
-        ctx.font = "bold 10px monospace";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(label, x, y+1);
-    };
-
-    structures.mines.forEach(s => drawIcon(s, "#555", "⛏️"));
-    structures.sawmills.forEach(s => drawIcon(s, "#4caf50", "🌲"));
-    structures.quarries.forEach(s => drawIcon(s, "#795548", "🧱"));
-    structures.monasteries.forEach(s => drawIcon(s, "#9c27b0", "⛪"));
-    
-    // Disegna anche gli edifici costruiti dal giocatore (buildings completati o in corso)
     buildings.forEach(b => {
-        if (b.stage === 'building') {
-             const x = b.x * size + size/2;
-             const y = b.y * size + size/2;
-             ctx.fillStyle = "rgba(255, 165, 0, 0.8)"; // Arancione cantiere
-             ctx.fillRect(x - size/4, y - size/4, size/2, size/2);
-             ctx.strokeStyle = "#fff";
-             ctx.strokeRect(x - size/4, y - size/4, size/2, size/2);
-        } else {
-             // Edifici completati (se vuoi icone specifiche aggiungi switch case qui)
-             const x = b.x * size + size/2;
-             const y = b.y * size + size/2;
-             ctx.fillStyle = "#2196f3"; 
-             ctx.beginPath(); ctx.arc(x, y, size*0.25, 0, Math.PI*2); ctx.fill();
-             ctx.strokeStyle = "#fff"; ctx.stroke();
+        if (b.stage === 'complete') {
+            const label = buildingData[b.type]?.name || b.type;
+            drawLabel(ctx, b, size, label, "#2196f3");
         }
     });
 }
 
-function drawVignette(ctx, w, h) {
-    const grad = ctx.createRadialGradient(w/2, h/2, w*0.3, w/2, h/2, w*0.8);
-    grad.addColorStop(0, "rgba(0,0,0,0)");
-    grad.addColorStop(1, "rgba(20,10,5,0.4)");
-    ctx.fillStyle = grad;
-    ctx.fillRect(0,0,w,h);
+function drawLabel(ctx, s, size, label, color) {
+    const x = s.x * size + size / 2;
+    const y = s.y * size + size / 2 - 15; // Sopra l'icona
+
+    ctx.fillStyle = "rgba(0,0,0,0.7)";
+    ctx.fillRect(x - 20, y - 10, 40, 15);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x - 20, y - 10, 40, 15);
+
+    ctx.fillStyle = "#fff";
+    ctx.font = "8px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(label, x, y + 2);
 }
 
-/* --- MAPPA REGIONALE (STRATEGICA) --- */
+
 
 function drawRegionMap() {
     const canvas = document.getElementById("region-map");
@@ -3599,28 +4402,32 @@ const buildingData = {
         desc: "Acqua pulita per prevenire malattie nei quartieri poveri.",
         effect: "Salute +, Contadini +",
         cost: { gold: 30, stone: 20 },
-        time: 2
+        time: 2,
+        upkeep: 1
     },
     wheat_field: {
         name: "Campi di Grano Estesi",
         desc: "Bonifica terre per nuove coltivazioni intensive.",
         effect: "Grano (produzione auto), Cibo ++",
         cost: { gold: 50, wood: 10 },
-        time: 3
+        time: 3,
+        upkeep: 2
     },
     dairy_farm: {
         name: "Fattoria e Caseificio",
         desc: "Allevamento bovino per carne e formaggi.",
         effect: "Bestiame (produzione auto), Cibo +",
         cost: { gold: 80, wood: 40 },
-        time: 3
+        time: 3,
+        upkeep: 3
     },
     granary: {
         name: "Granaio Fortificato",
         desc: "Protegge i raccolti da parassiti e ladri.",
         effect: "Sicurezza +, Riserve Cibo protette",
         cost: { gold: 100, wood: 80, stone: 40 },
-        time: 4
+        time: 4,
+        upkeep: 5
     },
 
     // --- ECONOMIA & INDUSTRIA ---
@@ -3629,42 +4436,51 @@ const buildingData = {
         desc: "Il cuore del commercio locale.",
         effect: "Felicità ++, Oro +, Mercanti ++",
         cost: { gold: 100, wood: 50 },
-        time: 3
+        time: 3,
+        upkeep: 8
     },
     harbor: {
         name: "Porto Commerciale",
         desc: "Apre rotte marittime per l'export.",
         effect: "Oro ++, Mercanti +++, Nobiltà +",
         cost: { gold: 300, wood: 60, stone: 80 },
-        time: 6
+        time: 6,
+        upkeep: 25
     },
     sawmill: {
         name: "Segheria Reale",
         desc: "Impianto idraulico per il taglio del legname.",
         effect: "Legno (produzione auto)",
         cost: { gold: 90, wood: 60, stone: 30 },
-        time: 4
+        time: 4,
+        upkeep: 5,
+        isStructure: true
     },
     stone_quarry: {
         name: "Cava di Pietra",
         desc: "Estrazione intensiva di materiali da costruzione.",
         effect: "Pietra (produzione auto)",
         cost: { gold: 85, wood: 40, stone: 40 },
-        time: 5
+        time: 5,
+        upkeep: 8,
+        isStructure: true
     },
     iron_mine: {
         name: "Miniera di Ferro",
         desc: "Tunnel profondi per l'estrazione di metalli.",
         effect: "Ferro (produzione auto)",
         cost: { gold: 140, wood: 40, stone: 80, iron: 20 },
-        time: 6
+        time: 6,
+        upkeep: 15,
+        isStructure: true
     },
     mint: {
         name: "Zecca Ducale",
         desc: "Conia moneta sovrana.",
         effect: "Oro (rendita fissa), Mercanti +",
         cost: { gold: 100, stone: 60, iron: 15 },
-        time: 5
+        time: 5,
+        upkeep: 20
     },
 
     // --- MILITARE & SICUREZZA ---
@@ -3673,35 +4489,40 @@ const buildingData = {
         desc: "Avvista nemici e banditi da lontano.",
         effect: "Sicurezza ++, Aggressività Vicini --",
         cost: { gold: 120, stone: 70, wood: 20 },
-        time: 4
+        time: 4,
+        upkeep: 10
     },
     barracks: {
         name: "Caserma della Guardia",
         desc: "Alloggi permanenti per la milizia cittadina.",
         effect: "Sicurezza +++, Milizia ++",
         cost: { gold: 120, wood: 50, stone: 70, iron: 15 },
-        time: 5
+        time: 5,
+        upkeep: 30
     },
     mercenary_camp: {
         name: "Accampamento Mercenario",
         desc: "Soldati di ventura a pagamento.",
         effect: "Milizia ++, Clero --, Oro - (mantenimento)",
         cost: { gold: 150, wood: 40, stone: 20 },
-        time: 3
+        time: 3,
+        upkeep: 50
     },
     forge: {
         name: "Forgia Reale",
         desc: "Armi e attrezzi di qualità superiore.",
         effect: "Sicurezza +, Artigiani ++, Milizia +",
         cost: { gold: 200, wood: 80, stone: 120, iron: 40 },
-        time: 5
+        time: 5,
+        upkeep: 10
     },
     stone_walls: {
         name: "Mura di Cinta",
         desc: "Una possente difesa contro gli eserciti invasori.",
         effect: "Sicurezza ++++, Nobiltà +, Prestigio",
         cost: { gold: 500, stone: 400, wood: 50 },
-        time: 8
+        time: 8,
+        upkeep: 15
     },
 
     // --- FEDE & CULTURA ---
@@ -3710,28 +4531,32 @@ const buildingData = {
         desc: "Un piccolo luogo di preghiera per il popolo.",
         effect: "Clero +, Felicità +",
         cost: { gold: 60, stone: 20, wood: 30 },
-        time: 3
+        time: 3,
+        upkeep: 5
     },
     church: {
         name: "Chiesa Parrocchiale",
         desc: "Il centro della vita spirituale della comunità.",
         effect: "Clero ++, Felicità ++, Salute +",
         cost: { gold: 250, stone: 150, wood: 60, luxuries: 10 },
-        time: 6
+        time: 6,
+        upkeep: 5
     },
     grand_cathedral: {
         name: "Grande Cattedrale",
         desc: "Un'opera monumentale che attira pellegrini.",
         effect: "Clero ++++, Prestigio Reale, Oro (offerte)",
         cost: { gold: 1200, stone: 800, wood: 200, iron: 50, luxuries: 50 },
-        time: 12
+        time: 12,
+        upkeep: 60
     },
     monk_clinic: {
         name: "Clinica dei Monaci",
         desc: "Erbe e cure per i malati.",
         effect: "Salute +++, Clero ++",
         cost: { gold: 80, wood: 30, herbs: 10 },
-        time: 3
+        time: 3,
+        upkeep: 5
     },
 
     // --- ISTRUZIONE & PRESTIGIO ---
@@ -3740,23 +4565,106 @@ const buildingData = {
         desc: "Insegna a leggere e far di conto ai figli dei borghesi.",
         effect: "Artigiani ++, Mistici +, Efficienza tasse",
         cost: { gold: 180, wood: 100, stone: 20 },
-        time: 5
+        time: 5,
+        upkeep: 10
     },
     library: {
         name: "Biblioteca del Conte",
         desc: "Raccoglie sapere antico e mappe rare.",
         effect: "Mistici +++, Consigli migliori",
         cost: { gold: 400, stone: 100, wood: 100, arcane: 10 },
-        time: 7
+        time: 7,
+        upkeep: 20
     },
     theater: {
         name: "Teatro all'Aperto",
         desc: "Svago e cultura per tutte le classi sociali.",
         effect: "Felicità +++, Nobiltà +, Popolo +",
         cost: { gold: 250, wood: 150, stone: 50 },
-        time: 5
+        time: 5,
+        upkeep: 15
+    },
+
+    // --- ABITAZIONI & ESPANSIONE ---
+    cottage: {
+        name: "Casupola",
+        desc: "Alloggio base per contadini e lavoratori.",
+        effect: "Capacità +50, Contadini +",
+        housing: 50, // Nuova proprietà: posti letto
+        cost: { gold: 20, wood: 25 },
+        time: 2,
+        upkeep: 2
+    },
+    tenement: {
+        name: "Palazzina Urbana",
+        desc: "Alloggi densi per la borghesia e artigiani.",
+        effect: "Capacità +150, Rischio malattie leggero",
+        housing: 150,
+        cost: { gold: 80, wood: 60, stone: 30 },
+        time: 4,
+        upkeep: 5
+    },
+    noble_estate: {
+        name: "Tenuta Nobile",
+        desc: "Lussuose dimore per attirare l'aristocrazia.",
+        effect: "Capacità +20 (Nobili), Nobiltà ++, Prestigio",
+        housing: 20,
+        cost: { gold: 300, stone: 100, luxuries: 20 },
+        time: 6,
+        upkeep: 0
     }
 };
+
+const STRUCTURE_UPKEEP = { structures: 0, military: 0 };
+
+function calculateSeasonalBudget() {
+    const season = getSeason();
+
+    // Usare uno stato simulato per calcolare entrate/spese senza mutare lo stato reale
+    const simState = captureGameState();
+    ensureWorldSystems(simState);
+
+    // Entrate: calcoliamo le tasse usando la funzione esistente su simState
+    let taxes = 0;
+    try {
+        taxes = collectTaxes(simState, { silent: true }) || 0;
+    } catch (e) {
+        taxes = 0;
+    }
+
+    // Produzione in oro (valore approssimativo): per ora 0 (potremmo estenderlo in futuro)
+    const production = 0;
+
+    const income = {
+        taxes: Number.isFinite(taxes) ? Math.floor(taxes) : 0,
+        production: Number.isFinite(production) ? Math.floor(production) : 0
+    };
+    income.total = income.taxes + income.production;
+
+    // Spese: militare e manutenzione strutture (sul simulato)
+    const expenses = {
+        structures: 0,
+        military: Math.floor((simState.populationGroups && simState.populationGroups.militia ? simState.populationGroups.militia : 0) * 0.2 * season.warCost)
+    };
+
+    (simState.buildings || []).forEach(b => {
+        if (b.stage === 'complete') {
+            const data = buildingData[b.type];
+            if (data && data.upkeep) {
+                expenses.structures += Number(data.upkeep) || 0;
+            }
+        }
+    });
+
+    expenses.total = expenses.structures + expenses.military;
+
+    const net = (income.total || 0) - (expenses.total || 0);
+    return {
+        income,
+        expenses,
+        net: Number.isFinite(net) ? net : 0
+    };
+}
 
 function buildingName(type){
     return buildingData[type].name;
@@ -3855,6 +4763,27 @@ function updateResourceUI() {
 function formatDeltaValue(value) {
     if (!value) return "—";
     return value > 0 ? `+${value}` : `${value}`;
+}
+
+function calculateHousingCapacity() {
+    // 1. Capacità base data dagli insediamenti naturali sulla mappa (villaggi esistenti)
+    // Ogni insediamento fornisce rifugio base per 100 persone
+    let capacity = (settlements.length || 0) * 100;
+
+    // 2. Capacità aggiunta dagli edifici costruiti dal giocatore
+    buildings.forEach(b => {
+        if (b.stage === 'complete') {
+            const data = buildingData[b.type];
+            if (data && data.housing) {
+                capacity += data.housing;
+            }
+            // Esempi extra: Le caserme ospitano soldati
+            if (b.type === 'barracks') capacity += 50; 
+            if (b.type === 'grand_cathedral') capacity += 20; // Rifugio per poveri
+        }
+    });
+    
+    return capacity;
 }
 
 function processVillageEconomy(targetState = null, options = {}) {
@@ -3956,6 +4885,44 @@ function calculateVillageConsumption(stateRef = null) {
 function applyEconomicEffects(production, consumption, deficits, stateRef = null) {
     const countyRef = stateRef ? stateRef.county : county;
     const factionsRef = stateRef ? stateRef.factions : factions;
+
+    // --- NUOVA LOGICA ABITATIVA ---
+    const totalPop = countyRef.pop;
+    const capacity = calculateHousingCapacity();
+    const homeless = Math.max(0, totalPop - capacity);
+    const vacancy = Math.max(0, capacity - totalPop);
+
+    // Effetti dei Senzatetto (Deficit Abitativo)
+    if (homeless > 0) {
+        // Più gente senza casa = Più infelicità e malattie
+        const severity = Math.ceil(homeless / 50); // Ogni 50 senzatetto, 1 punto malus
+        
+        countyRef.happy = clamp(countyRef.happy - severity);
+        countyRef.health = clamp(countyRef.health - Math.ceil(severity / 2));
+        
+        // Le fazioni popolari si arrabbiano
+        factionsRef.peasants -= 2;
+        factionsRef.outcasts += 2; // Aumenta il crimine/emarginati
+        
+        // Messaggio di allarme (solo se non è una simulazione silenziosa)
+        if (!stateRef && Math.random() < 0.2) {
+            addMsg("ai", `🏚️ <b>Emergenza Abitativa:</b> ${homeless} sudditi dormono all'aperto! La plebe mormora.`);
+        }
+    } 
+    // Effetti dello Spazio Libero (Incentivo alla crescita)
+    else if (vacancy > 50) {
+        // Se ci sono case libere e cibo, la gente arriva
+        if (countyRef.food > 30 && countyRef.happy > 50) {
+            // Immigrazione bonus
+            const immigration = Math.floor(vacancy * 0.05); // Riempi il 5% dei posti liberi
+            adjustPopulation("peasants", immigration, stateRef);
+            if (!stateRef && Math.random() < 0.1) {
+                addMsg("system", `🏘️ Le case vuote attirano ${immigration} nuovi coloni.`);
+            }
+        }
+    }
+    // --- FINE NUOVA LOGICA ---
+
     const prodGrain = production.grain || 0;
     const consGrain = consumption.grain || 0;
     const prodLivestock = production.livestock || 0;
@@ -4327,6 +5294,22 @@ function applyBuildingEffects(b) {
             factions.nobility += 5;
             factions.peasants += 5;
             break;
+
+        // --- ABITAZIONI ---
+        case "cottage":
+            adjustPopulation("peasants", 50);
+            factions.peasants += 5;
+            break;
+        case "tenement":
+            adjustPopulation("burghers", 150);
+            factions.burghers += 10;
+            county.health = clamp(county.health - 5);
+            break;
+        case "noble_estate":
+            adjustPopulation("nobility", 20);
+            factions.nobility += 10;
+            county.happy = clamp(county.happy + 10);
+            break;
             
         default:
             addMsg("system", `Costruzione di ${b.type} completata.`);
@@ -4518,7 +5501,19 @@ function updateUI() {
     const summary = updateIndustrySummary();
     document.getElementById("visual-desc").innerText = `"${county.desc}"`;
 
-    document.getElementById("val-pop").innerText = county.pop;
+    // Dentro updateUI()...
+    
+    const capacity = calculateHousingCapacity();
+    const popColor = county.pop > capacity ? "#ff7c7c" : "#fff"; // Rosso se sovraffollato
+    
+    // Aggiorna il testo della popolazione indicando anche la capacità
+    document.getElementById("val-pop").innerHTML = `
+        <span style="color:${popColor}">${county.pop}</span> 
+        <span style="font-size:0.6em; color:#888;">/ ${capacity} cap.</span>
+    `;
+    
+    // ... resto della funzione
+
     document.getElementById("val-gold").innerText = county.gold;
 
     updateBar("food", county.food);
@@ -4657,36 +5652,76 @@ function progressSeason(options = {}) {
     const { silent = false } = options;
     ensureWorldSystems();
     county.turn++;
+    
     const turnTag = document.getElementById("chat-turn");
-    if (turnTag) turnTag.innerText = `Turno ${county.turn}`;
+    if (turnTag) turnTag.innerText = `Anno ${worldTime.year} - ${getSeason().label}`;
 
+    // Snapshot Iniziale
     const startSnapshot = captureResourceSnapshot();
     const startGold = county.gold;
     const startHappy = county.happy;
+    const budget = calculateSeasonalBudget();
 
-    advanceSeason(null, { silent });
-    applyProduction(null, { skipUI:true, silent });
-    const economyReport = processVillageEconomy(null, { skipUI:true, silent });
-    collectTaxes(null, { silent });
-    applySeasonalUpkeep(null, { silent });
+    // --- ELABORAZIONE TURNO ---
+    advanceSeason(null, { silent: true }); // Stagione avanza silenziosamente
+    applyProduction(null, { skipUI: true, silent: true }); // Produzione silenziosa
+    
+    // Calcolo Economia Villaggio
+    const economyReport = processVillageEconomy(null, { skipUI: true, silent: true });
+    
+    // Tasse e Manutenzione
+    const taxesCollected = collectTaxes(null, { silent: true });
+    applySeasonalUpkeep(null, { silent: true });
+    county.gold = Math.max(0, county.gold - budget.expenses.structures);
+    if (county.gold === 0 && budget.expenses.structures > 0) {
+        addMsg("system", "⚠️ Mancanza di fondi per la manutenzione delle strutture! Alcuni edifici potrebbero deteriorarsi.");
+    }
+    
+    // Eventi vari
     processBuildings();
-    triggerStructureEvents({ skipUI:true });
+    triggerStructureEvents({ skipUI: true });
     structureFactionEffect();
-    processNeighborEconomies({ silent });
+    processNeighborEconomies({ silent: true });
 
+    // Snapshot Finale & Delta
     const endSnapshot = captureResourceSnapshot();
     lastResourceDelta = computeResourceDelta(startSnapshot, endSnapshot);
     lastResourceSnapshot = cloneResourceBag(endSnapshot);
     const goldDelta = county.gold - startGold;
     const happyDelta = county.happy - startHappy;
-    const maxAggression = neighboringCounties.reduce((max, c) => Math.max(max, c.aggression || 0), 0);
-    triggerFactionInterjections({ economy: economyReport, goldDelta, happyDelta, maxAggression, resourceDelta: lastResourceDelta });
 
     updateUI();
     autoSaveGame();
 
     if (!silent) {
-        addMsg("system", `📅 Resoconto stagione: ${formatResourceDelta(lastResourceDelta)} | Oro:${formatDeltaValue(goldDelta)} | Felicità:${county.happy}% (Δ${formatDeltaValue(happyDelta)})`);
+        // 1. RAPPOSTO DEL CIAMBELLANO (Messaggio unico di sistema pulito)
+        let reportHTML = `<strong>📅 Rapporto Stagionale:</strong><br>`;
+        
+        // Risorse principali cambiate
+        const significantChanges = Object.entries(lastResourceDelta)
+            .filter(([k,v]) => Math.abs(v) > 0)
+            .map(([k,v]) => `${resourceLabels[k] || k}: ${v>0?'+':''}${v}`)
+            .join(", ");
+            
+        reportHTML += `<span style="opacity:0.8">${significantChanges || "Nessuna variazione di risorse."}</span><br>`;
+        reportHTML += `💰 Tesoreria: <strong>${county.gold}</strong> (${goldDelta > 0 ? '+'+goldDelta : goldDelta})`;
+        
+        // Aggiungi deficit critici se ci sono
+        const deficitKeys = Object.keys(economyReport.deficits || {});
+        if (deficitKeys.length > 0) {
+            reportHTML += `<br><span style="color:#ff7c7c">⚠️ CARENZE CRITICHE: ${deficitKeys.map(k=>resourceLabels[k]).join(", ")}</span>`;
+        }
+
+        addMsg("system", reportHTML);
+
+        // 2. LA CORTE SI RIUNISCE (Interazione Fazioni)
+        // Invece di messaggi casuali, l'IA o il sistema scelgono UN evento principale
+        triggerCourtEvent({ 
+            economy: economyReport, 
+            goldDelta, 
+            happyDelta, 
+            deficits: economyReport.deficits 
+        });
     }
 }
 
@@ -4720,16 +5755,56 @@ function timestamp() {
     });
 }
 
-function addMsg(type, text){
+function addMsg(type, text) {
     const log = document.getElementById("chat-log");
     const div = document.createElement("div");
+
+    // Gestione speciale per i messaggi delle fazioni (Riconosciuti dal nome in grassetto all'inizio)
+    // L'IA tende a rispondere "Lord Emeric: ..." -> Lo intercettiamo
+    if (type === 'ai' && text.includes(':')) {
+        const parts = text.split(':');
+        const possibleName = parts[0].trim().replace(/\*/g, ''); // Rimuovi bold markdown
+        
+        // Cerca se il nome corrisponde a una fazione
+        let foundFaction = null;
+        const factionNamesMap = {
+            "Lord Emeric": "nobility", "Vescovo Aldebrando": "clergy", 
+            "Capitano Ronan": "militia", "Odric": "peasants", 
+            "Maestro Bernard": "burghers", "Ser Lothar": "merchants",
+            "Madre Elowen": "mystics", "Rasko": "outcasts"
+        };
+        
+        // Match parziale del nome
+        for(let name in factionNamesMap) {
+            if (possibleName.includes(name) || possibleName.includes(name.split(" ")[1])) {
+                foundFaction = factionNamesMap[name];
+                break;
+            }
+        }
+
+        if (foundFaction) {
+            // Renderizza come Card Fazione
+            div.className = `msg-faction ${foundFaction}`;
+            div.innerHTML = `
+                <div class="faction-avatar">${FACTION_ICONS[foundFaction] || '👤'}</div>
+                <span class="faction-title">${possibleName}</span>
+                <div class="msg-text">${parts.slice(1).join(':').trim()}</div>
+            `;
+            log.appendChild(div);
+            log.scrollTop = log.scrollHeight;
+            return;
+        }
+    }
+
+    // Fallback standard
     if (type === "system") {
         div.className = "msg-system";
-        div.innerText = text;
+        div.innerHTML = text; // Permetti HTML per il report
     } else {
         div.className = `msg msg-${type}`;
         div.innerHTML = `<div class="msg-text">${text}</div><div class="msg-meta">${timestamp()}</div>`;
     }
+    
     log.appendChild(div);
     log.scrollTop = log.scrollHeight;
 }
@@ -4843,6 +5918,64 @@ function extractActionsFromText(text) {
 
 function askAdvisor() {
     callGroq("Dammi un consiglio politico sulla situazione attuale.", "advice");
+}
+
+function openBudgetModal() {
+    const modal = document.getElementById("modal-budget");
+    if (modal) {
+        renderBudget();
+        modal.classList.add("active");
+    }
+}
+
+function closeBudgetModal() {
+    const modal = document.getElementById("modal-budget");
+    if (modal) modal.classList.remove("active");
+}
+
+function renderBudget() {
+    const budget = calculateSeasonalBudget();
+    const container = document.getElementById("budget-content");
+    if (!container) return;
+
+    const s = (v) => (Number.isFinite(v) ? Math.round(v) : 0);
+    const taxes = s(budget.income && budget.income.taxes);
+    const production = s(budget.income && budget.income.production);
+    const incomeTotal = s(budget.income && budget.income.total);
+    const structuresCost = s(budget.expenses && budget.expenses.structures);
+    const militaryCost = s(budget.expenses && budget.expenses.military);
+    const expensesTotal = s(budget.expenses && budget.expenses.total);
+    const net = s(budget.net);
+
+    container.innerHTML = `
+        <div class="budget-section">
+            <h3>Entrate</h3>
+            <div class="budget-row money-plus">
+                <span>Tasse: +${taxes} oro</span>
+            </div>
+            <div class="budget-row money-plus">
+                <span>Produzione: +${production} oro</span>
+            </div>
+            <div class="budget-total money-plus">
+                Totale Entrate: ${incomeTotal} oro
+            </div>
+        </div>
+        <div class="budget-section">
+            <h3>Uscite</h3>
+            <div class="budget-row money-minus">
+                <span>Strutture: -${structuresCost} oro</span>
+            </div>
+            <div class="budget-row money-minus">
+                <span>Militare: -${militaryCost} oro</span>
+            </div>
+            <div class="budget-total money-minus">
+                Totale Uscite: ${expensesTotal} oro
+            </div>
+        </div>
+        <div class="budget-net ${net >= 0 ? 'money-plus' : 'money-minus'}">
+            <strong>Netto: ${net >= 0 ? '+'+net : net} oro</strong>
+        </div>
+    `;
 }
 
 </script>
@@ -4978,43 +6111,26 @@ Non usare JSON qui, solo dialogo.
    ============================================================ */
 
 function buildPrompt(userText, mode) {
-
     const systemText = `
-Tu sei il narratore intelligente di un simulatore medievale 
-basato su mappe, territorio, diplomazia, fazioni, economia e fede.
+SEI IL GAMEMASTER DI UNA CORTE MEDIEVALE INGLESE.
 
-*** REGOLE FONDAMENTALI ***
-- Rispondi sempre come narratore immersivo.
-- Valuta SEMPRE le conseguenze politiche, economiche, sociali e religiose.
-- Le fazioni sono vere persone con nomi e personalità.
-- Se necessario puoi generare EVENTI.
-- Puoi proporre azioni proattive.
-- La corte è viva, le fazioni agiscono anche senza il Conte.
-- Ogni scelta cambia la storia.
+RUOLO: Non sei un assistente AI. Sei il Narratore e interpreti i personaggi (Nobili, Preti, Contadini) che parlano col Conte (Utente).
 
-Tono del consigliere: ${personalitySettings.advisorTone || "saggio"}.
-Umore della corte: ${personalitySettings.courtMood || "prudente"}.
-Appunti recenti: ${personalitySettings.notes || "Nessuno"}.
+REGOLE DI SCENA:
+1. Se l'utente dice "avanza turno", descrivi chi entra nella sala e qual è il problema urgente basato sulle statistiche.
+2. Se l'utente risponde a un personaggio, rispondi SOLO come quel personaggio, reagendo emotivamente.
+3. Sii conciso. Nessun "Certamente!". Vai dritto al dialogo o all'azione.
 
-*** COSTRUZIONI ***
-Se il Conte ordina una costruzione, restituisci SEMPRE un JSON:
+FORMATO RISPOSTA:
+- Se parla un personaggio, usa il formato: "Nome Personaggio: [Dialogo]"
+- Se narri un evento: "Narrazione: [Descrizione]"
 
-{
-  "start_building":{
-    "type":"forge|harbor|watchtower|mercenary_camp|market|monk_clinic",
-    "x":0,
-    "y":0,
-    "turns":X,
-    "cost":{ "gold":0,"wood":0,"stone":0,"iron":0 }
-  },
-  "story":"testo narrativo"
-}
+STATO ATTUALE:
+Umore Corte: ${personalitySettings.courtMood}.
+Consigliere: ${personalitySettings.advisorTone}.
 
-*** RISPOSTA ***
-Oltre al JSON, includi dialogo narrativo e dettagliato.
-
-Fine regole.
-    `.trim();
+OBIETTIVO: Metti il Conte di fronte a dilemmi morali. Se favorisce i ricchi, i poveri soffrono (e viceversa).
+`.trim();
 
     return {
         system: systemText,
@@ -5067,6 +6183,46 @@ function handleAIResponse(text, mode) {
         displayText = displayText.replace(jsonMatch[0], "").trim();
     }
 
+    // MODALITÀ DIBATTITO (Nuova)
+    if (mode === "debate") {
+        // Divide il testo in righe
+        const lines = text.split('\n').filter(line => line.trim() !== '');
+        
+        lines.forEach((line, index) => {
+            // Ritardo progressivo per simulare la discussione in tempo reale
+            setTimeout(() => {
+                // Cerca pattern "NomeFazione: Testo"
+                const match = line.match(/^([^:]+):(.+)$/);
+                if (match) {
+                    const speakerLabel = match[1].trim();
+                    const message = match[2].trim();
+                    
+                    // Mappa l'etichetta italiana alla chiave interna (es. "Nobiltà" -> "nobility")
+                    let factionKey = null;
+                    for (let key of factionOrder) {
+                        if (factionLabel(key).toLowerCase() === speakerLabel.toLowerCase()) {
+                            factionKey = key;
+                            break;
+                        }
+                    }
+                    
+                    // Se troviamo la fazione, usiamo la grafica figa, altrimenti testo normale
+                    if (factionKey) {
+                        // Ricostruiamo il formato che addMsg si aspetta per le card
+                        // addMsg gestisce "Nome: Messaggio" se type è 'ai'
+                        const charName = getChatName(factionKey).split(" ")[0]; // Es. "Lord Emeric"
+                        addMsg("ai", `${charName} (${speakerLabel}): ${message}`);
+                    } else {
+                        addMsg("ai", line);
+                    }
+                } else {
+                    addMsg("ai", line);
+                }
+            }, index * 1500); // 1.5 secondi di pausa tra una battuta e l'altra
+        });
+        return;
+    }
+
     if (mode === "advice") {
         const adviceText = displayText.trim();
         if (adviceText) addAdviceCard(adviceText);
@@ -5093,6 +6249,309 @@ function handleAIResponse(text, mode) {
 /* ============================================================
    ============ GESTIONE SCHERMATE E AVVIO GIOCO ===============
    ============================================================ */
+
+/* ============================================================
+   =================== GRAFICA MAPPA "MEDIEVALE" ==============
+   ============================================================ */
+
+// Nuova Palette: Toni desaturati e naturali
+const MEDIAEVAL_PALETTE = {
+    paper: "#f4ecd8",         // Sfondo pergamena
+    grid: "rgba(62, 39, 35, 0.1)", // Griglia stile matita leggera
+    
+    // Terreni
+    plains: "#d8e2b6",        // Verde pallido / giallastro
+    forest: "#8fac76",        // Verde salvia scuro
+    hills: "#e6d6ad",         // Sabbia scura
+    mountain: "#cfcfc4",      // Grigio pietra chiaro
+    mountainPeak: "#8c8c8c",  // Grigio scuro per i picchi
+    swamp: "#aeb58d",         // Verde marcio/grigiastro
+    water: "#a4c4d6",         // Azzurro carta da zucchero
+    waterDeep: "#89abbd",     // Dettagli acqua
+
+    // Bordi proprietà
+    borders: {
+        count: "#d4af37",     // Oro
+        nobility: "#8b0000",  // Rosso scuro inchiostro
+        clergy: "#483d8b",    // Blu scuro ardesia
+        commons: "#2f4f4f"    // Grigio ardesia scuro
+    }
+};
+
+// Funzione per disegnare un "rumore" carta sopra la mappa
+function drawPaperTexture(ctx, width, height) {
+    const numGrains = (width * height) / 200; 
+    ctx.fillStyle = "rgba(62, 39, 35, 0.03)";
+    for (let i = 0; i < numGrains; i++) {
+        const x = Math.random() * width;
+        const y = Math.random() * height;
+        const r = Math.random() * 2;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+// Disegna i dettagli specifici per ogni tipo di terreno
+function drawTileVisuals(ctx, x, y, size, tile) {
+    // 1. Sfondo base del tile
+    ctx.fillStyle = MEDIAEVAL_PALETTE[tile.terrain] || "#fff";
+    ctx.fillRect(x, y, size, size);
+
+    // 2. Dettagli interni (Disegno a mano libera simulato)
+    const cx = x + size / 2;
+    const cy = y + size / 2;
+
+    switch (tile.terrain) {
+        case "forest":
+            // Disegna 3 alberelli stilizzati (triangoli/cerchi)
+            ctx.fillStyle = "#5e754a"; // Verde più scuro per le chiome
+            drawTree(ctx, cx - 4, cy + 2, 3);
+            drawTree(ctx, cx + 4, cy + 4, 4);
+            drawTree(ctx, cx, cy - 4, 4);
+            break;
+
+        case "mountain":
+            // Disegna un picco montuoso
+            ctx.fillStyle = MEDIAEVAL_PALETTE.mountainPeak;
+            ctx.beginPath();
+            ctx.moveTo(x + 2, y + size - 2);
+            ctx.lineTo(cx, y + 2);
+            ctx.lineTo(x + size - 2, y + size - 2);
+            ctx.fill();
+            // Neve in cima
+            ctx.fillStyle = "#fff";
+            ctx.beginPath();
+            ctx.moveTo(cx - 3, y + 10); // Punto sulla sinistra
+            ctx.lineTo(cx, y + 2);      // Cima
+            ctx.lineTo(cx + 3, y + 10); // Punto sulla destra
+            ctx.fill();
+            break;
+
+        case "hills":
+            // Disegna due curve morbide
+            ctx.fillStyle = "#c2b280";
+            ctx.beginPath();
+            ctx.arc(cx - 3, cy + 4, 5, Math.PI, 0);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(cx + 3, cy + 2, 4, Math.PI, 0);
+            ctx.fill();
+            break;
+
+        case "swamp":
+            // Lineette orizzontali e colori scuri
+            ctx.strokeStyle = "#6b705c";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x + 4, y + size - 6); ctx.lineTo(x + 10, y + size - 6);
+            ctx.moveTo(x + 12, y + 6); ctx.lineTo(x + 18, y + 6);
+            ctx.moveTo(cx - 3, cy); ctx.lineTo(cx + 3, cy);
+            ctx.stroke();
+            break;
+
+        case "lake":
+        case "water":
+            // Onde stilizzate
+            ctx.strokeStyle = MEDIAEVAL_PALETTE.waterDeep;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(cx - 4, cy, 3, 0, Math.PI, false);
+            ctx.arc(cx + 2, cy, 3, 0, Math.PI, false);
+            ctx.stroke();
+            break;
+            
+        case "plains":
+            // Un piccolo ciuffo d'erba occasionale (non su tutti per pulizia)
+            if ((x + y) % 3 === 0) {
+                ctx.strokeStyle = "#889c6b";
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy); ctx.lineTo(cx - 2, cy - 4);
+                ctx.moveTo(cx, cy); ctx.lineTo(cx + 2, cy - 4);
+                ctx.stroke();
+            }
+            break;
+    }
+}
+
+function drawTree(ctx, x, y, r) {
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+// Funzione Principale di Disegno Mappa
+function drawCountyMap() {
+    const canvas = document.getElementById("county-map");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    
+    // Assicura che worldMap sia caricato
+    if (!worldMap || !worldMap.tiles || worldMap.tiles.length === 0) return;
+    
+    const tileSize = canvas.width / worldMap.width;
+
+    // 1. Sfondo carta
+    ctx.fillStyle = MEDIAEVAL_PALETTE.paper;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // 2. Disegna Terreno
+    for (let y = 0; y < worldMap.height; y++) {
+        for (let x = 0; x < worldMap.width; x++) {
+            const tile = getTile(x, y);
+            if (!tile) continue;
+            drawTileVisuals(ctx, x * tileSize, y * tileSize, tileSize, tile);
+        }
+    }
+
+    // 3. Texture Carta (Sopra il terreno, sotto l'UI)
+    drawPaperTexture(ctx, canvas.width, canvas.height);
+
+    // 4. Griglia leggera
+    ctx.strokeStyle = MEDIAEVAL_PALETTE.grid;
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    for (let i = 0; i <= worldMap.width; i++) {
+        ctx.moveTo(i * tileSize, 0); ctx.lineTo(i * tileSize, canvas.height);
+        ctx.moveTo(0, i * tileSize); ctx.lineTo(canvas.width, i * tileSize);
+    }
+    ctx.stroke();
+
+    // 5. Bordi Proprietà (Stile inchiostro spesso)
+    drawOwnershipBorders(ctx, tileSize);
+
+    // 6. Strutture ed Edifici
+    drawSettlements(ctx, tileSize);
+    drawStructureMarkers(ctx, tileSize);
+    
+    // 7. Vignettatura finale
+    drawVignette(ctx, canvas.width, canvas.height);
+}
+
+function drawOwnershipBorders(ctx, size) {
+    // Linee più spesse e tratteggiate per sembrare confini politici
+    ctx.setLineDash([4, 2]); 
+    
+    for (let y = 0; y < worldMap.height; y++) {
+        for (let x = 0; x < worldMap.width; x++) {
+            const tile = getTile(x, y);
+            if (!tile || !tile.owner || tile.owner === 'wild') continue;
+
+            const px = x * size;
+            const py = y * size;
+            const color = MEDIAEVAL_PALETTE.borders[tile.owner] || "rgba(0,0,0,0.5)";
+
+            const neighbors = [
+                {dx: 0, dy: -1}, {dx: 1, dy: 0}, {dx: 0, dy: 1}, {dx: -1, dy: 0}
+            ];
+
+            neighbors.forEach(n => {
+                const nx = x + n.dx;
+                const ny = y + n.dy;
+                const nTile = getTile(nx, ny);
+                
+                // Disegna bordo se il vicino è diverso
+                if (!nTile || nTile.owner !== tile.owner) {
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 2.5;
+                    ctx.beginPath();
+                    if (n.dx === 0 && n.dy === -1) { // Sopra
+                        ctx.moveTo(px, py); ctx.lineTo(px + size, py);
+                    } else if (n.dx === 1 && n.dy === 0) { // Destra
+                        ctx.moveTo(px + size, py); ctx.lineTo(px + size, py + size);
+                    } else if (n.dx === 0 && n.dy === 1) { // Sotto
+                        ctx.moveTo(px, py + size); ctx.lineTo(px + size, py + size);
+                    } else if (n.dx === -1 && n.dy === 0) { // Sinistra
+                        ctx.moveTo(px, py); ctx.lineTo(px, py + size);
+                    }
+                    ctx.stroke();
+                }
+            });
+        }
+    }
+    ctx.setLineDash([]); // Resetta tratteggio
+}
+
+// Aggiornamento icone strutture (più pulite)
+function drawStructureMarkers(ctx, tileSize) {
+    const center = tileSize / 2;
+
+    // Helper per disegnare icone
+    const drawIcon = (list, color, char) => {
+        ctx.fillStyle = "rgba(255, 255, 255, 0.8)"; // Sfondo per leggibilità
+        ctx.font = "14px Segoe UI Emoji"; 
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        
+        list.forEach(s => {
+            const x = s.x * tileSize + center;
+            const y = s.y * tileSize + center;
+            // Piccolo alone chiaro sotto l'icona
+            ctx.beginPath();
+            ctx.arc(x, y, 8, 0, Math.PI*2);
+            ctx.fill();
+            
+            // Icona
+            ctx.fillStyle = "#000"; // Colore testo
+            ctx.fillText(char, x, y + 1);
+        });
+    }
+
+    // Usa Emoji o caratteri invece di forme geometriche astratte
+    drawIcon(structures.mines, "#333", "⛏️");
+    drawIcon(structures.sawmills, "#228B22", "🪚");
+    drawIcon(structures.quarries, "#696969", "🧱");
+    drawIcon(structures.monasteries, "#800080", "⛪");
+}
+
+function drawSettlements(ctx, tileSize) {
+    ctx.fillStyle = "#5D4037"; // Marrone scuro legno
+    settlements.forEach(s => {
+        const x = s.x * tileSize + tileSize / 2 - 4;
+        const y = s.y * tileSize + tileSize / 2 - 4;
+        // Casetta semplice
+        ctx.beginPath();
+        ctx.moveTo(x, y + 8);
+        ctx.lineTo(x + 8, y + 8);
+        ctx.lineTo(x + 8, y + 3);
+        ctx.lineTo(x + 4, y); // Tetto
+        ctx.lineTo(x, y + 3);
+        ctx.fill();
+    });
+}
+
+// Etichette migliorate con sfondo carta
+function drawLabel(ctx, s, size, label, color) {
+    const x = s.x * size + size / 2;
+    const y = s.y * size + size / 2 - 18; 
+
+    ctx.font = "bold 10px Georgia";
+    const textWidth = ctx.measureText(label).width;
+    
+    // Sfondo etichetta
+    ctx.fillStyle = "rgba(244, 236, 216, 0.9)"; // Color pergamena chiaro
+    ctx.strokeStyle = "#8b7355";
+    ctx.lineWidth = 1;
+    
+    // Rettangolo arrotondato (simulato)
+    const pad = 4;
+    ctx.fillRect(x - textWidth/2 - pad, y - 8, textWidth + pad*2, 12);
+    ctx.strokeRect(x - textWidth/2 - pad, y - 8, textWidth + pad*2, 12);
+
+    ctx.fillStyle = "#3e2723"; // Inchiostro scuro
+    ctx.textAlign = "center";
+    ctx.fillText(label, x, y + 1);
+}
+
+function drawVignette(ctx, width, height) {
+    const gradient = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, Math.max(width, height) / 2);
+    gradient.addColorStop(0, "rgba(0,0,0,0)");
+    gradient.addColorStop(0.7, "rgba(0,0,0,0.1)");
+    gradient.addColorStop(1, "rgba(0,0,0,0.3)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+}
 
 function loginManual() {
     const key = document.getElementById("api-key-input").value.trim();
@@ -5279,9 +6738,102 @@ function updateConstructionUI() {
     container.innerHTML = html;
 }
 
+function drawRegionMap() {
+    const canvas = document.getElementById("region-map");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const size = canvas.width / 8;
+
+    // Sfondo carta antica
+    ctx.fillStyle = "#e3d5b8"; 
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Disegna territori
+    for (let y = 0; y < 8; y++) {
+        for (let x = 0; x < 8; x++) {
+            let owner = "wild";
+            // Logica semplice per proprietari (uguale a prima ma con colori nuovi)
+            if (y < 2) owner = "auvrey";
+            else if (x > 5 && y > 5) owner = "falken";
+            else if (rand(0,10) > 4) owner = "count";
+
+            const px = x * size;
+            const py = y * size;
+
+            // Disegna solo bordi colorati e leggero riempimento per effetto mappa politica
+            ctx.fillStyle = getRegionColor(owner, 0.3);
+            ctx.fillRect(px, py, size, size);
+            
+            ctx.strokeStyle = getRegionColor(owner, 0.8);
+            ctx.lineWidth = 1;
+            ctx.strokeRect(px, py, size, size);
+            
+            // Disegna un simbolo per il proprietario
+            if (Math.random() > 0.7 && owner !== 'wild') {
+                ctx.font = "16px serif";
+                ctx.textAlign = "center";
+                ctx.fillStyle = "rgba(0,0,0,0.3)";
+                const symbol = owner === 'count' ? '⚜️' : (owner === 'auvrey' ? '🦁' : '🦅');
+                ctx.fillText(symbol, px + size/2, py + size/2 + 5);
+            }
+        }
+    }
+    
+    drawNeighborPins(ctx);
+    drawVignette(ctx, canvas.width, canvas.height);
+}
+
+function getRegionColor(owner, alpha) {
+    const map = {
+        count: `rgba(212, 175, 55, ${alpha})`,  // Oro
+        auvrey: `rgba(180, 40, 40, ${alpha})`,  // Rosso scuro
+        falken: `rgba(20, 60, 120, ${alpha})`,  // Blu scuro
+        wild: `rgba(100, 100, 100, ${alpha})`   // Grigio neutro
+    };
+    return map[owner] || map.wild;
+}
+
+function drawNeighborPins(ctx) {
+    const canvas = ctx.canvas;
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = canvas.width * 0.35;
+
+    neighboringCounties.forEach((c, idx) => {
+        const angle = (idx / neighboringCounties.length) * Math.PI * 2;
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
+
+        ctx.beginPath();
+        ctx.fillStyle = getRegionColor(c.key, 1);
+        ctx.arc(x, y, 12, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#3e2723";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = "#fff";
+        ctx.font = "10px Georgia";
+        ctx.textAlign = "center";
+        ctx.fillText(c.name.split(" ")[0], x, y + 3);
+    });
+}
+
 document.addEventListener("DOMContentLoaded", initStartScreen);
 
 </script>
+
+<div id="modal-budget" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Bilancio Stagionale</h3>
+            <button class="close-btn" onclick="closeBudgetModal()">✕</button>
+        </div>
+        <div id="budget-content">
+            <!-- Contenuto popolato da renderBudget() -->
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
