@@ -135,6 +135,27 @@
             font-size: 0.9em;
         }
 
+        /* Small transient delta indicators for stats (pop, gold, food, health) */
+        .stat-delta {
+            font-size: 0.8em;
+            color: var(--text-soft);
+            margin-top: 6px;
+            height: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: opacity 0.35s cubic-bezier(.2,.9,.2,1), transform 0.35s cubic-bezier(.2,.9,.2,1);
+            opacity: 0;
+            transform: translateY(0) scale(1);
+            will-change: opacity, transform;
+        }
+        .stat-delta.active { opacity: 1; transform: translateY(-4px) scale(1.04); }
+        .stat-delta.up { color: #7be36a; }
+        .stat-delta.down { color: #ff7c7c; }
+        .stat-delta svg { width: 12px; height: 12px; vertical-align: middle; }
+        /* Backwards-compatible alias for old pop-delta */
+        .pop-delta { all: unset; }
+
         .save-entry {
             display: flex;
             justify-content: space-between;
@@ -497,6 +518,200 @@
             font-size: 0.85em;
             margin-bottom: 4px;
         }
+        /* ===================== MAGAZZINO ===================== */
+        .warehouse-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .warehouse-stat {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .warehouse-stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .warehouse-stat-label {
+            font-size: 0.85em;
+            color: var(--text-soft);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .warehouse-section {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-soft);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .resource-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+        }
+
+        .resource-item {
+            background: rgba(8,8,8,0.6);
+            border: 2px solid var(--border-soft);
+            border-radius: 10px;
+            padding: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .resource-item.critical {
+            border-color: #f44336;
+            background: rgba(244, 67, 54, 0.08);
+        }
+
+        .resource-item.warning {
+            border-color: #ff9800;
+            background: rgba(255, 152, 0, 0.08);
+        }
+
+        .resource-item.healthy {
+            border-color: #4caf50;
+            background: rgba(76, 175, 80, 0.08);
+        }
+
+        .resource-header-w {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .resource-name-w {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .resource-icon-w {
+            font-size: 1.5em;
+            margin-right: 8px;
+        }
+
+        .resource-quantity {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .resource-item.critical .resource-quantity {
+            color: #f44336;
+        }
+
+        .resource-item.warning .resource-quantity {
+            color: #ff9800;
+        }
+
+        .resource-item.healthy .resource-quantity {
+            color: #4caf50;
+        }
+
+        .resource-details-w {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 0.85em;
+            color: var(--text-soft);
+            margin-bottom: 10px;
+        }
+
+        .resource-row-w {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+        }
+
+        .resource-row-w.positive {
+            color: #4caf50;
+        }
+
+        .resource-row-w.negative {
+            color: #f44336;
+        }
+
+        .resource-autonomy {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--accent-muted);
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .resource-autonomy.critical {
+            background: rgba(244, 67, 54, 0.15);
+            border-color: #f44336;
+            color: #f44336;
+        }
+
+        .resource-autonomy.warning {
+            background: rgba(255, 152, 0, 0.15);
+            border-color: #ff9800;
+            color: #ff9800;
+        }
+
+        .resource-autonomy.infinite {
+            background: rgba(76, 175, 80, 0.15);
+            border-color: #4caf50;
+            color: #4caf50;
+        }
+
+        .population-needs {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-soft);
+            border-radius: 14px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .needs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .need-card {
+            background: rgba(8,8,8,0.6);
+            border: 1px solid var(--border-soft);
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .need-title {
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .need-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--text);
+        }
+
+        .need-desc {
+            font-size: 0.8em;
+            color: var(--text-soft);
+            margin-top: 4px;
+        }
+
         .need-bar-bg {
             background: #333;
             height: 8px;
@@ -2706,6 +2921,7 @@
         </div>
         <div class="hud-nav-bar">
             <button onclick="switchTab('tab-dominio', this)">🏰 Dominio</button>
+            <button onclick="switchTab('tab-warehouse', this)">📦 Magazzino</button>
             <button onclick="switchTab('tab-diplomacy', this)">⚖️ Diplomazia</button>
             <button onclick="switchTab('tab-map', this)">🗺️ Mappa</button>
             <button onclick="switchTab('tab-market', this)">🏪 Mercato</button>
@@ -2732,11 +2948,13 @@
     <div class="grid-stats">
         <div class="stat-card">
             <div class="stat-val" id="val-pop">0</div>
+            <div id="pop-delta" class="stat-delta pop-delta"></div>
             <div class="stat-sub">Popolazione</div>
         </div>
 
         <div class="stat-card" style="cursor:pointer;" onclick="openBudgetModal()">
             <div class="stat-val" id="val-gold">0</div>
+            <div id="gold-delta" class="stat-delta" aria-hidden="true"></div>
             <div class="stat-sub">Oro</div>
         </div>
     </div>
@@ -2746,6 +2964,7 @@
         <div class="need-header">
             <span>Cibo</span>
             <span id="txt-food">0%</span>
+            <span id="food-delta" class="stat-delta" aria-hidden="true"></span>
         </div>
         <div class="need-bar-bg">
             <div class="need-bar-fill fill-food" id="bar-food"></div>
@@ -2756,6 +2975,7 @@
         <div class="need-header">
             <span>Salute</span>
             <span id="txt-health">0%</span>
+            <span id="health-delta" class="stat-delta" aria-hidden="true"></span>
         </div>
         <div class="need-bar-bg">
             <div class="need-bar-fill fill-health" id="bar-health"></div>
@@ -3073,6 +3293,42 @@
             <div class="person-name">Rasko il Senzapatria</div>
             <div>Emarginati — 29 anni. Imprevedibile e rapido.</div>
         </div>
+    </div>
+
+</div>
+<!-- ====================== TAB: MAGAZZINO ====================== -->
+<div id="tab-warehouse" class="tab-view">
+
+    <h2>📦 Magazzino e Risorse</h2>
+    <p style="color: var(--text-soft); font-size: 0.9em; margin-bottom: 20px;">
+        Monitora lo stock, la produzione, il consumo e l'autonomia di tutte le risorse.
+    </p>
+    
+    <!-- Riepilogo veloce -->
+    <div class="warehouse-summary" id="warehouse-summary"></div>
+
+    <!-- Risorse critiche -->
+    <div class="warehouse-section" id="critical-resources-section" style="display: none;">
+        <h3 style="color: var(--accent); margin-top: 0;">⚠️ Risorse Critiche</h3>
+        <div class="resource-list" id="critical-resources"></div>
+    </div>
+
+    <!-- Risorse in attenzione -->
+    <div class="warehouse-section" id="warning-resources-section" style="display: none;">
+        <h3 style="color: var(--accent); margin-top: 0;">⚡ Risorse in Attenzione</h3>
+        <div class="resource-list" id="warning-resources"></div>
+    </div>
+
+    <!-- Tutte le risorse -->
+    <div class="warehouse-section">
+        <h3 style="color: var(--accent); margin-top: 0;">📊 Tutte le Risorse</h3>
+        <div class="resource-list" id="all-resources"></div>
+    </div>
+
+    <!-- Bisogni popolazione -->
+    <div class="population-needs">
+        <h3 style="color: var(--accent); margin-top: 0;">👥 Bisogni della Popolazione</h3>
+        <div class="needs-grid" id="population-needs"></div>
     </div>
 
 </div>
@@ -3638,6 +3894,12 @@ let county = createDefaultCounty();
 lastResourceSnapshot = cloneResourceBag(county.resources);
 lastResourceDelta = createEmptyResourceDelta();
 let industrySummary = null;
+
+// Tracciamo l'ultimo stato per mostrare delta stagionale (pop, gold, food, health)
+let lastPop = county.pop;
+let lastGold = county.gold;
+let lastFood = county.food;
+let lastHealth = county.health;
 
 // Memoria dell'ultimo stato dei bisogni per l'IA
 let lastNeedsReport = {};
@@ -4578,16 +4840,23 @@ function ownedStructures(list = [], owner = "count") {
 function summarizeIndustry(structuresRef = structures, settlementsRef = settlements, stateRef = null) {
     const landRef = stateRef ? stateRef.landOwnership : landOwnership;
     const popRef = stateRef ? stateRef.populationGroups : populationGroups;
+    
+    // Gestisce sia la struttura con .count che valori diretti
+    const getPop = (group) => {
+        if (!popRef[group]) return 0;
+        return popRef[group].count !== undefined ? popRef[group].count : (popRef[group] || 0);
+    };
+    
     const summary = {
         housing: {
-            poor: Math.max(0, Math.floor((((popRef.peasants || 0) + (popRef.outcasts || 0)) / 80))),
-            middle: Math.max(0, Math.floor((((popRef.burghers || 0) + (popRef.merchants || 0)) / 120))),
-            noble: Math.max(0, Math.floor(((popRef.nobility || 0) / 60)))
+            poor: Math.max(1, Math.floor(((getPop('peasants') + getPop('outcasts')) / 80))),
+            middle: Math.max(1, Math.floor(((getPop('burghers') + getPop('merchants')) / 120))),
+            noble: Math.max(1, Math.floor((getPop('nobility') / 60)))
         },
-        shops: Math.max(0, Math.floor((((popRef.burghers || 0) + (popRef.merchants || 0)) / 90))),
-        churches: Math.max(0, Math.floor((((popRef.clergy || 0) + (popRef.mystics || 0)) / 30))),
-        farms: Math.max(0, Math.floor(((landRef.count || 0) / 4))),
-        ranches: Math.max(0, Math.floor(((landRef.count || 0) / 7))),
+        shops: Math.max(1, Math.floor(((getPop('burghers') + getPop('merchants')) / 90))),
+        churches: Math.max(1, Math.floor(((getPop('clergy') + getPop('mystics')) / 30))),
+        farms: Math.max(3, Math.floor(((landRef.count || 0) / 4))),
+        ranches: Math.max(2, Math.floor(((landRef.count || 0) / 7))),
         mines: ownedStructures(structuresRef?.mines).length,
         sawmills: ownedStructures(structuresRef?.sawmills).length,
         quarries: ownedStructures(structuresRef?.quarries).length,
@@ -4719,6 +4988,30 @@ function updateAssetSummaryUI(summaryRef = null) {
         `);
     });
 
+    // Aggiungi edifici costruiti
+    const completedBuildings = buildings.filter(b => b.stage === 'complete');
+    if (completedBuildings.length > 0) {
+        // Raggruppa per tipo
+        const buildingCounts = {};
+        completedBuildings.forEach(b => {
+            buildingCounts[b.type] = (buildingCounts[b.type] || 0) + 1;
+        });
+
+        Object.entries(buildingCounts).forEach(([type, count]) => {
+            const data = buildingData[type];
+            if (data) {
+                cards.push(`
+                    <div class="asset-card">
+                        <h4>${data.name}</h4>
+                        <div>Edifici completati: ${count}</div>
+                        <div class="asset-flow">Effetto: ${data.effect}</div>
+                        <div class="asset-flow">Manutenzione: ${data.upkeep * count} oro/stagione</div>
+                    </div>
+                `);
+            }
+        });
+    }
+
     if (!cards.length) {
         container.innerHTML = '<div class="asset-card">Nessun asset controllato al momento.</div>';
     } else {
@@ -4729,7 +5022,11 @@ function updateAssetSummaryUI(summaryRef = null) {
 function calculateLogisticNeeds(stateRef = null) {
     const needs = [];
     const popRef = stateRef ? stateRef.populationGroups : populationGroups;
-    const militia = (popRef && popRef.militia) ? popRef.militia : 0;
+    
+    // Gestisce sia la struttura con .count che valori diretti
+    const militia = popRef && popRef.militia ? 
+        (popRef.militia.count !== undefined ? popRef.militia.count : popRef.militia) : 0;
+    
     if (militia > 0) {
         needs.push({ resource:"iron", amount: Math.ceil(militia * 0.08), tag:"military" });
         needs.push({ resource:"wood", amount: Math.ceil(militia * 0.04), tag:"military" });
@@ -6357,47 +6654,70 @@ const buildingData = {
 const STRUCTURE_UPKEEP = { structures: 0, military: 0 };
 
 function calculateSeasonalBudget() {
-    const season = getSeason();
-
-    // Usare uno stato simulato per calcolare entrate/spese senza mutare lo stato reale
-    const simState = captureGameState();
-    ensureWorldSystems(simState);
-
-    // Entrate: calcoliamo le tasse usando la funzione esistente su simState
-    let taxes = 0;
-    try {
-        taxes = collectTaxes(simState, { silent: true }) || 0;
-    } catch (e) {
-        taxes = 0;
-    }
-
-    // Produzione in oro (valore approssimativo): per ora 0 (potremmo estenderlo in futuro)
-    const production = 0;
-
+    // Simulazione accurata del bilancio stagionale usando lo stato attuale
+    // Questo calcolo riflette esattamente ciò che accadrà in progressSeason()
+    
+    // === ENTRATE ===
     const income = {
-        taxes: Number.isFinite(taxes) ? Math.floor(taxes) : 0,
-        production: Number.isFinite(production) ? Math.floor(production) : 0
+        taxes_nobility: 0,
+        taxes_burghers: 0,
+        taxes_peasants: 0,
+        taxes_other: 0,
+        trade_export: 0,
+        production_mint: 0
     };
-    income.total = income.taxes + income.production;
-
-    // Spese: militare e manutenzione strutture (sul simulato)
-    const expenses = {
-        structures: 0,
-        military: Math.floor((simState.populationGroups && simState.populationGroups.militia ? simState.populationGroups.militia.count || simState.populationGroups.militia : 0) * 0.2 * season.warCost)
-    };
-
-    (simState.buildings || []).forEach(b => {
-        if (b.stage === 'complete') {
-            const data = buildingData[b.type];
-            if (data && data.upkeep) {
-                expenses.structures += Number(data.upkeep) || 0;
-            }
-        }
+    
+    // Calcolo Tasse (basato sulla ricchezza reale dei pop)
+    TAX_CATEGORIES.forEach(cat => {
+        const popGroup = populationGroups[cat.key];
+        if (!popGroup) return;
+        
+        const pop = popGroup.count || 0;
+        const wealth = popGroup.wealth || 0;
+        const baseTaxable = Math.min(wealth, pop * cat.wealthFactor);
+        const percent = taxPolicy[cat.key] || 0;
+        const taxIncome = Math.floor(baseTaxable * (percent / 100));
+        
+        if (cat.key === 'nobility') income.taxes_nobility += taxIncome;
+        else if (cat.key === 'burghers') income.taxes_burghers += taxIncome;
+        else if (cat.key === 'peasants') income.taxes_peasants += taxIncome;
+        else income.taxes_other += taxIncome;
     });
-
-    expenses.total = expenses.structures + expenses.military;
-
-    const net = (income.total || 0) - (expenses.total || 0);
+    
+    // Commercio (approssimazione basata su vendite recenti)
+    income.trade_export = Math.floor(seasonalTransactions.marketSales || 0);
+    
+    // Zecca
+    const mints = buildings.filter(b => b.type === 'mint' && b.stage === 'complete').length;
+    income.production_mint = mints * 50;
+    
+    const totalIncome = Object.values(income).reduce((a, b) => a + b, 0);
+    
+    // === SPESE ===
+    const upkeep = calculateDetailedUpkeep();
+    
+    // Costo Leggi Attive
+    let lawCostGold = 0;
+    activeLaws.forEach(lawKey => {
+        const law = getLawDefinition(lawKey);
+        if (law && law.upkeepCost) lawCostGold += law.upkeepCost;
+    });
+    
+    // Stipendi Milizia (pagati dalla contea)
+    const militiaWages = Math.floor((populationGroups.militia?.count || 0) * 1.2);
+    
+    const expenses = {
+        upkeep_military: upkeep.military + militiaWages,
+        upkeep_civil: upkeep.civil,
+        upkeep_court: upkeep.court,
+        upkeep_infrastructure: upkeep.infrastructure,
+        welfare_laws: lawCostGold,
+        import_costs: Math.floor(seasonalTransactions.marketPurchases || 0)
+    };
+    
+    const totalExpense = Object.values(expenses).reduce((a, b) => a + b, 0);
+    const net = totalIncome - totalExpense;
+    
     return {
         income,
         expenses,
@@ -6720,10 +7040,17 @@ function calculateVillageConsumption(stateRef = null) {
     const popRef = stateRef ? stateRef.populationGroups : populationGroups;
     const flows = getCachedAssetFlows(stateRef) || calculateAssetFlows(getIndustrySummary(stateRef), stateRef);
     const consumption = { ...flows.consumption };
-    const grainExtra = Math.floor(((popRef.militia || 0) + (popRef.peasants || 0)) * 0.05);
-    const livestockExtra = Math.floor((popRef.nobility || 0) * 0.02);
-    const textilesExtra = Math.floor((popRef.burghers || 0) * 0.02);
-    const herbsExtra = Math.floor((popRef.mystics || 0) * 0.05);
+    
+    // Gestisce sia la struttura con .count che valori diretti
+    const getPop = (group) => {
+        if (!popRef[group]) return 0;
+        return popRef[group].count !== undefined ? popRef[group].count : (popRef[group] || 0);
+    };
+    
+    const grainExtra = Math.floor(((getPop('militia') + getPop('peasants')) * 0.05));
+    const livestockExtra = Math.floor((getPop('nobility') * 0.02));
+    const textilesExtra = Math.floor((getPop('burghers') * 0.02));
+    const herbsExtra = Math.floor((getPop('mystics') * 0.05));
     if (grainExtra) consumption.grain = (consumption.grain || 0) + grainExtra;
     if (livestockExtra) consumption.livestock = (consumption.livestock || 0) + livestockExtra;
     if (textilesExtra) consumption.textiles = (consumption.textiles || 0) + textilesExtra;
@@ -7448,10 +7775,50 @@ function updateUI() {
         <span style="color:${popColor}">${county.pop}</span> 
         <span style="font-size:0.6em; color:#888;">/ ${capacity} cap.</span>
     `;
+    // Visual indicators for changes (pop, gold, food, health)
+    (function(){
+        const THRESH = 1; // minimum absolute change to show indicator
+        const localFmtMoney = (v) => { const n = Number(v) || 0; return n.toFixed(2); };
+
+        function setDelta(id, delta, textFormatter) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (Math.abs(delta) < THRESH) { el.innerHTML = ''; el.classList.remove('active','up','down'); return; }
+            const up = delta > 0;
+            const txt = textFormatter ? textFormatter(delta) : (up ? '+' : '-') + Math.abs(delta);
+            const svgUp = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 3l5 6H3z"></path></svg>';
+            const svgDown = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 13l-5-6h10z"></path></svg>';
+            el.innerHTML = (up ? svgUp : svgDown) + '<span style="margin-left:4px">' + (up ? '+' : '-') + txt + '</span>';
+            el.classList.add('active', up ? 'up' : 'down');
+            el.classList.remove(up ? 'down' : 'up');
+            setTimeout(() => { el.classList.remove('active'); }, 3000);
+        }
+
+        // Population (integer)
+        setDelta('pop-delta', county.pop - (typeof lastPop === 'number' ? lastPop : county.pop), d => String(Math.abs(d)));
+        // Gold (currency)
+        setDelta('gold-delta', county.gold - (typeof lastGold === 'number' ? lastGold : county.gold), d => localFmtMoney(Math.abs(d)) );
+        // Food (percent points)
+        setDelta('food-delta', county.food - (typeof lastFood === 'number' ? lastFood : county.food), d => Math.abs(Math.round(d)) + '%');
+        // Health (percent points)
+        setDelta('health-delta', county.health - (typeof lastHealth === 'number' ? lastHealth : county.health), d => Math.abs(Math.round(d)) + '%');
+    })();
+
+    // Aggiorna gli ultimi valori per il prossimo ciclo
+    lastPop = county.pop;
+    lastGold = county.gold;
+    lastFood = county.food;
+    lastHealth = county.health;
     
+    // Helper per formattare denaro a centesimi
+    function fmtMoney(v) {
+        const n = Number(v) || 0;
+        return n.toFixed(2);
+    }
+
     // ... resto della funzione
 
-    document.getElementById("val-gold").innerText = county.gold;
+    document.getElementById("val-gold").innerText = fmtMoney(county.gold);
 
     updateBar("food", county.food);
     updateBar("health", county.health);
@@ -7466,21 +7833,21 @@ function updateUI() {
     // Aggiorna classi sociali con ricchezza
     if (document.getElementById("nobility-count") && populationGroups) {
         document.getElementById("nobility-count").innerText = populationGroups.nobility?.count || 0;
-        document.getElementById("nobility-wealth").innerText = (populationGroups.nobility?.wealth || 0) + "💰";
+        document.getElementById("nobility-wealth").innerText = fmtMoney(populationGroups.nobility?.wealth || 0) + "💰";
         document.getElementById("clergy-count").innerText = populationGroups.clergy?.count || 0;
-        document.getElementById("clergy-wealth").innerText = (populationGroups.clergy?.wealth || 0) + "💰";
+        document.getElementById("clergy-wealth").innerText = fmtMoney(populationGroups.clergy?.wealth || 0) + "💰";
         document.getElementById("militia-count").innerText = populationGroups.militia?.count || 0;
-        document.getElementById("militia-wealth").innerText = (populationGroups.militia?.wealth || 0) + "💰";
+        document.getElementById("militia-wealth").innerText = fmtMoney(populationGroups.militia?.wealth || 0) + "💰";
         document.getElementById("burghers-count").innerText = populationGroups.burghers?.count || 0;
-        document.getElementById("burghers-wealth").innerText = (populationGroups.burghers?.wealth || 0) + "💰";
+        document.getElementById("burghers-wealth").innerText = fmtMoney(populationGroups.burghers?.wealth || 0) + "💰";
         document.getElementById("peasants-count").innerText = populationGroups.peasants?.count || 0;
-        document.getElementById("peasants-wealth").innerText = (populationGroups.peasants?.wealth || 0) + "💰";
+        document.getElementById("peasants-wealth").innerText = fmtMoney(populationGroups.peasants?.wealth || 0) + "💰";
         document.getElementById("mystics-count").innerText = populationGroups.mystics?.count || 0;
-        document.getElementById("mystics-wealth").innerText = (populationGroups.mystics?.wealth || 0) + "💰";
+        document.getElementById("mystics-wealth").innerText = fmtMoney(populationGroups.mystics?.wealth || 0) + "💰";
         document.getElementById("outcasts-count").innerText = populationGroups.outcasts?.count || 0;
-        document.getElementById("outcasts-wealth").innerText = (populationGroups.outcasts?.wealth || 0) + "💰";
+        document.getElementById("outcasts-wealth").innerText = fmtMoney(populationGroups.outcasts?.wealth || 0) + "💰";
         document.getElementById("merchants-count").innerText = populationGroups.merchants?.count || 0;
-        document.getElementById("merchants-wealth").innerText = (populationGroups.merchants?.wealth || 0) + "💰";
+        document.getElementById("merchants-wealth").innerText = fmtMoney(populationGroups.merchants?.wealth || 0) + "💰";
     }
 
     updateResourceUI();
@@ -7786,21 +8153,74 @@ function calculateStability() {
 
 // Aggiorna ricchezze delle categorie
 function updateCategoryWealth() {
-    // Nobiltà: guadagna da tasse e proprietà
-    populationGroups.nobility.wealth += Math.floor(county.gold * 0.1);
+    // === ECONOMIA MEDIEVALE REALISTICA ===
+    // Gerarchia di ricchezza: Nobiltà > Mercanti/Clero > Borghesi > Milizia > Contadini > Emarginati > Mistici
     
-    // Clero: guadagna da donazioni e decime
-    populationGroups.clergy.wealth += Math.floor(county.gold * 0.05);
+    // CONTADINI (Peasants): I più poveri, vivono di sussistenza
+    // Guadagnano pochissimo perché la maggior parte del raccolto va ai signori
+    const peasantIncome = Math.floor(
+        (populationGroups.peasants.count * 0.08) + // Minimo di sussistenza: 0.08 oro a testa
+        ((county.resources.grain || 0) * 0.005) + // Solo 0.5% del grano (il resto va ai nobili)
+        ((county.resources.livestock || 0) * 0.01) // 1% del bestiame
+    );
+    populationGroups.peasants.wealth += peasantIncome;
     
-    // Merchants: guadagnano dal commercio
-    populationGroups.merchants.wealth += seasonalTransactions.marketSales * 0.1;
+    // ARTIGIANI (Burghers): Classe media urbana, vendono i loro manufatti
+    // Guadagnano dalla vendita di beni artigianali
+    const burghersBaseIncome = populationGroups.burghers.count * 1.5; // Reddito fisso discreto
+    const textilesProfit = (county.resources.textiles || 0) * 0.25; // 25% profitto sui tessuti
+    const ironProfit = (county.resources.iron || 0) * 0.3; // 30% profitto sul ferro lavorato
+    const copperProfit = (county.resources.copper || 0) * 0.35; // 35% profitto sul rame
+    const burghersIncome = Math.floor(burghersBaseIncome + textilesProfit + ironProfit + copperProfit);
+    populationGroups.burghers.wealth += burghersIncome;
     
-    // Peasants: guadagnano dalla produzione agricola
-    const grainProduction = county.resources.grain || 0;
-    populationGroups.peasants.wealth += Math.floor(grainProduction * 0.01);
+    // MERCANTI (Merchants): Ricchi commercianti, controllano il commercio
+    // Guadagnano da OGNI transazione commerciale + beni di lusso
+    const merchantsBaseIncome = populationGroups.merchants.count * 3; // Reddito base alto
+    const tradingFees = (seasonalTransactions.marketSales + seasonalTransactions.marketPurchases) * 0.12; // 12% su tutte le transazioni
+    const luxuriesMonopoly = (county.resources.luxuries || 0) * 0.4; // 40% sui beni di lusso (alto margine!)
+    const specialTradeBonus = seasonalTransactions.specialPurchases * 0.2; // 20% sul commercio speciale
+    const merchantsIncome = Math.floor(merchantsBaseIncome + tradingFees + luxuriesMonopoly + specialTradeBonus);
+    populationGroups.merchants.wealth += merchantsIncome;
     
-    // Militia: stipendio fisso
-    populationGroups.militia.wealth += populationGroups.militia.count * 2;
+    // MILIZIA (Militia): Soldati pagati dalla contea
+    // Stipendio fisso modesto
+    const militiaWage = 1.2; // 1.2 oro per soldato (ridotto, erano poveri!)
+    const militiaIncome = Math.floor(populationGroups.militia.count * militiaWage);
+    populationGroups.militia.wealth += militiaIncome;
+    
+    // NOBILTÀ (Nobility): I più ricchi, vivono di rendite fondiarie
+    // Guadagnano dalle terre e dai privilegi feudali
+    const nobilityLandRent = landOwnership.nobility * 8; // 8 oro per unità di terra (alto!)
+    const feudalDues = Math.floor(county.gold * 0.015); // 1.5% dell'oro statale
+    const grainTithes = (county.resources.grain || 0) * 0.03; // 3% del grano (decime feudali)
+    const nobilityIncome = Math.floor(nobilityLandRent + feudalDues + grainTithes + (populationGroups.nobility.count * 15));
+    populationGroups.nobility.wealth += nobilityIncome;
+    
+    // CLERO (Clergy): Ricchi grazie a decime e proprietà ecclesiastiche
+    // Guadagnano da terre della chiesa e offerte
+    const clergyLandRent = landOwnership.clergy * 6; // 6 oro per unità di terra ecclesiastica
+    const tithesIncome = Math.floor(county.gold * 0.012); // 1.2% decime
+    const offerings = Math.floor(county.pop * 0.015); // Offerte dai fedeli
+    const clergyIncome = Math.floor(clergyLandRent + tithesIncome + offerings + (populationGroups.clergy.count * 8));
+    populationGroups.clergy.wealth += clergyIncome;
+    
+    // MISTICI (Mystics): Ai margini della società, vivono di carità e servizi
+    // Guadagnano poco da pozioni e rituali
+    const herbsSales = (county.resources.herbs || 0) * 0.08; // 8% vendita erbe
+    const arcaneSales = (county.resources.arcane || 0) * 0.15; // 15% servizi arcani
+    const mysticsIncome = Math.floor(herbsSales + arcaneSales + (populationGroups.mystics.count * 1));
+    populationGroups.mystics.wealth += mysticsIncome;
+    
+    // EMARGINATI (Outcasts): I più poveri, vivono di espedienti
+    // Quasi nessun reddito legale
+    const outcastsIncome = Math.floor(populationGroups.outcasts.count * 0.15); // Pochissimo
+    // Bonus dal crimine se la sicurezza è bassa
+    if (county.security < 50) {
+        const crimeBonus = Math.floor((50 - county.security) * populationGroups.outcasts.count * 0.02);
+        populationGroups.outcasts.wealth += crimeBonus;
+    }
+    populationGroups.outcasts.wealth += outcastsIncome;
     
     // Previeni ricchezze negative
     Object.keys(populationGroups).forEach(key => {
@@ -7970,7 +8390,7 @@ function renderNeedsPanel() {
 }
 
 async function generateSeasonStory() {
-    // 1. Apri il modale in stato di caricamento
+    // 1. Setup UI Modale (Feedback visivo immediato)
     const modal = document.getElementById("modal-chronicle");
     const body = document.getElementById("chronicle-body");
     const titleDate = document.getElementById("chronicle-date");
@@ -7980,7 +8400,7 @@ async function generateSeasonStory() {
     if (body) body.innerHTML = `
         <div class="loading-story">
             <span class="scribe-icon">✍️</span>
-            <p>Il Mastrocronista sta scrivendo le cronache della stagione...</p>
+            <p>Il Mastrocronista sta osservando il regno per scrivere le cronache...</p>
         </div>`;
 
     if (!ensureApiKey()) {
@@ -7988,39 +8408,54 @@ async function generateSeasonStory() {
         return;
     }
 
-    // 2. Prepara il Prompt
-    // Uniamo il "Deep Context" (stato statico) con gli "Eventi del Turno" (cosa è appena successo)
-    const context = generateDeepContext(); 
-    const eventsList = currentTurnEvents.length > 0 ? currentTurnEvents.join("\n- ") : "Nessun evento maggiore, ordinaria amministrazione.";
+    // 2. CALCOLO DEL "TONO" REALE (Logica rigida anti-allucinazione)
+    let realmStatus = "NEUTRO";
+    let prosperityDesc = "";
     
-    // Recuperiamo anche i problemi economici dai bisogni (se ci sono)
-    let economicWoes = "";
-    if (lastNeedsReport && Object.keys(lastNeedsReport).length > 0) {
-        Object.values(lastNeedsReport).forEach(r => {
-            if (r.status === "DISPERATO") economicWoes += `- Una classe sociale è disperata: ${r.mainIssue}.\n`;
-        });
+    // Dati attuali
+    const foodStock = county.food; 
+    const happiness = county.happy;
+    const gold = county.gold;
+    
+    // Verifica se c'è una vera crisi alimentare nei dati dei bisogni
+    // (Se lastNeedsReport è vuoto o non ha "DISPERATO", non c'è carestia vera)
+    const isStarving = (lastNeedsReport && Object.values(lastNeedsReport).some(r => r.status === "DISPERATO"));
+
+    // LOGICA DI PRIORITÀ: I fatti numerici vincono sulla fantasia dell'IA
+    if (isStarving || foodStock < 20) {
+        realmStatus = "CRISI NERA";
+        prosperityDesc = "C'è una carestia reale. Il popolo soffre la fame e la disperazione cresce.";
+    } else if (foodStock > 80 && happiness > 60 && gold > 300) {
+        realmStatus = "ETÀ DELL'ORO";
+        prosperityDesc = "I granai traboccano, i commerci fioriscono e il popolo è felice. Regna la pace.";
+    } else if (foodStock > 40 && happiness > 45) {
+        realmStatus = "STABILE";
+        prosperityDesc = "La vita scorre tranquilla. Non ci sono disastri, né carestie, né pestilenze in corso.";
+    } else {
+        realmStatus = "DIFFICILE";
+        prosperityDesc = "Tempi duri. Si tira la cinghia, ma il regno resiste senza catastrofi.";
     }
 
+    // 3. Costruzione Prompt
+    const eventsList = currentTurnEvents.length > 0 ? currentTurnEvents.join("\n- ") : "Nessun evento maggiore, la stagione è passata in tranquillità.";
+    
     const systemPrompt = `
     SEI IL MASTROCRONISTA DEL REGNO.
-    Il tuo compito è scrivere un breve e coinvolgente resoconto narrativo (max 150 parole) di come è trascorsa l'ultima stagione.
+    Scrivi un breve resoconto narrativo (max 80-100 parole) per l'ultima stagione.
 
-    DATI DEL REGNO:
-    ${context}
-
-    EVENTI APPENA ACCADUTI (Importante):
-    - ${eventsList}
-    ${economicWoes}
-
-    ISTITUZIONI:
-    Scrivi un testo in prosa, stile romanzo storico/fantasy medievale. 
-    - Non fare un elenco puntato.
-    - Usa un tono solenne ma descrittivo.
-    - Se ci sono carestie economiche (gente povera), descrivi la sofferenza.
-    - Se ci sono stati matrimoni o nascite, celebrali.
-    - Se non è successo nulla, descrivi l'atmosfera della stagione (es. "L'inverno è passato tranquillo...").
+    === STATO REALE OBBLIGATORIO: ${realmStatus} ===
+    DATI DI FATTO: ${prosperityDesc}
     
-    Inizia direttamente con la narrazione.
+    EVENTI ACCADUTI REALMENTE:
+    - ${eventsList}
+
+    REGOLE FERREE (Se le violi il gioco si rompe):
+    1. **COERENZA**: Se lo stato è "STABILE" o "ETÀ DELL'ORO", è **VIETATO** inventare carestie, pestilenze, morti o disastri.
+    2. **DESCRIZIONE**: 
+       - Se è "ETÀ DELL'ORO": Descrivi banchetti, mercati pieni, canti nei campi.
+       - Se è "STABILE": Descrivi la serena routine quotidiana.
+    3. **STILE**: Usa un tono da cronaca medievale. Non iniziare sempre con "Il sole sorge".
+    4. Se non ci sono eventi specifici, celebra la buona amministrazione del Conte (o lamentati delle tasse se lo stato è DIFFICILE).
     `;
 
     try {
@@ -8032,7 +8467,7 @@ async function generateSeasonStory() {
             },
             body: JSON.stringify({
                 model: "llama-3.1-8b-instant",
-                temperature: 0.7,
+                temperature: 0.6, // Temperatura bassa per ridurre le allucinazioni
                 messages: [{ role: "system", content: systemPrompt }]
             })
         });
@@ -8040,13 +8475,28 @@ async function generateSeasonStory() {
         const data = await resp.json();
         const story = data.choices[0].message.content;
 
-        // 3. Mostra la storia
-        // Formattiamo leggermente (grassetto per i nomi propri se l'IA li usa)
+        // 4. VISUALIZZAZIONE E SALVATAGGIO (Il Fix per non perdere la storia)
+        
+        // A) Mostra nel Modale (Formattato)
         const formattedStory = story.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         body.innerHTML = `<p>${formattedStory}</p>`;
 
+        // B) Salva nella Chat Principale (Così rimane nello storico scorribile quando chiudi il modale)
+        const chatLog = document.getElementById("chat-log");
+        const narrativeDiv = document.createElement("div");
+        narrativeDiv.className = "msg-scene"; // Usa lo stile esistente per la narrativa
+        // Aggiungiamo un bordo dorato specifico per le cronache stagionali
+        narrativeDiv.style.borderLeft = "4px solid #d4af37"; 
+        narrativeDiv.innerHTML = `<strong>📜 Cronache di ${getSeason().label} ${worldTime.year}</strong><br><br>${formattedStory}`;
+        chatLog.appendChild(narrativeDiv);
+        chatLog.scrollTop = chatLog.scrollHeight;
+
+        // C) Salva nella memoria dell'IA (Così si ricorda cosa è successo nel prossimo turno)
+        publicChatHistory.push({ role: "assistant", content: `[CRONACA ${worldTime.year}]: ${story}` });
+
     } catch (e) {
-        body.innerHTML = `<p>Il cronista ha rotto la penna (Errore: ${e.message})</p>`;
+        body.innerHTML = `<p>Il cronista non riesce a scrivere (Errore: ${e.message})</p>`;
+        console.error(e);
     }
 }
 
@@ -8134,6 +8584,9 @@ function progressSeason(options = {}) {
     // 2. CALCOLO USCITE (Spese Dettagliate)
     const upkeep = calculateDetailedUpkeep();
     
+    // Stipendi Milizia (pagati dal tesoro della contea)
+    const militiaWages = Math.floor((populationGroups.militia?.count || 0) * 1.2);
+    
     // Costo Leggi Attive
     let lawCostGold = 0;
     activeLaws.forEach(lawKey => {
@@ -8148,7 +8601,7 @@ function progressSeason(options = {}) {
     });
 
     detailedBudget.expenses = {
-        upkeep_military: upkeep.military,
+        upkeep_military: upkeep.military + militiaWages, // Include stipendi soldati
         upkeep_civil: upkeep.civil,
         upkeep_court: upkeep.court,
         upkeep_infrastructure: upkeep.infrastructure,
@@ -8546,10 +8999,42 @@ function renderBudget() {
     const totalInc = Object.values(inc).reduce((a,b)=>a+b,0);
     const totalExp = Object.values(exp).reduce((a,b)=>a+b,0);
 
+    // Calcolo entrate dei pop per dare visione completa economia
+    const popIncomes = {
+        peasants: Math.floor(
+            (populationGroups.peasants.count * 0.08) +
+            ((county.resources.grain || 0) * 0.005) +
+            ((county.resources.livestock || 0) * 0.01)
+        ),
+        burghers: Math.floor(
+            (populationGroups.burghers.count * 1.5) +
+            ((county.resources.textiles || 0) * 0.25) +
+            ((county.resources.iron || 0) * 0.3) +
+            ((county.resources.copper || 0) * 0.35)
+        ),
+        merchants: Math.floor(
+            (populationGroups.merchants.count * 3) +
+            ((seasonalTransactions.marketSales + seasonalTransactions.marketPurchases) * 0.12) +
+            ((county.resources.luxuries || 0) * 0.4)
+        ),
+        nobility: Math.floor(
+            (landOwnership.nobility * 8) +
+            (county.gold * 0.015) +
+            ((county.resources.grain || 0) * 0.03) +
+            (populationGroups.nobility.count * 15)
+        ),
+        clergy: Math.floor(
+            (landOwnership.clergy * 6) +
+            (county.gold * 0.012) +
+            (county.pop * 0.015) +
+            (populationGroups.clergy.count * 8)
+        )
+    };
+
     container.innerHTML = `
         <div class="budget-columns">
             <div class="budget-col">
-                <h4>Entrate (+${totalInc})</h4>
+                <h4>💰 Entrate Tesoro (+${totalInc})</h4>
                 <div class="budget-row"><span>Tasse Nobiltà</span> <span>${inc.taxes_nobility}</span></div>
                 <div class="budget-row"><span>Tasse Borghesia</span> <span>${inc.taxes_burghers}</span></div>
                 <div class="budget-row"><span>Tasse Contadini</span> <span>${inc.taxes_peasants}</span></div>
@@ -8559,7 +9044,7 @@ function renderBudget() {
             </div>
             
             <div class="budget-col">
-                <h4>Uscite (-${totalExp})</h4>
+                <h4>💸 Uscite Tesoro (-${totalExp})</h4>
                 <div class="budget-row"><span>Militare & Difesa</span> <span class="money-minus">${exp.upkeep_military}</span></div>
                 <div class="budget-row"><span>Corte & Prestigio</span> <span class="money-minus">${exp.upkeep_court}</span></div>
                 <div class="budget-row"><span>Civile & Mercati</span> <span class="money-minus">${exp.upkeep_civil}</span></div>
@@ -8570,12 +9055,31 @@ function renderBudget() {
         </div>
         
         <div class="net-balance-card">
-            <div>Risultato Netto</div>
+            <div>Bilancio Tesoro</div>
             <div class="net-balance-val ${detailedBudget.net >= 0 ? 'money-plus' : 'money-minus'}">
                 ${detailedBudget.net > 0 ? '+' : ''}${detailedBudget.net} 💰
             </div>
             <div style="font-size:0.8em; color:#888; margin-top:5px;">
-                Tesoro Attuale: ${county.gold}
+                Tesoro Attuale: ${county.gold} 💰
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border-soft);">
+            <h4 style="color: var(--accent); margin-bottom: 10px;">📊 Economia dei Ceti (redditi stagionali)</h4>
+            <div class="budget-columns">
+                <div class="budget-col">
+                    <div class="budget-row"><span>👨‍🌾 Contadini</span> <span>${popIncomes.peasants} 💰</span></div>
+                    <div class="budget-row"><span>🏪 Borghesi</span> <span>${popIncomes.burghers} 💰</span></div>
+                    <div class="budget-row"><span>💼 Mercanti</span> <span>${popIncomes.merchants} 💰</span></div>
+                </div>
+                <div class="budget-col">
+                    <div class="budget-row"><span>👑 Nobiltà</span> <span>${popIncomes.nobility} 💰</span></div>
+                    <div class="budget-row"><span>⛪ Clero</span> <span>${popIncomes.clergy} 💰</span></div>
+                </div>
+            </div>
+            <div style="font-size: 0.75em; color: var(--text-soft); margin-top: 8px; font-style: italic;">
+                Questi redditi vengono guadagnati dai ceti attraverso produzione, commercio e rendite. 
+                Il Tesoro della Contea li tassa attraverso le aliquote impostate.
             </div>
         </div>
     `;
@@ -9045,16 +9549,62 @@ function generateDeepContext() {
     context += `POPOLAZIONE: ${county.pop} anime. (Felicità: ${county.happy}%, Salute Pubblica: ${county.health}%, Sicurezza: ${county.security}%).\n`;
     context += `TESORERIA: ${county.gold} Oro.\n`;
 
-    // 2. ECONOMIA E RISORSE (Solo quelle rilevanti o critiche)
-    context += `\n[MAGAZZINI E RISORSE]\n`;
+    // 2. ECONOMIA E RISORSE - ANALISI DETTAGLIATA MAGAZZINO
+    context += `\n[MAGAZZINI E RISORSE - ANALISI DETTAGLIATA]\n`;
+    
+    // Calcola statistiche magazzino
+    const warehouseStats = calculateResourceStats();
+    
+    // Prima mostra un riepilogo delle scorte
     const resList = Object.entries(county.resources)
         .map(([k, v]) => `${resourceLabels[k] || k}: ${v}`)
         .join(", ");
-    context += `Scorte: ${resList}.\n`;
+    context += `SCORTE ATTUALI: ${resList}.\n\n`;
     
-    // Segnaliamo deficit critici se ci sono
-    if (county.food < county.pop * 0.5) context += "ATTENZIONE: Carestia imminente (Cibo insufficiente).\n";
-    if (county.gold < 50) context += "ATTENZIONE: Bancarotta vicina.\n";
+    // Poi mostra l'analisi dettagliata per le risorse critiche
+    context += `ANALISI PRODUZIONE/CONSUMO (risorse con problemi):\n`;
+    let hasCriticalIssues = false;
+    
+    Object.entries(warehouseStats).forEach(([key, stat]) => {
+        const status = getResourceStatus(stat);
+        const label = resourceLabels[key] || key;
+        
+        // Mostra solo risorse con problemi o importanti
+        if (status === "critical" || status === "warning" || key === "food" || key === "gold") {
+            hasCriticalIssues = true;
+            let statusText = "";
+            if (stat.daysLeft <= 0) {
+                statusText = "ESAURITA!";
+            } else if (stat.daysLeft <= 2) {
+                statusText = `CRITICO - Solo ${stat.daysLeft} stagioni rimanenti`;
+            } else if (stat.daysLeft <= 5) {
+                statusText = `ATTENZIONE - ${stat.daysLeft} stagioni rimanenti`;
+            } else if (stat.net > 0) {
+                statusText = `STABILE - Produzione eccedente di +${stat.net}/stagione`;
+            } else {
+                statusText = `${stat.daysLeft} stagioni di autonomia`;
+            }
+            
+            context += `- ${label}: Stock ${stat.current}, Produzione +${stat.production}/stagione, Consumo -${stat.consumption}/stagione, Bilancio ${stat.net >= 0 ? '+' : ''}${stat.net}/stagione. ${statusText}.\n`;
+        }
+    });
+    
+    if (!hasCriticalIssues) {
+        context += `Tutte le risorse sono in stato stabile o eccedente.\n`;
+    }
+    
+    // Segnala problemi critici specifici
+    if (county.food < county.pop * 0.5) {
+        context += "\n⚠️ ALLARME CARESTIA: Le scorte di cibo sono criticamente basse rispetto alla popolazione.\n";
+    }
+    if (warehouseStats.food && warehouseStats.food.daysLeft <= 2 && warehouseStats.food.daysLeft >= 0) {
+        context += `\n⚠️ EMERGENZA ALIMENTARE: Il cibo si esaurirà tra ${warehouseStats.food.daysLeft} stagioni!\n`;
+    }
+    if (county.gold < 50) {
+        context += `\n⚠️ CRISI FINANZIARIA: Il tesoro è quasi vuoto.\n`;
+    }
+    
+    context += `\n`;
 
     // 3. POLITICA E FAZIONI
     context += `\n[UMORE DELLE FAZIONI (0-100)]\n`;
@@ -9696,6 +10246,7 @@ function startGame() {
 
     updateUI();
     updateDynastyUI();
+    updateAssetSummaryUI(); // Popola la sintesi insediamenti
 
     activateScreen("screen-game");
     
@@ -9718,6 +10269,7 @@ function switchTab(id, btn){
     if (btn) btn.classList.add("active");
 
     if (id === 'tab-market') renderMarket();
+    if (id === 'tab-warehouse') renderWarehouse();
     if (id === 'tab-dominio') updateUI();
 }
 
@@ -9950,6 +10502,259 @@ function getQtyValue(id) {
     if (!el) return 1;
     const val = parseInt(el.value);
     return (isNaN(val) || val < 1) ? 1 : val;
+}
+
+/* ===================== SISTEMA MAGAZZINO ===================== */
+
+// Calcola produzione, consumo e autonomia per ogni risorsa
+function calculateResourceStats() {
+    const stats = {};
+    
+    // Usa le funzioni esistenti del gioco per calcolare produzione e consumo
+    const production = calculateVillageProduction() || {};
+    const consumption = calculateVillageConsumption() || {};
+    
+    // Aggiungi anche i bisogni logistici
+    const logisticNeeds = calculateLogisticNeeds() || [];
+    logisticNeeds.forEach(need => {
+        consumption[need.resource] = (consumption[need.resource] || 0) + need.amount;
+    });
+
+    // Raccogli tutte le risorse (sia quelle in magazzino che quelle con produzione/consumo)
+    const allResources = new Set([
+        ...Object.keys(county.resources || {}),
+        ...Object.keys(production),
+        ...Object.keys(consumption)
+    ]);
+
+    // Calcola statistiche per ogni risorsa
+    allResources.forEach(key => {
+        const currentStock = county.resources[key] || 0;
+        const productionRate = production[key] || 0;
+        const consumptionRate = consumption[key] || 0;
+        const netRate = productionRate - consumptionRate;
+        
+        let daysLeft = 0;
+        if (netRate < 0) {
+            // Consumo > produzione: calcola autonomia
+            daysLeft = currentStock > 0 ? Math.floor(currentStock / Math.abs(netRate)) : 0;
+        } else if (netRate === 0 && consumptionRate > 0) {
+            // Produzione = consumo: calcola quanto dura lo stock
+            daysLeft = currentStock > 0 ? Math.floor(currentStock / consumptionRate) : 0;
+        } else {
+            // Produzione > consumo: autonomia infinita
+            daysLeft = 999;
+        }
+
+        stats[key] = {
+            current: currentStock,
+            consumption: consumptionRate,
+            production: productionRate,
+            net: netRate,
+            daysLeft: daysLeft
+        };
+    });
+
+    return stats;
+}
+
+// Determina lo stato di una risorsa (critical/warning/healthy)
+function getResourceStatus(stat) {
+    if (stat.daysLeft <= 2 && stat.daysLeft >= 0) return "critical";
+    if (stat.daysLeft <= 5 && stat.daysLeft > 2) return "warning";
+    if (stat.net >= 0) return "healthy";
+    return "warning";
+}
+
+// Icone per le risorse
+function getResourceIcon(key) {
+    const icons = {
+        // Risorse base
+        food: "🍞",
+        wood: "🪵",
+        stone: "🪨",
+        iron: "⚒️",
+        tools: "🔨",
+        cloth: "🧵",
+        leather: "🥾",
+        gold: "💰",
+        copper: "🔶",
+        silver: "⚪",
+        gems: "💎",
+        herbs: "🌿",
+        mystic_crystals: "🔮",
+        // Risorse del sistema village
+        grain: "🌾",
+        livestock: "🐄",
+        textiles: "🧵",
+        luxuries: "💎",
+        arcane: "🔮"
+    };
+    return icons[key] || "📦";
+}
+
+// Renderizza una singola card risorsa
+function renderResourceCard(key, stat) {
+    const status = getResourceStatus(stat);
+    const icon = getResourceIcon(key);
+    const label = resourceLabels[key] || key;
+
+    let autonomyText = "";
+    let autonomyClass = "";
+    
+    if (stat.net > 0) {
+        autonomyText = "✓ Produzione eccedente";
+        autonomyClass = "infinite";
+    } else if (stat.net === 0 && stat.consumption === 0) {
+        autonomyText = "♾️ Risorsa stabile";
+        autonomyClass = "infinite";
+    } else if (stat.daysLeft >= 999) {
+        autonomyText = "♾️ Nessun consumo";
+        autonomyClass = "infinite";
+    } else if (stat.daysLeft <= 0) {
+        autonomyText = "⚠️ ESAURITA!";
+        autonomyClass = "critical";
+    } else {
+        autonomyText = `${stat.daysLeft} ${stat.daysLeft === 1 ? 'stagione' : 'stagioni'} rimanenti`;
+        autonomyClass = status;
+    }
+
+    return `
+        <div class="resource-item ${status}">
+            <div class="resource-header-w">
+                <div style="display: flex; align-items: center;">
+                    <div class="resource-icon-w">${icon}</div>
+                    <div class="resource-name-w">${label}</div>
+                </div>
+                <div class="resource-quantity">${stat.current}</div>
+            </div>
+            <div class="resource-details-w">
+                <div class="resource-row-w ${stat.production > 0 ? 'positive' : ''}">
+                    <span>📈 Produzione:</span>
+                    <span>+${stat.production}/stagione</span>
+                </div>
+                <div class="resource-row-w ${stat.consumption > 0 ? 'negative' : ''}">
+                    <span>📉 Consumo:</span>
+                    <span>-${stat.consumption}/stagione</span>
+                </div>
+                <div class="resource-row-w ${stat.net >= 0 ? 'positive' : 'negative'}">
+                    <span>⚖️ Bilancio:</span>
+                    <span>${stat.net >= 0 ? '+' : ''}${stat.net}/stagione</span>
+                </div>
+            </div>
+            <div class="resource-autonomy ${autonomyClass}">
+                ${autonomyText}
+            </div>
+        </div>
+    `;
+}
+
+// Renderizza il magazzino completo
+function renderWarehouse() {
+    const stats = calculateResourceStats();
+    const totalPop = county.pop || 0;
+
+    // Riepilogo veloce
+    const summary = document.getElementById("warehouse-summary");
+    if (summary) {
+        const criticalCount = Object.values(stats).filter(s => getResourceStatus(s) === "critical").length;
+        const warningCount = Object.values(stats).filter(s => getResourceStatus(s) === "warning").length;
+        const healthyCount = Object.values(stats).filter(s => getResourceStatus(s) === "healthy").length;
+
+        summary.innerHTML = `
+            <div class="warehouse-stat">
+                <div class="warehouse-stat-value">${Object.keys(county.resources).length}</div>
+                <div class="warehouse-stat-label">Risorse Totali</div>
+            </div>
+            <div class="warehouse-stat">
+                <div class="warehouse-stat-value" style="color: #f44336;">${criticalCount}</div>
+                <div class="warehouse-stat-label">Critiche</div>
+            </div>
+            <div class="warehouse-stat">
+                <div class="warehouse-stat-value" style="color: #ff9800;">${warningCount}</div>
+                <div class="warehouse-stat-label">In Attenzione</div>
+            </div>
+            <div class="warehouse-stat">
+                <div class="warehouse-stat-value" style="color: #4caf50;">${healthyCount}</div>
+                <div class="warehouse-stat-label">Stabili</div>
+            </div>
+        `;
+    }
+
+    // Risorse critiche
+    const criticalResources = Object.keys(stats).filter(k => getResourceStatus(stats[k]) === "critical");
+    const criticalSection = document.getElementById("critical-resources-section");
+    const criticalContainer = document.getElementById("critical-resources");
+    
+    if (criticalContainer && criticalSection) {
+        if (criticalResources.length > 0) {
+            criticalSection.style.display = "block";
+            criticalContainer.innerHTML = criticalResources.map(key => renderResourceCard(key, stats[key])).join("");
+        } else {
+            criticalSection.style.display = "none";
+        }
+    }
+
+    // Risorse in attenzione
+    const warningResources = Object.keys(stats).filter(k => getResourceStatus(stats[k]) === "warning");
+    const warningSection = document.getElementById("warning-resources-section");
+    const warningContainer = document.getElementById("warning-resources");
+    
+    if (warningContainer && warningSection) {
+        if (warningResources.length > 0) {
+            warningSection.style.display = "block";
+            warningContainer.innerHTML = warningResources.map(key => renderResourceCard(key, stats[key])).join("");
+        } else {
+            warningSection.style.display = "none";
+        }
+    }
+
+    // Tutte le risorse
+    const allContainer = document.getElementById("all-resources");
+    if (allContainer) {
+        allContainer.innerHTML = Object.keys(stats)
+            .sort((a, b) => {
+                const statusOrder = { critical: 0, warning: 1, healthy: 2 };
+                return statusOrder[getResourceStatus(stats[a])] - statusOrder[getResourceStatus(stats[b])];
+            })
+            .map(key => renderResourceCard(key, stats[key]))
+            .join("");
+    }
+
+    // Bisogni popolazione
+    const needsContainer = document.getElementById("population-needs");
+    if (needsContainer) {
+        // Mostra tutte le risorse che hanno consumo > 0
+        const needsList = [];
+        
+        Object.keys(stats).forEach(key => {
+            const stat = stats[key];
+            if (stat.consumption > 0) {
+                needsList.push({
+                    title: resourceLabels[key] || key,
+                    value: stat.consumption,
+                    desc: `Consumo della popolazione e strutture`,
+                    icon: getResourceIcon(key)
+                });
+            }
+        });
+        
+        // Aggiungi popolazione totale
+        needsList.push({
+            title: "Popolazione Totale",
+            value: totalPop,
+            desc: `Base per tutti i calcoli di consumo`,
+            icon: "👥"
+        });
+
+        needsContainer.innerHTML = needsList.map(need => `
+            <div class="need-card">
+                <div class="need-title">${need.icon} ${need.title}</div>
+                <div class="need-value">${need.value}</div>
+                <div class="need-desc">${need.desc}</div>
+            </div>
+        `).join("");
+    }
 }
 
 function renderMarket() {
