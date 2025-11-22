@@ -2275,101 +2275,303 @@
 .candidate-origin { font-size: 0.8em; color: var(--accent); }
 .candidate-bonus { font-size: 0.9em; color: #81c784; }
 
+/* ===================== NUOVO HUD (STILE DARK MEDIEVAL) ===================== */
+
+/* Barra Superiore (Contenitore Generale) */
 .top-hud {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(135deg, #2c1810 0%, #4a2c1a 100%);
-    border-bottom: 2px solid #8b4513;
+    /* Sfondo scuro semitrasparente uniforme al gioco */
+    background: rgba(12, 12, 12, 0.95); 
+    border-bottom: 1px solid var(--border-soft);
     z-index: 1000;
     padding: 10px 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-}
-
-.hud-stats-bar {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    height: 60px; /* Altezza fissa desktop */
+}
+
+/* Statistiche (Sinistra/Alto) */
+.hud-stats-bar {
+    display: flex;
+    gap: 20px;
+    align-items: center;
 }
 
 .hud-stats-bar .stat {
     display: flex;
     align-items: center;
-    gap: 5px;
-    font-size: 1.1em;
-    color: #f4e4bc;
+    gap: 6px;
+    font-size: 0.95em;
+    color: var(--text);
+    font-family: 'Georgia', serif;
 }
 
 .hud-stats-bar .stat i {
-    color: #daa520;
+    color: var(--accent); /* Oro */
+    font-size: 1.1em;
 }
 
+/* Navigazione (Destra/Basso) */
 .hud-nav-bar {
     display: flex;
-    justify-content: center;
-    gap: 15px;
+    gap: 8px;
 }
 
 .hud-nav-bar button {
-    background: rgba(255,255,255,0.1);
-    border: 1px solid #daa520;
-    color: #f4e4bc;
-    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-soft);
+    padding: 6px 12px;
     border-radius: 6px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9em;
+    transition: all 0.2s ease;
+    font-family: 'Georgia', serif;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
+/* Hover e Stato Attivo */
 .hud-nav-bar button:hover {
-    background: rgba(255,255,255,0.2);
-    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
 }
 
 .hud-nav-bar button.active {
-    background: #daa520;
-    color: #2c1810;
+    background: rgba(212, 175, 55, 0.15); /* Oro scuro trasparente */
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
 }
 
+/* Spaziatura contenuto principale per non finire sotto la barra */
 .system-toolbar {
-    margin-top: 80px; /* Space for fixed HUD */
+    margin-top: 80px; 
     padding: 20px;
 }
 
-.season-effects-text {
-    text-align: center;
-    margin-bottom: 20px;
-    font-style: italic;
-    color: #8b4513;
+/* ===================== MOBILE REDESIGN (USER FRIENDLY) ===================== */
+@media (max-width: 768px) {
+    
+    /* 1. La barra superiore tiene SOLO le statistiche */
+    .top-hud {
+        height: 50px;
+        padding: 0 12px;
+        justify-content: center;
+        background: #080808; /* Nero quasi totale */
+        border-bottom: 1px solid #333;
+    }
+
+    .hud-stats-bar {
+        width: 100%;
+        justify-content: space-between;
+        gap: 0;
+        font-size: 0.8em; /* Testo più piccolo */
+    }
+    
+    /* Nascondiamo l'icona o riduciamo spazio se necessario */
+    .hud-stats-bar .stat { gap: 4px; }
+
+    /* 2. La barra di navigazione scende in BASSO (App Style) */
+    .hud-nav-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #121212; /* Grigio scuro */
+        border-top: 1px solid var(--accent); /* Linea dorata sopra */
+        height: 70px; /* Altezza fissa per il tocco */
+        z-index: 2000;
+        
+        /* Abilita lo scroll orizzontale se i pulsanti sono troppi */
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        
+        /* Centratura e spaziatura */
+        padding: 8px 10px;
+        gap: 12px;
+        justify-content: flex-start; /* Allinea a sinistra per lo scroll */
+        
+        /* Nascondi scrollbar nativa ma permetti scroll */
+        -webkit-overflow-scrolling: touch; 
+        scrollbar-width: none; /* Firefox */
+    }
+    
+    .hud-nav-bar::-webkit-scrollbar { 
+        display: none; /* Chrome/Safari */
+    }
+
+    /* Stile Pulsanti Mobile */
+    .hud-nav-bar button {
+        flex: 0 0 auto; /* Non schiacciare i pulsanti */
+        display: flex;
+        flex-direction: column; /* Icona sopra, testo sotto */
+        justify-content: center;
+        align-items: center;
+        min-width: 65px;
+        padding: 4px;
+        font-size: 0.65em; /* Testo molto piccolo leggibile */
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 8px;
+        color: #aaa;
+    }
+    
+    /* Rimuoviamo emoji dal testo se necessario o le ingrandiamo */
+    .hud-nav-bar button {
+        gap: 4px;
+    }
+
+    /* Stato attivo mobile molto visibile */
+    .hud-nav-bar button.active {
+        background: #252525;
+        border-color: var(--accent);
+        color: #fff;
+        transform: translateY(-2px);
+    }
+
+    /* Aggiustiamo i margini del contenuto */
+    .system-toolbar {
+        margin-top: 60px; /* Spazio per stats sopra */
+        margin-bottom: 80px; /* Spazio per nav sotto */
+        padding: 10px;
+    }
+    
+    /* Nascondiamo la vecchia bottom-nav se presente nel codice originale per evitare duplicati */
+    .bottom-nav {
+        display: none !important; 
+    }
 }
 
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-    .top-hud {
-        padding: 8px 10px;
-    }
-    .hud-stats-bar {
-        flex-direction: column;
-        gap: 8px;
-        align-items: flex-start;
-    }
-    .hud-stats-bar .stat {
-        font-size: 1em;
-    }
-    .hud-nav-bar {
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-    .hud-nav-bar button {
-        padding: 6px 12px;
-        font-size: 0.8em;
-    }
-    .system-toolbar {
-        margin-top: 120px; /* Adjust for mobile HUD height */
-        padding: 15px;
-    }
+/* Stili Pannello Bisogni */
+.needs-legend {
+    font-size: 0.75em;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+}
+
+.need-entry {
+    background: rgba(12,12,12,0.6);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.need-entry-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: var(--accent);
+}
+
+.need-bars-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.need-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.75em;
+    color: var(--text-soft);
+}
+
+.need-track {
+    flex: 1;
+    height: 6px;
+    background: #222;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.need-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+.fill-prim { background: #6ada91; }
+.fill-sec { background: #64b5f6; }
+
+/* Status Warning */
+.need-warning {
+    color: #ff7c7c;
+    font-size: 0.8em;
+    margin-top: 4px;
+    font-style: italic;
+    background: rgba(255, 0, 0, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+/* Stile per il Modale Cronache */
+.chronicle-content {
+    max-width: 650px;
+    background: #1a1612; /* Sfondo scuro caldo/marrone */
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 50px rgba(0,0,0,0.9);
+    text-align: left;
+    font-family: 'Georgia', serif; /* Font serif per la narrativa */
+    line-height: 1.6;
+    color: #e0d8c0; /* Colore pergamena chiaro per il testo */
+}
+
+.chronicle-header {
+    text-align: center;
+}
+
+.chronicle-header h2 {
+    font-family: 'Cinzel', serif; /* Se disponibile, o Georgia */
+    color: var(--accent);
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+}
+
+.chronicle-text {
+    font-size: 1.1em;
+    min-height: 200px;
+    white-space: pre-wrap; /* Mantiene i paragrafi dell'IA */
+}
+
+.chronicle-text p {
+    margin-bottom: 15px;
+}
+
+/* Animazione caricamento */
+.loading-story {
+    text-align: center;
+    padding: 40px;
+    color: #888;
+    font-style: italic;
+}
+
+.scribe-icon {
+    font-size: 3em;
+    display: block;
+    margin-bottom: 15px;
+    animation: writing 1s infinite alternate;
+}
+
+@keyframes writing {
+    from { transform: rotate(-5deg); }
+    to { transform: rotate(5deg); }
 }
 
     </style>
@@ -2669,6 +2871,21 @@
                 <div class="social-class-count" id="merchants-count">0</div>
                 <div class="social-class-wealth" id="merchants-wealth">0💰</div>
             </div>
+        </div>
+    </div>
+
+    <!-- ===================== BISOGNI E CONSUMI ===================== -->
+    <button class="section-toggle" onclick="togglePanel('panel-needs')">
+        Soddisfazione e Potere d'Acquisto
+        <span>Analisi Consumi</span>
+    </button>
+    <div id="panel-needs" class="section-panel collapsed">
+        <div class="needs-legend">
+            <span style="color:#6ada91">■ Primari (Sopravvivenza)</span>
+            <span style="color:#64b5f6">■ Secondari (Comfort)</span>
+        </div>
+        <div id="needs-list-container">
+            <div class="save-empty">Dati disponibili dopo il primo turno.</div>
         </div>
     </div>
 
@@ -3195,6 +3412,41 @@ const resourceLabels = {
     arcane: "Essenza arcana"
 };
 
+const POP_NEEDS = {
+    peasants: {
+        primary: { grain: 0.1 },        // Sopravvivenza: Cibo base
+        secondary: { wood: 0.05, textiles: 0.01 } // Comfort: Legna, Vestiti
+    },
+    militia: {
+        primary: { grain: 0.15, iron: 0.02 }, // Cibo + Manutenzione armi
+        secondary: { livestock: 0.05, textiles: 0.02 }
+    },
+    burghers: {
+        primary: { grain: 0.1, textiles: 0.05 },
+        secondary: { livestock: 0.1, luxuries: 0.01, wood: 0.05 }
+    },
+    merchants: {
+        primary: { grain: 0.1, textiles: 0.1 },
+        secondary: { luxuries: 0.05, livestock: 0.1, gold: 0.1 } // Accumulo ricchezza
+    },
+    nobility: {
+        primary: { livestock: 0.2, textiles: 0.1 },
+        secondary: { luxuries: 0.1, arcane: 0.01, gold: 0.5 }
+    },
+    clergy: {
+        primary: { grain: 0.1, herbs: 0.05 },
+        secondary: { luxuries: 0.02, arcane: 0.02 }
+    },
+    mystics: {
+        primary: { grain: 0.05, herbs: 0.1 },
+        secondary: { arcane: 0.05, luxuries: 0.01 }
+    },
+    outcasts: {
+        primary: { grain: 0.05 }, // Mangiano poco
+        secondary: { wood: 0.02 }
+    }
+};
+
 const SEASON_CYCLE = [
     {
         key: "spring",
@@ -3332,6 +3584,18 @@ let county = createDefaultCounty();
 lastResourceSnapshot = cloneResourceBag(county.resources);
 lastResourceDelta = createEmptyResourceDelta();
 let industrySummary = null;
+
+// Memoria dell'ultimo stato dei bisogni per l'IA
+let lastNeedsReport = {};
+
+// Registro degli eventi del turno corrente
+let currentTurnEvents = [];
+
+function logTurnEvent(text) {
+    // Aggiunge un evento alla lista (es. "È nato un figlio", "Costruito mercato")
+    currentTurnEvents.push(text);
+}
+
 
 // Tracciamento transazioni economiche per il rapporto stagionale
 let seasonalTransactions = {
@@ -3752,6 +4016,7 @@ function marrySuitor(suitor) {
     }
 
     addMsg("system", `💍 <b>MATRIMONIO REALE:</b> Il Conte ha sposato ${suitor.name}!`);
+    logTurnEvent(`Matrimonio reale celebrato con ${suitor.name}`);
     updateDynastyUI();
     updateUI();
 }
@@ -3801,6 +4066,7 @@ function checkBirth() {
         
         dynasty.heirs.push(child);
         addMsg("system", `👶 <b>LIETO EVENTO:</b> È nato un erede! Benvenuto al piccolo ${name}.`);
+        logTurnEvent(`È nato un erede: ${name}`);
         
         // Se è il primo figlio, aumenta stabilità
         if (dynasty.heirs.length === 1) {
@@ -5325,6 +5591,7 @@ function resetGameState() {
     worldMap.tiles = [];
     privateChats = createDefaultPrivateChats();
     publicChatHistory = []; // <--- AGGIUNTO
+    lastNeedsReport = {}; // Reset memoria bisogni
     activePrivateChat = null;
     county.turn = 1;
     worldTime = createDefaultWorldTime();
@@ -6234,6 +6501,118 @@ function processVillageEconomy(targetState = null, options = {}) {
     return { production, consumption, deficits, logisticImpact, logisticNeeds };
 }
 
+function processPopNeedsSystem(targetState = null, options = {}) {
+    const { silent = false } = options;
+    const statePop = targetState ? targetState.populationGroups : populationGroups;
+    const stateCounty = targetState ? targetState.county : county;
+    const stateFactions = targetState ? targetState.factions : factions;
+    const marketPrices = getMarketPrices(); 
+    
+    // Resetta il report per questo turno
+    if (!targetState) lastNeedsReport = {};
+
+    let reportLog = [];
+    let totalSatisfaction = 0;
+    let groupsProcessed = 0;
+
+    for (const [groupKey, data] of Object.entries(statePop)) {
+        if (data.count <= 0) continue;
+        const needs = POP_NEEDS[groupKey];
+        if (!needs) continue;
+
+        let primaryMet = 0;
+        let secondaryMet = 0;
+        
+        // Tracking per il report IA
+        let povertyStrikes = 0; // Quante volte non hanno avuto soldi
+        let shortageStrikes = 0; // Quante volte mancava merce
+
+        const attemptPurchase = (needList, isPrimary) => {
+            let count = 0; 
+            let met = 0;
+            for (const [resKey, amountPerCapita] of Object.entries(needList)) {
+                count++;
+                const totalDemand = Math.ceil(amountPerCapita * data.count);
+                const stock = stateCounty.resources[resKey] || 0;
+                const unitPrice = marketPrices[resKey] || 1;
+                const maxAffordable = Math.floor(data.wealth / unitPrice);
+                
+                const actualBuy = Math.min(totalDemand, stock, maxAffordable);
+                
+                // Transazione
+                if (actualBuy > 0) {
+                    stateCounty.resources[resKey] -= actualBuy;
+                    data.wealth -= actualBuy * unitPrice;
+                    stateCounty.gold += Math.floor(actualBuy * unitPrice * 0.3);
+                }
+
+                // Analisi cause fallimento per l'IA
+                if (actualBuy < totalDemand) {
+                    if (maxAffordable < totalDemand) povertyStrikes++; // Hanno fallito per soldi
+                    else if (stock < totalDemand) shortageStrikes++;   // Hanno fallito per stock
+                }
+
+                met += (totalDemand > 0 ? actualBuy / totalDemand : 1);
+            }
+            return { count, met };
+        };
+
+        const pRes = attemptPurchase(needs.primary || {}, true);
+        const sRes = attemptPurchase(needs.secondary || {}, false);
+
+        const pScore = pRes.count > 0 ? (pRes.met / pRes.count) : 1;
+        const sScore = sRes.count > 0 ? (sRes.met / sRes.count) : 1;
+
+        // --- SALVATAGGIO DATI PER L'IA ---
+        if (!targetState) {
+            let status = "Soddisfatto";
+            let reason = "Nessuna";
+            
+            if (pScore < 0.5) {
+                status = "DISPERATO";
+                // Determiniamo la causa principale
+                if (povertyStrikes > shortageStrikes) reason = "POVERTÀ ESTREMA (Prezzi troppo alti)";
+                else reason = "CARESTIA (Magazzini vuoti)";
+            } else if (pScore < 0.9) {
+                status = "In difficoltà";
+                if (povertyStrikes > 0) reason = "Potere d'acquisto basso";
+                else reason = "Scarsità merci";
+            }
+
+            lastNeedsReport[groupKey] = {
+                wealth: Math.floor(data.wealth),
+                primary: Math.floor(pScore * 100),
+                secondary: Math.floor(sScore * 100),
+                status: status,
+                mainIssue: reason
+            };
+        }
+        // ---------------------------------
+
+        // Conseguenze (uguali a prima)
+        if (pScore < 0.8) {
+            const severity = (1 - pScore);
+            stateCounty.health = Math.max(0, stateCounty.health - (severity * 5));
+            stateFactions[groupKey] = Math.max(0, stateFactions[groupKey] - (severity * 20));
+        } else {
+            stateFactions[groupKey] = Math.min(100, stateFactions[groupKey] + 1);
+        }
+
+        if (sScore < 0.6) {
+            stateCounty.happy = Math.max(0, stateCounty.happy - 2);
+            stateFactions[groupKey] = Math.max(0, stateFactions[groupKey] - 2);
+        } else if (sScore > 0.9) {
+            stateCounty.happy = Math.min(100, stateCounty.happy + 1);
+            stateFactions[groupKey] = Math.min(100, stateFactions[groupKey] + 2);
+        }
+
+        totalSatisfaction += (pScore * 0.7 + sScore * 0.3);
+        groupsProcessed++;
+    }
+
+    return totalSatisfaction / (groupsProcessed || 1);
+}
+
 function calculateVillageProduction(stateRef = null) {
     const summary = getIndustrySummary(stateRef);
     const flows = getCachedAssetFlows(stateRef) || calculateAssetFlows(summary, stateRef);
@@ -6563,6 +6942,8 @@ function applyBuildingEffects(b) {
         registerNewStructure(listKey, production, b, label);
         addMsg("system", `⚙️ Produzione avviata: una nuova ${b.name} è operativa.`);
     };
+
+    logTurnEvent(`Completata la costruzione di: ${b.name}`);
 
     switch(b.type) {
         // --- AGRICOLTURA & SOPRAVVIVENZA ---
@@ -6977,6 +7358,7 @@ function updateUI() {
     updateConstructionUI();
     renderResourceStats();
     renderMarket();
+    renderNeedsPanel();
 }
 
 function updateDiplomacyUI() {
@@ -7143,7 +7525,10 @@ function processDemographicEvents() {
         const d1 = safeAdjustPop("peasants", -peasantDeaths);
         const d2 = safeAdjustPop("outcasts", -outcastDeaths);
         
-        if ((d1 + d2) < 0) events.push(`💀 Carestia: ${Math.abs(d1+d2)} morti di fame.`);
+        if ((d1 + d2) < 0) {
+            events.push(`💀 Carestia: ${Math.abs(d1+d2)} morti di fame.`);
+            logTurnEvent(`Care stia nel regno: ${Math.abs(d1+d2)} morti di fame.`);
+        }
         totalDeaths += Math.abs(d1+d2);
     }
 
@@ -7159,7 +7544,10 @@ function processDemographicEvents() {
         const d4 = safeAdjustPop("militia", -Math.floor(deaths * 0.1));
 
         const actualDeaths = Math.abs(d1+d2+d3+d4);
-        if (actualDeaths > 0) events.push(`🦠 Epidemia: ${actualDeaths} vittime.`);
+        if (actualDeaths > 0) {
+            events.push(`🦠 Epidemia: ${actualDeaths} vittime.`);
+            logTurnEvent(`Epidemia nel regno: ${actualDeaths} vittime.`);
+        }
         totalDeaths += actualDeaths;
     }
 
@@ -7348,13 +7736,174 @@ function processNeighborEconomies(options = {}) {
     neighboringCounties.forEach(neigh => simulateNeighborEconomy(neigh, { silent }));
 }
 
+// Arrotonda a 2 cifre decimali (es. 45.67%)
+function fmtPct(value) {
+    if (value === undefined || value === null) return "0.00%";
+    // Se il valore è 0-1 (es. 0.5), lo moltiplichiamo per 100
+    // Se è già 0-100, lo usiamo direttamente.
+    // Nel tuo codice usi spesso valori 0-100, quindi assumiamo quello.
+    return parseFloat(value).toFixed(2) + "%";
+}
+
+// Versione per numeri 0-1 (es. needs calculation returns 0.85)
+function fmtPctFrac(value) {
+    return (value * 100).toFixed(2) + "%";
+}
+
 function updateBar(id,val){
     const bar = document.getElementById(`bar-${id}`);
     const txt = document.getElementById(`txt-${id}`);
     bar.style.width = val + "%";
-    txt.innerText = val + "%";
+    txt.innerText = parseFloat(val).toFixed(2) + "%";
 }
 
+function renderNeedsPanel() {
+    const container = document.getElementById("needs-list-container");
+    if (!container) return;
+
+    // Se non ci sono dati (inizio gioco)
+    if (!lastNeedsReport || Object.keys(lastNeedsReport).length === 0) {
+        container.innerHTML = '<div class="save-empty">I dati sui consumi appariranno qui dopo il prossimo cambio di stagione.</div>';
+        return;
+    }
+
+    let html = "";
+    
+    // Ordine standard fazioni
+    const order = ["nobility", "clergy", "militia", "burghers", "merchants", "peasants", "mystics", "outcasts"];
+
+    order.forEach(key => {
+        const data = lastNeedsReport[key];
+        if (!data) return;
+
+        // Recuperiamo il nome leggibile
+        const label = factionLabel(key);
+        
+        // Colore ricchezza
+        const wealthColor = data.wealth < 20 ? "#ff7c7c" : "#ffd700";
+
+        // Avvisi critici
+        let warningHtml = "";
+        if (data.mainIssue && data.mainIssue !== "Nessuna") {
+            warningHtml = `<div class="need-warning">⚠️ ${data.mainIssue} (${data.status})</div>`;
+        }
+
+        html += `
+            <div class="need-entry">
+                <div class="need-entry-header">
+                    <span>${label}</span>
+                    <span style="color:${wealthColor}">💰 ${data.wealth} oro</span>
+                </div>
+                
+                <div class="need-bars-container">
+                    <div class="need-bar-row">
+                        <span style="width:60px">Primari</span>
+                        <div class="need-track">
+                            <div class="need-fill fill-prim" style="width: ${data.primary}%"></div>
+                        </div>
+                        <span style="width:45px; text-align:right;">${fmtPct(data.primary)}</span>
+                    </div>
+                    
+                    <div class="need-bar-row">
+                        <span style="width:60px">Secondari</span>
+                        <div class="need-track">
+                            <div class="need-fill fill-sec" style="width: ${data.secondary}%"></div>
+                        </div>
+                        <span style="width:45px; text-align:right;">${fmtPct(data.secondary)}</span>
+                    </div>
+                </div>
+                ${warningHtml}
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+}
+
+async function generateSeasonStory() {
+    // 1. Apri il modale in stato di caricamento
+    const modal = document.getElementById("modal-chronicle");
+    const body = document.getElementById("chronicle-body");
+    const titleDate = document.getElementById("chronicle-date");
+    
+    if (modal) modal.classList.add("active");
+    if (titleDate) titleDate.innerText = `Anno ${worldTime.year}, ${getSeason().label}`;
+    if (body) body.innerHTML = `
+        <div class="loading-story">
+            <span class="scribe-icon">✍️</span>
+            <p>Il Mastrocronista sta scrivendo le cronache della stagione...</p>
+        </div>`;
+
+    if (!ensureApiKey()) {
+        body.innerHTML = "<p>Chiave API mancante. Impossibile scrivere la storia.</p>";
+        return;
+    }
+
+    // 2. Prepara il Prompt
+    // Uniamo il "Deep Context" (stato statico) con gli "Eventi del Turno" (cosa è appena successo)
+    const context = generateDeepContext(); 
+    const eventsList = currentTurnEvents.length > 0 ? currentTurnEvents.join("\n- ") : "Nessun evento maggiore, ordinaria amministrazione.";
+    
+    // Recuperiamo anche i problemi economici dai bisogni (se ci sono)
+    let economicWoes = "";
+    if (lastNeedsReport && Object.keys(lastNeedsReport).length > 0) {
+        Object.values(lastNeedsReport).forEach(r => {
+            if (r.status === "DISPERATO") economicWoes += `- Una classe sociale è disperata: ${r.mainIssue}.\n`;
+        });
+    }
+
+    const systemPrompt = `
+    SEI IL MASTROCRONISTA DEL REGNO.
+    Il tuo compito è scrivere un breve e coinvolgente resoconto narrativo (max 150 parole) di come è trascorsa l'ultima stagione.
+
+    DATI DEL REGNO:
+    ${context}
+
+    EVENTI APPENA ACCADUTI (Importante):
+    - ${eventsList}
+    ${economicWoes}
+
+    ISTITUZIONI:
+    Scrivi un testo in prosa, stile romanzo storico/fantasy medievale. 
+    - Non fare un elenco puntato.
+    - Usa un tono solenne ma descrittivo.
+    - Se ci sono carestie economiche (gente povera), descrivi la sofferenza.
+    - Se ci sono stati matrimoni o nascite, celebrali.
+    - Se non è successo nulla, descrivi l'atmosfera della stagione (es. "L'inverno è passato tranquillo...").
+    
+    Inizia direttamente con la narrazione.
+    `;
+
+    try {
+        const resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type":"application/json",
+                "Authorization":"Bearer " + apiKey
+            },
+            body: JSON.stringify({
+                model: "llama-3.1-8b-instant",
+                temperature: 0.7,
+                messages: [{ role: "system", content: systemPrompt }]
+            })
+        });
+
+        const data = await resp.json();
+        const story = data.choices[0].message.content;
+
+        // 3. Mostra la storia
+        // Formattiamo leggermente (grassetto per i nomi propri se l'IA li usa)
+        const formattedStory = story.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        body.innerHTML = `<p>${formattedStory}</p>`;
+
+    } catch (e) {
+        body.innerHTML = `<p>Il cronista ha rotto la penna (Errore: ${e.message})</p>`;
+    }
+}
+
+function closeChronicleModal() {
+    document.getElementById("modal-chronicle").classList.remove("active");
+}
 
 /* ============================================================
    ==================== INVIO MESSAGGI PUBBLICI =================
@@ -7362,6 +7911,7 @@ function updateBar(id,val){
 
 function progressSeason(options = {}) {
     const { silent = false } = options;
+    currentTurnEvents = [];
     ensureWorldSystems();
     county.turn++;
     
@@ -7388,10 +7938,21 @@ function progressSeason(options = {}) {
     
     processLifeEvents(); // <--- AGGIUNGI QUESTA RIGA QUI!
     
+    // 1. PRIMA GUADAGNANO (Stipendi, Raccolti, Commercio)
+    updateCategoryWealth(); // <--- Assicurati che questa esista e funzioni
+    
+    // 2. POI PRODUCONO (Le strutture generano risorse per il mercato)
     applyProduction(null, { skipUI: true, silent: true }); // Produzione silenziosa
     
+    // 3. ORA CONSUMANO (Usando la nuova logica basata sui soldi)
+    // Sostituisci la vecchia processVillageEconomy o integrala così:
+    processPopNeedsSystem(null, { silent: silent });
+    
+    // NOTA: processVillageEconomy vecchia faceva un calcolo astratto. 
+    // Se usi la nuova funzione, commenta la parte di consumo della vecchia per non consumare risorse due volte.
+    
     // Calcolo Economia Villaggio
-    const economyReport = processVillageEconomy(null, { skipUI: true, silent: true });
+    // const economyReport = processVillageEconomy(null, { skipUI: true, silent: true });
     
     // Tasse e Manutenzione
     const taxesCollected = collectTaxes(null, { silent: true });
@@ -7468,6 +8029,8 @@ function progressSeason(options = {}) {
         if (worldNarration) {
             addMsg("system", worldNarration);
         }
+
+        setTimeout(() => generateSeasonStory(), 1000);
     }
 }
 
@@ -7858,9 +8421,9 @@ async function callGroq(userText, mode="action") {
     // Aggiungiamo il messaggio dell'utente alla memoria
     publicChatHistory.push({ role: "user", content: userText });
 
-    // Manteniamo la memoria pulita (ultimi 12 messaggi per non consumare troppi token)
-    if (publicChatHistory.length > 12) {
-        publicChatHistory = publicChatHistory.slice(-12);
+    // Manteniamo la memoria pulita (ultimi 10 messaggi per non consumare troppi token)
+    if (publicChatHistory.length > 10) {
+        publicChatHistory = publicChatHistory.slice(-10);
     }
 
     // 3. Prepariamo il pacchetto completo per l'IA
@@ -7879,7 +8442,7 @@ async function callGroq(userText, mode="action") {
             },
             body: JSON.stringify({
                 model: "llama-3.1-8b-instant",
-                temperature: 0.7, // Un po' più basso per mantenere coerenza logica
+                temperature: 0.6, // Leggermente più basso per essere fedele ai dati
                 messages: apiMessages
             })
         });
@@ -8243,79 +8806,142 @@ function getDynamicActions(response = "") {
     return actions;
 }
 
-function generateKingdomSummary() {
-    const s = []; // Array di stringhe per il sommario
-    
-    // 1. TEMPO E RICCHEZZA
-    s.push(`Siamo nell'Anno ${worldTime.year}, durante la stagione di ${getSeason().label}.`);
-    
-    if (county.gold < 50) s.push("Le casse reali sono quasi vuote (CRISI ECONOMICA).");
-    else if (county.gold > 500) s.push("Il regno è prospero e ricco.");
-    
-    // 2. STATO SOCIALE (Cibo e Salute)
-    if (county.food < 25) s.push("⚠ GRAVE CARESTIA: Il popolo muore di fame.");
-    else if (county.food < 50) s.push("Le scorte di cibo scarseggiano.");
-    
-    if (county.health < 30) s.push("⚠ PESTILENZA: La malattia si diffonde tra i vicoli.");
-    if (county.security < 30) s.push("⚠ INSICUREZZA: I banditi scorrazzano impuniti.");
+function generateDeepContext() {
+    // 1. TEMPO E STATO GENERALE
+    let context = `=== STATO DEL REGNO (Turno ${county.turn}) ===\n`;
+    context += `DATA: Anno ${worldTime.year}, ${getSeason().label}.\n`;
+    context += `REGNANTE: ${dynasty.ruler.name} (Età: ${Math.floor(dynasty.ruler.age)}, Salute: ${dynasty.ruler.health}%).\n`;
+    context += `POPOLAZIONE: ${county.pop} anime. (Felicità: ${county.happy}%, Salute Pubblica: ${county.health}%, Sicurezza: ${county.security}%).\n`;
+    context += `TESORERIA: ${county.gold} Oro.\n`;
 
-    // 3. FAZIONI (Chi ti odia?)
-    const enemies = Object.entries(factions)
-        .filter(([key, val]) => val < 35)
-        .map(([key]) => factionLabel(key));
+    // 2. ECONOMIA E RISORSE (Solo quelle rilevanti o critiche)
+    context += `\n[MAGAZZINI E RISORSE]\n`;
+    const resList = Object.entries(county.resources)
+        .map(([k, v]) => `${resourceLabels[k] || k}: ${v}`)
+        .join(", ");
+    context += `Scorte: ${resList}.\n`;
     
-    if (enemies.length > 0) {
-        s.push(`Fazioni ostili che tramano nell'ombra: ${enemies.join(", ")}.`);
+    // Segnaliamo deficit critici se ci sono
+    if (county.food < county.pop * 0.5) context += "ATTENZIONE: Carestia imminente (Cibo insufficiente).\n";
+    if (county.gold < 50) context += "ATTENZIONE: Bancarotta vicina.\n";
+
+    // 3. POLITICA E FAZIONI
+    context += `\n[UMORE DELLE FAZIONI (0-100)]\n`;
+    // Ordiniamo per lealtà per dare priorità a chi è arrabbiato o molto fedele
+    const sortedFactions = Object.entries(factions).sort((a, b) => a[1] - b[1]);
+    sortedFactions.forEach(([key, val]) => {
+        let status = "Neutrale";
+        if (val <= 30) status = "RIVOLTOSO/OSTILE";
+        else if (val <= 45) status = "Scontento";
+        else if (val >= 80) status = "Devoto";
+        else if (val >= 60) status = "Fedele";
+        
+        context += `- ${factionLabel(key)}: ${val} (${status})\n`;
+    });
+
+    // NUOVA SEZIONE: ECONOMIA POPOLAZIONE
+    context += `\n[ANALISI ECONOMICA E BISOGNI POPOLAZIONE]\n`;
+    context += `Nota: Se "Primari" è basso, muoiono. Se la causa è "POVERTÀ", il cibo c'è ma costa troppo.\n`;
+    
+    if (Object.keys(lastNeedsReport).length > 0) {
+        Object.entries(lastNeedsReport).forEach(([key, data]) => {
+            // Mostriamo solo se ci sono problemi o se è una classe chiave, per risparmiare token
+            // Oppure mostriamo tutto per massima precisione. Qui mostriamo tutto.
+            const label = factionLabel(key);
+            context += `- ${label}: Ricchezza ${data.wealth} oro. `;
+            context += `Bisogni Primari: ${data.primary}% coperti. Secondari: ${data.secondary}%. `;
+            context += `Stato: ${data.status}. `;
+            if (data.mainIssue !== "Nessuna") {
+                context += `⚠️ PROBLEMA: ${data.mainIssue}.`;
+            }
+            context += `\n`;
+        });
+    } else {
+        context += "Nessun dato sui consumi disponibile (Inizio partita o turno non processato).\n";
     }
 
-    // 4. EDIFICI IMPORTANTI (Cosa vede il Conte?)
-    const majorBuildings = buildings
-        .filter(b => b.stage === 'complete')
-        .map(b => buildingData[b.type].name);
+    // 5. GEOGRAFIA E STRUTTURE
+    context += `\n[INFRASTRUTTURE]\n`;
+    const completedBuildings = buildings.filter(b => b.stage === 'complete');
+    const inProgress = buildings.filter(b => b.stage === 'building');
     
-    if (majorBuildings.length > 0) {
-        s.push(`Infrastrutture completate: ${majorBuildings.join(", ")}.`);
+    if (completedBuildings.length > 0) {
+        const buildNames = completedBuildings.map(b => buildingData[b.type].name).join(", ");
+        context += `Completati: ${buildNames}.\n`;
+    } else {
+        context += `Nessun edificio importante completato.\n`;
+    }
+    
+    if (inProgress.length > 0) {
+        const progNames = inProgress.map(b => `${buildingData[b.type].name} (${b.turns_left} turni rimanenti)`).join(", ");
+        context += `CANTIERI ATTIVI: ${progNames}.\n`;
     }
 
-    // 5. LEGGI ATTIVE
-    if (activeLaws.length > 0) {
-        const lawsNames = activeLaws.map(key => getLawDefinition(key).name);
-        s.push(`Leggi in vigore: ${lawsNames.join(", ")}.`);
-    }
+    // 6. RELAZIONI ESTERE
+    context += `\n[DIPLOMAZIA]\n`;
+    neighboringCounties.forEach(n => {
+        let rel = "Neutrale";
+        if (n.relations > 70) rel = "Alleato";
+        if (n.relations < 30) rel = "Nemico";
+        context += `- ${n.name}: Relazione ${n.relations}/100 (${rel}). Potenza: ${n.power}.\n`;
+    });
 
-    return s.join("\n");
+    // 7. MEMORIA A BREVE TERMINE (Ultimi eventi)
+    // Prendiamo gli ultimi 3 messaggi di sistema significativi per dare continuità narrativa
+    context += `\n[MEMORIA RECENTE - Ultimi eventi]\n`;
+    // Qui simuliamo recuperando dallo storico o da una variabile globale di log se esiste
+    // Se non hai un log strutturato, puoi lasciare generico o usare l'ultimo delta risorse
+    if (lastResourceDelta) {
+        context += `Ultimo bilancio risorse: ${formatResourceDelta(lastResourceDelta)}.\n`;
+    }
+    
+    return context;
 }
 
 function buildPrompt(userText, mode) {
-    // 1. Calcola le azioni fattibili (economicamente)
+    // 1. Genera il contesto completo e aggiornato
+    const fullContext = generateDeepContext();
+    
+    // 2. Calcola azioni possibili (per aiutare l'IA a suggerire cose sensate)
     const feasibleOptions = getFeasibleActions();
 
-    // 2. Genera il RIASSUNTO DEL REGNO (Memoria contestuale)
-    const kingdomContext = generateKingdomSummary();
+    // 3. Costruisci il System Prompt (Il "cervello" dell'IA)
+    let systemText = "";
 
-    // 3. Costruisci il System Prompt
-    const systemText = `
-SEI IL "MOTORE NARRATIVO" DI UN GIOCO DI GESTIONE MEDIEVALE.
+    if (mode === "action") {
+        systemText = `
+SEI IL GAME MASTER E NARRATORE DI UN GIOCO STRATEGICO MEDIEVALE.
+Il tuo compito è rispondere alle azioni del Conte (l'utente) basandoti RIGOROSAMENTE sui dati attuali del regno.
 
-=== RIASSUNTO DELLO STATO DEL REGNO (MEMORIA A LUNGO TERMINE) ===
-${kingdomContext}
-=================================================================
+${fullContext}
 
-AMBIENTAZIONE: Sala della Corte.
-RUOLI: L'Utente è il CONTE. Tu interpreti le FAZIONI e il NARRATORE.
+=== REGOLE DI RISPOSTA ===
+1. **Coerenza**: Se c'è carestia (Cibo basso), i contadini devono lamentarsi. Se c'è tanto Oro, i mercanti devono proporre affari. Non inventare risorse che non esistono.
+2. **Stile**: Usa un tono appropriato all'epoca. Sii descrittivo ma conciso (max 3 frasi per la scena).
+3. **Reattività**: Reagisci direttamente all'input dell'utente "${userText}".
+4. **Output Strutturato**:
+   - Inizia con "SCENA: " per descrivere l'atmosfera o la reazione immediata.
+   - Usa "NOME_FAZIONE: " se qualcuno parla (es. "Odric: ...").
+   - Alla fine, fornisci una lista "AZIONI:" basata sulle opzioni fattibili qui sotto.
 
-OBIETTIVO:
-Usa il "Riassunto del Regno" qui sopra per dare contesto. 
-Esempio: Se c'è "GRAVE CARESTIA", i contadini devono implorare cibo e i nobili devono temere rivolte.
-
-REGOLE FORMATTAZIONE (Output riga per riga):
-- "SCENA: " -> Descrizione atmosferica.
-- "NOME: " -> Dialogo personaggio.
-- "AZIONI:" -> Lista opzioni finali.
-
-AZIONI DA PROPORRE (Scegline 2 pertinenti):
+=== OPZIONI FATTIBILI DA SUGGERIRE (Scegline 2 o 3 pertinenti) ===
 ${feasibleOptions}
 `;
+    } 
+    
+    else if (mode === "advice") {
+        systemText = `
+SEI SER DORIAN, IL CONSIGLIERE DI CORTE.
+Parli in modo saggio, pragmatico e diretto.
+Analizza i dati seguenti e dai un consiglio strategico urgente.
+
+${fullContext}
+
+Tuo compito:
+Identifica il problema più critico (es. Cibo scarso, bassa Sicurezza, Fazioni ribelli) e suggerisci una soluzione concreta (es. Costruire edificio X, Alzare tasse, Fare accordi).
+Non dilungarti in saluti. Vai al punto.
+`;
+    }
 
     return {
         system: systemText,
@@ -9416,6 +10042,27 @@ document.addEventListener("DOMContentLoaded", initStartScreen);
         <div id="budget-content">
             <!-- Contenuto popolato da renderBudget() -->
         </div>
+    </div>
+</div>
+
+<!-- MODALE CRONACHE STAGIONALI -->
+<div id="modal-chronicle" class="modal" style="background: rgba(0,0,0,0.9); z-index: 5000;">
+    <div class="modal-content chronicle-content">
+        <div class="chronicle-header">
+            <h2 id="chronicle-title">Cronache del Regno</h2>
+            <div id="chronicle-date" style="color:var(--text-soft); font-style:italic;">Anno 1325, Primavera</div>
+        </div>
+        
+        <hr style="border-color:var(--accent); opacity:0.3; margin: 15px 0;">
+        
+        <div id="chronicle-body" class="chronicle-text">
+            <div class="loading-story">
+                <span class="scribe-icon">✍️</span>
+                <p>Il Mastrocronista sta scrivendo la storia della stagione...</p>
+            </div>
+        </div>
+
+        <button class="btn-main" onclick="closeChronicleModal()" style="margin-top:20px;">Continua a Governare</button>
     </div>
 </div>
 
