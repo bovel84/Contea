@@ -3512,11 +3512,32 @@ const BASE_LAW_LIBRARY = [
     {
         key: "grain_subsidy",
         name: "Sussidi Agricoli",
-        description: "Finanzia sementi e mulini: +produzione grano ma minori entrate fiscali dai contadini.",
+        description: "Il Conte paga parte delle sementi.",
+        upkeepCost: 20, // Costo fisso in Oro per turno
         effects: {
             production: { grain: 1.25 },
-            taxes: { peasants: -2 },
-            factions: { peasants: 4, nobility: -2 }
+            factions: { peasants: 4, nobility: -1 }
+        }
+    },
+    {
+        key: "bread_for_poor",
+        name: "Pane per i Poveri",
+        description: "Distribuzione gratuita di cibo agli indigenti.",
+        upkeepCost: 50, // Costoso!
+        consumeResource: { grain: 20 }, // Consuma anche cibo fisico
+        effects: {
+            factions: { peasants: 10, outcasts: 10, nobility: -5 },
+            county: { health: 2, happy: 5 }
+        }
+    },
+    {
+        key: "road_maintenance",
+        name: "Manutenzione Strade Reali",
+        description: "Investimento costante nella viabilità.",
+        upkeepCost: 30,
+        effects: {
+            production: { gold: 1.1 }, // Aumenta efficienza commerciale
+            factions: { merchants: 5 }
         }
     },
     {
@@ -3540,6 +3561,39 @@ const BASE_LAW_LIBRARY = [
         }
     }
 ];
+
+function calculateDetailedUpkeep(targetState = null) {
+    const buildingList = targetState ? targetState.buildings : buildings;
+    const landCount = targetState ? targetState.landOwnership.count : landOwnership.count;
+    
+    let military = 0;
+    let civil = 0;
+    let court = 0;
+
+    // 1. Mantenimento Edifici Specifici
+    buildingList.forEach(b => {
+        if (b.stage !== 'complete') return;
+        const data = buildingData[b.type];
+        if (!data || !data.upkeep) return;
+
+        const cost = data.upkeep;
+
+        // Categorizzazione
+        if (['watchtower','barracks','stone_walls','mercenary_camp'].includes(b.type)) {
+            military += cost;
+        } else if (['noble_estate','grand_cathedral','library','theater'].includes(b.type)) {
+            court += cost;
+        } else {
+            civil += cost; // Mercati, pozzi, ecc.
+        }
+    });
+
+    // 2. Mantenimento Infrastrutture (Strade e Ponti astratti)
+    // Costo basato sulla dimensione del territorio controllato (1 oro per tile)
+    const infra = Math.floor(landCount * 1.5); 
+
+    return { military, civil, court, infrastructure: infra };
+}
 
 let customLaws = [];
 let activeLaws = [];
@@ -3587,6 +3641,27 @@ let industrySummary = null;
 
 // Memoria dell'ultimo stato dei bisogni per l'IA
 let lastNeedsReport = {};
+
+// Struttura globale per il bilancio dettagliato
+let detailedBudget = {
+    income: {
+        taxes_nobility: 0,
+        taxes_burghers: 0,
+        taxes_peasants: 0,
+        taxes_other: 0,
+        trade_export: 0,
+        production_mint: 0 // Zecca
+    },
+    expenses: {
+        upkeep_military: 0,      // Soldati, torri, mura
+        upkeep_civil: 0,         // Mercati, pozzi, edifici pubblici
+        upkeep_court: 0,         // Famiglia reale, lussi, cattedrali
+        upkeep_infrastructure: 0,// Strade, ponti (calcolato su estensione territorio)
+        welfare_laws: 0,         // Costo leggi attive (es. pane per i poveri)
+        import_costs: 0          // Acquisti automatici o manuali
+    },
+    net: 0
+};
 
 // Registro degli eventi del turno corrente
 let currentTurnEvents = [];
@@ -3732,25 +3807,30 @@ function advanceAgeAndRecovery(person) {
 }
 
 // Tira i dadi per eventi sfortunati
-function rollLifeEvent(person, illnessChance, accidentChance) {
+function rollLifeEvent(person, baseIllnessRisk, baseAccidentRisk) {
     if (person.isDead) return;
 
-    // Malattia
-    if (!person.traits.includes("Malato") && Math.random() < illnessChance) {
+    // Age multipliers
+    let ageMultiplier = 1.0;
+    if (person.age < 5) ageMultiplier = 2.0; // Children more vulnerable
+    else if (person.age > 60) ageMultiplier = 1.5; // Elderly more vulnerable
+
+    // Illness
+    let illnessRisk = baseIllnessRisk * ageMultiplier;
+    if (person.traits.includes("Robust")) illnessRisk *= 0.5;
+    if (person.traits.includes("Frail")) illnessRisk *= 2.0;
+    if (!person.traits.includes("Malato") && Math.random() < illnessRisk) {
         addTrait(person, "Malato");
-        // Gravità dipende dall'età (bambini e anziani più a rischio)
-        const severity = (person.age < 5 || person.age > 50) ? "grave" : "lieve";
-        addMsg("system", `🤢 <strong>Malattia:</strong> ${person.name} si è ammalato (${severity}). La salute della contea influisce sulla guarigione.`);
+        addMsg("system", `🤢 <strong>Malattia:</strong> ${person.name} si è ammalato.`);
     }
 
-    // Incidente (Caccia, addestramento, gioco)
-    else if (!person.traits.includes("Ferito") && Math.random() < accidentChance) {
+    // Accident
+    let accidentRisk = baseAccidentRisk * ageMultiplier;
+    if (person.traits.includes("Clumsy")) accidentRisk *= 2.0;
+    if (person.traits.includes("Agile")) accidentRisk *= 0.5;
+    if (!person.traits.includes("Ferito") && Math.random() < accidentRisk) {
         addTrait(person, "Ferito");
-        let cause = "un incidente a cavallo";
-        if (person.age < 10) cause = "una caduta giocando";
-        else if (person.age > 60) cause = "una brutta caduta dalle scale";
-        
-        addMsg("system", `🤕 <strong>Incidente:</strong> ${person.name} ha subito ${cause}.`);
+        addMsg("system", `🤕 <strong>Incidente:</strong> ${person.name} ha subito un incidente.`);
     }
 }
 
@@ -3799,20 +3879,29 @@ function checkDeath(person, role) {
 
     let deathChance = 0;
 
-    // 1. Fattore Età (Curva esponenziale dopo i 50)
-    if (person.age > 50) deathChance += 0.01;
-    if (person.age > 60) deathChance += 0.05;
-    if (person.age > person.maxAge) deathChance += 0.50; // Il tempo è scaduto
+    // Età-based mortality curve
+    if (person.age < 1) deathChance = 0.10; // Infant mortality
+    else if (person.age < 5) deathChance = 0.02;
+    else if (person.age < 15) deathChance = 0.005;
+    else if (person.age < 30) deathChance = 0.001;
+    else if (person.age < 50) deathChance = 0.005;
+    else if (person.age < 60) deathChance = 0.02;
+    else if (person.age < 70) deathChance = 0.05;
+    else if (person.age < 80) deathChance = 0.10;
+    else deathChance = 0.20; // Over 80
 
-    // 2. Fattore Salute (Traits)
-    if (person.traits.includes("Malato")) deathChance += 0.15; // Malattia è pericolosa
-    if (person.traits.includes("Ferito")) deathChance += 0.05;
-    if (person.traits.includes("Debole")) deathChance += 0.05;
+    // Trait modifiers
+    if (person.traits.includes("Robust")) deathChance *= 0.5;
+    if (person.traits.includes("Frail")) deathChance *= 2.0;
+    if (person.traits.includes("Malato")) deathChance *= 3.0;
+    if (person.traits.includes("Ferito")) deathChance *= 1.5;
 
-    // 3. Fattore Ambiente
-    if (county.food < 10) deathChance += 0.05; // Fame
+    // Environmental factors
+    if (county.health < 20) deathChance *= 1.5;
+    if (county.food < 10) deathChance *= 2.0;
+    if (county.security < 20) deathChance *= 1.2;
 
-    // TIRO SALVEZZA
+    // Roll for death
     if (Math.random() < deathChance) {
         person.isDead = true;
         handleDeathEffect(person, role);
@@ -3824,15 +3913,18 @@ function handleDeathEffect(person, role) {
     
     // Effetti scenici
     if (role === "ruler") {
+        logTurnEvent(`The ruler ${name} has passed away.`);
         handleSuccession(); // Logica successione esistente
     } 
     else if (role === "spouse") {
         addMsg("system", `⚰️ <strong>Lutto Reale:</strong> Il consorte ${name} è deceduto. La corte è in lutto.`);
+        logTurnEvent(`The consort ${name} has died.`);
         dynasty.spouse = null; // Rimuovi consorte
         county.happy = Math.max(0, county.happy - 15);
     } 
     else if (role === "heir") {
         addMsg("system", `⚰️ <strong>Tragedia:</strong> Il giovane ${name} è morto prematuramente.`);
+        logTurnEvent(`The heir ${name} has died prematurely.`);
         // La rimozione dall'array avviene nel filtro all'inizio di processLifeEvents
         county.happy = Math.max(0, county.happy - 10);
     }
@@ -7284,6 +7376,63 @@ function clearInterfaceLogs() {
     if (actionPrompt) actionPrompt.innerText = "In attesa di nuovi suggerimenti dalla corte.";
 }
 
+/* ===================== SISTEMA FINANZIARIO FAZIONI ===================== */
+
+// 1. CHIEDERE UN PRESTITO (Il Conte riceve Oro, la Fazione perde Ricchezza, Lealtà cala leggermente per il debito morale)
+function requestLoan(factionKey) {
+    const faction = populationGroups[factionKey];
+    const amount = 100; // Prestito standard
+
+    if (faction.wealth < amount) {
+        addMsg("system", `❌ I ${factionLabel(factionKey)} non hanno abbastanza oro per prestarti ${amount} monete.`);
+        return;
+    }
+
+    faction.wealth -= amount;
+    county.gold += amount;
+    // Il debito abbassa la lealtà perché il Conte perde autorità dipendendo da loro
+    factions[factionKey] = Math.max(0, factions[factionKey] - 5); 
+
+    addMsg("system", `💰 Hai ottenuto un prestito di ${amount} oro dai ${factionLabel(factionKey)}. (Lealtà -5)`);
+    updateUI();
+}
+
+// 2. DONAZIONE (Il Conte perde Oro, la Fazione guadagna Ricchezza, Lealtà sale)
+function donateToFaction(factionKey) {
+    const amount = 50; // Donazione standard
+
+    if (county.gold < amount) {
+        addMsg("system", "❌ Non hai abbastanza oro per fare questa donazione.");
+        return;
+    }
+
+    county.gold -= amount;
+    populationGroups[factionKey].wealth += amount;
+    factions[factionKey] = Math.min(100, factions[factionKey] + 8); // Bonus lealtà
+
+    addMsg("system", `🎁 Hai donato ${amount} oro ai ${factionLabel(factionKey)}. La loro lealtà aumenta (+8).`);
+    updateUI();
+}
+
+// 3. CONFISCA / TASSA STRAORDINARIA (Il Conte prende Oro, la Fazione perde Ricchezza, Lealtà crolla)
+function seizeAssets(factionKey) {
+    const faction = populationGroups[factionKey];
+    const amount = Math.floor(faction.wealth * 0.5); // Prendi il 50% della loro ricchezza
+
+    if (amount < 10) {
+        addMsg("system", `I ${factionLabel(factionKey)} non hanno nulla da confiscare.`);
+        return;
+    }
+
+    faction.wealth -= amount;
+    county.gold += amount;
+    factions[factionKey] = Math.max(0, factions[factionKey] - 25); // Malus gravissimo
+    county.happy = Math.max(0, county.happy - 5); // Malcontento generale
+
+    addMsg("system", `⚖️ Hai confiscato ${amount} oro ai ${factionLabel(factionKey)}. Sono furiosi! (Lealtà -25)`);
+    updateUI();
+}
+
 function updateUI() {
     ensureWorldSystems();
     const summary = updateIndustrySummary();
@@ -7936,33 +8085,89 @@ function progressSeason(options = {}) {
     // --- ELABORAZIONE TURNO ---
     advanceSeason(null, { silent: true }); // Stagione avanza silenziosamente
     
-    processLifeEvents(); // <--- AGGIUNGI QUESTA RIGA QUI!
+    processLifeEvents(); 
     
-    // 1. PRIMA GUADAGNANO (Stipendi, Raccolti, Commercio)
-    updateCategoryWealth(); // <--- Assicurati che questa esista e funzioni
+    // 1. Aggiornamento ricchezza (Stipendi, Raccolti, Commercio)
+    updateCategoryWealth(); 
     
-    // 2. POI PRODUCONO (Le strutture generano risorse per il mercato)
-    applyProduction(null, { skipUI: true, silent: true }); // Produzione silenziosa
+    // 2. Produzione (Le strutture generano risorse per il mercato)
+    applyProduction(null, { skipUI: true, silent: true }); 
     
-    // 3. ORA CONSUMANO (Usando la nuova logica basata sui soldi)
-    // Sostituisci la vecchia processVillageEconomy o integrala così:
+    // 3. Consumo (Bisogni e Povertà)
     processPopNeedsSystem(null, { silent: silent });
     
-    // NOTA: processVillageEconomy vecchia faceva un calcolo astratto. 
-    // Se usi la nuova funzione, commenta la parte di consumo della vecchia per non consumare risorse due volte.
+    // 1. CALCOLO ENTRATE (Tasse Dettagliate)
+    detailedBudget.income = { taxes_nobility:0, taxes_burghers:0, taxes_peasants:0, taxes_other:0, trade_export:0, production_mint:0 };
     
-    // Calcolo Economia Villaggio
-    // const economyReport = processVillageEconomy(null, { skipUI: true, silent: true });
+    // Tasse (Versione Dettagliata)
+    const taxPolicyRef = ensureTaxPolicy(null);
+    TAX_CATEGORIES.forEach(cat => {
+        const pop = populationGroups[cat.key].count;
+        const wealth = populationGroups[cat.key].wealth; // Ricchezza del gruppo
+        // Calcolo basato sulla ricchezza reale del gruppo, non solo sulla popolazione
+        // Se il gruppo è povero, le tasse rendono 0
+        const baseTaxable = Math.min(wealth, pop * cat.wealthFactor); 
+        
+        const percent = taxPolicyRef[cat.key];
+        const income = Math.floor(baseTaxable * (percent / 100));
+        
+        // Sottrai oro al gruppo
+        populationGroups[cat.key].wealth = Math.max(0, populationGroups[cat.key].wealth - income);
+        
+        // Registra entrata
+        if(cat.key === 'nobility') detailedBudget.income.taxes_nobility += income;
+        else if(cat.key === 'burghers') detailedBudget.income.taxes_burghers += income;
+        else if(cat.key === 'peasants') detailedBudget.income.taxes_peasants += income;
+        else detailedBudget.income.taxes_other += income;
+    });
+
+    // Entrate da Commercio (Vendite Mercato)
+    detailedBudget.income.trade_export = seasonalTransactions.marketSales;
     
-    // Tasse e Manutenzione
-    const taxesCollected = collectTaxes(null, { silent: true });
-    seasonalTransactions.taxes += taxesCollected;
-    applySeasonalUpkeep(null, { silent: true });
-    const maintenanceCost = budget.expenses.structures;
-    seasonalTransactions.maintenance += maintenanceCost;
-    county.gold = Math.max(0, county.gold - maintenanceCost);
-    if (county.gold === 0 && budget.expenses.structures > 0) {
-        addMsg("system", "⚠️ Mancanza di fondi per la manutenzione delle strutture! Alcuni edifici potrebbero deteriorarsi.");
+    // Entrate da Zecca (Se esiste edificio 'mint')
+    const mints = buildings.filter(b => b.type === 'mint' && b.stage === 'complete').length;
+    detailedBudget.income.production_mint = mints * 50;
+
+    const totalIncome = Object.values(detailedBudget.income).reduce((a,b)=>a+b,0);
+    county.gold += totalIncome;
+
+    // 2. CALCOLO USCITE (Spese Dettagliate)
+    const upkeep = calculateDetailedUpkeep();
+    
+    // Costo Leggi Attive
+    let lawCostGold = 0;
+    activeLaws.forEach(lawKey => {
+        const law = getLawDefinition(lawKey);
+        if (law && law.upkeepCost) lawCostGold += law.upkeepCost;
+        // Gestione consumo risorse fisiche (es. Grano per legge Pane)
+        if (law && law.consumeResource) {
+            for (let res in law.consumeResource) {
+                county.resources[res] = Math.max(0, (county.resources[res] || 0) - law.consumeResource[res]);
+            }
+        }
+    });
+
+    detailedBudget.expenses = {
+        upkeep_military: upkeep.military,
+        upkeep_civil: upkeep.civil,
+        upkeep_court: upkeep.court,
+        upkeep_infrastructure: upkeep.infrastructure,
+        welfare_laws: lawCostGold,
+        import_costs: seasonalTransactions.marketPurchases
+    };
+
+    const totalExpense = Object.values(detailedBudget.expenses).reduce((a,b)=>a+b,0);
+    
+    // Applicazione Spese
+    county.gold -= totalExpense;
+    detailedBudget.net = totalIncome - totalExpense;
+
+    // Bancarotta?
+    if (county.gold < 0) {
+        addMsg("system", "💸 <strong>BANCAROTTA!</strong> Il tesoro è vuoto. Le truppe disertano e le strutture crollano.");
+        county.gold = 0;
+        county.security = Math.max(0, county.security - 10);
+        county.happy = Math.max(0, county.happy - 10);
     }
     
     // Eventi vari
@@ -7975,62 +8180,22 @@ function progressSeason(options = {}) {
     const endSnapshot = captureResourceSnapshot();
     lastResourceDelta = computeResourceDelta(startSnapshot, endSnapshot);
     lastResourceSnapshot = cloneResourceBag(endSnapshot);
+    // (Queste variabili servivano per il vecchio report, le lasciamo per sicurezza interna ma non le usiamo per stampare)
     const goldDelta = county.gold - startGold;
     const happyDelta = county.happy - startHappy;
 
     updateUI();
     autoSaveGame();
 
+    // --- NUOVA GESTIONE OUTPUT ---
     if (!silent) {
-        // 1. RAPPOSTO DEL CIAMBELLANO (Messaggio unico di sistema pulito)
-        let reportHTML = `<strong>📅 Rapporto Stagionale:</strong><br>`;
+        // Abbiamo rimosso tutti i vecchi addMsg("system", reportHTML)
+        // Abbiamo rimosso triggerCourtEvent e generateWorldNarration che scrivevano in chat
         
-        // Risorse principali cambiate
-        const significantChanges = Object.entries(lastResourceDelta)
-            .filter(([k,v]) => Math.abs(v) > 0)
-            .map(([k,v]) => `${resourceLabels[k] || k}: ${v>0?'+':''}${v}`)
-            .join(", ");
-            
-        reportHTML += `<span style="opacity:0.8">${significantChanges || "Nessuna variazione di risorse."}</span><br>`;
-        reportHTML += `💰 Tesoreria: <strong>${county.gold}</strong> (${goldDelta > 0 ? '+'+goldDelta : goldDelta})`;
-        
-        // Breakdown dettagliato delle entrate/uscite
-        const totalIncome = seasonalTransactions.taxes;
-        const totalExpenses = seasonalTransactions.maintenance + seasonalTransactions.marketPurchases + seasonalTransactions.specialPurchases;
-        const netMarket = seasonalTransactions.marketSales - seasonalTransactions.marketPurchases - seasonalTransactions.specialPurchases;
-        
-        reportHTML += `<br><small style="opacity:0.7">`;
-        reportHTML += `Entrate: Tasse +${seasonalTransactions.taxes}`;
-        reportHTML += ` | Uscite: Manutenzione -${seasonalTransactions.maintenance}`;
-        if (seasonalTransactions.marketPurchases > 0) reportHTML += `, Acquisti -${seasonalTransactions.marketPurchases}`;
-        if (seasonalTransactions.specialPurchases > 0) reportHTML += `, Merci speciali -${seasonalTransactions.specialPurchases}`;
-        if (seasonalTransactions.marketSales > 0) reportHTML += `, Vendite +${seasonalTransactions.marketSales}`;
-        reportHTML += `</small>`;
-        
-        // Aggiungi deficit critici se ci sono
-        const deficitKeys = Object.keys(economyReport.deficits || {});
-        if (deficitKeys.length > 0) {
-            reportHTML += `<br><span style="color:#ff7c7c">⚠️ CARENZE CRITICHE: ${deficitKeys.map(k=>resourceLabels[k]).join(", ")}</span>`;
-        }
-
-        addMsg("system", reportHTML);
-
-        // 2. LA CORTE SI RIUNISCE (Interazione Fazioni)
-        // Invece di messaggi casuali, l'IA o il sistema scelgono UN evento principale
-        triggerCourtEvent({ 
-            economy: economyReport, 
-            goldDelta, 
-            happyDelta, 
-            deficits: economyReport.deficits 
-        });
-
-        // 3. NOTIZIE DAL MONDO ESTERNO
-        const worldNarration = generateWorldNarration();
-        if (worldNarration) {
-            addMsg("system", worldNarration);
-        }
-
-        setTimeout(() => generateSeasonStory(), 1000);
+        // L'unica cosa che deve succedere è l'apertura del popup narrativo
+        setTimeout(() => {
+            generateSeasonStory();
+        }, 1000);
     }
 }
 
@@ -8066,7 +8231,25 @@ function executeAction(action) {
     console.log("Azione selezionata:", action);
     let userMessage = "";
 
-    if (action.startsWith("build_")) {
+    // --- NUOVI COMANDI FINANZIARI ---
+    if (action.startsWith("donate_")) {
+        const faction = action.split("_")[1];
+        donateToFaction(faction);
+        userMessage = `Ho inviato una donazione ai ${factionLabel(faction)}.`;
+    } 
+    else if (action.startsWith("loan_")) {
+        const faction = action.split("_")[1];
+        requestLoan(faction);
+        userMessage = `Ho chiesto un prestito ai ${factionLabel(faction)}.`;
+    } 
+    else if (action.startsWith("seize_")) {
+        const faction = action.split("_")[1];
+        seizeAssets(faction);
+        userMessage = `Ho ordinato la confisca dei beni dei ${factionLabel(faction)}.`;
+    }
+    
+    // ... (i tuoi casi esistenti build_ ecc.) ...
+    else if (action.startsWith("build_")) {
         const type = action.split("_")[1];
         orderBuilding(type);
         const b = buildingData[type];
@@ -8355,46 +8538,45 @@ function closeBudgetModal() {
 }
 
 function renderBudget() {
-    const budget = calculateSeasonalBudget();
     const container = document.getElementById("budget-content");
     if (!container) return;
 
-    const s = (v) => (Number.isFinite(v) ? Math.round(v) : 0);
-    const taxes = s(budget.income && budget.income.taxes);
-    const production = s(budget.income && budget.income.production);
-    const incomeTotal = s(budget.income && budget.income.total);
-    const structuresCost = s(budget.expenses && budget.expenses.structures);
-    const militaryCost = s(budget.expenses && budget.expenses.military);
-    const expensesTotal = s(budget.expenses && budget.expenses.total);
-    const net = s(budget.net);
+    const inc = detailedBudget.income;
+    const exp = detailedBudget.expenses;
+    const totalInc = Object.values(inc).reduce((a,b)=>a+b,0);
+    const totalExp = Object.values(exp).reduce((a,b)=>a+b,0);
 
     container.innerHTML = `
-        <div class="budget-section">
-            <h3>Entrate</h3>
-            <div class="budget-row money-plus">
-                <span>Tasse: +${taxes} oro</span>
+        <div class="budget-columns">
+            <div class="budget-col">
+                <h4>Entrate (+${totalInc})</h4>
+                <div class="budget-row"><span>Tasse Nobiltà</span> <span>${inc.taxes_nobility}</span></div>
+                <div class="budget-row"><span>Tasse Borghesia</span> <span>${inc.taxes_burghers}</span></div>
+                <div class="budget-row"><span>Tasse Contadini</span> <span>${inc.taxes_peasants}</span></div>
+                <div class="budget-row"><span>Altri Ceti</span> <span>${inc.taxes_other}</span></div>
+                <div class="budget-row"><span>Commercio/Export</span> <span>${inc.trade_export}</span></div>
+                <div class="budget-row"><span>Produzione (Zecca)</span> <span>${inc.production_mint}</span></div>
             </div>
-            <div class="budget-row money-plus">
-                <span>Produzione: +${production} oro</span>
-            </div>
-            <div class="budget-total money-plus">
-                Totale Entrate: ${incomeTotal} oro
-            </div>
-        </div>
-        <div class="budget-section">
-            <h3>Uscite</h3>
-            <div class="budget-row money-minus">
-                <span>Strutture: -${structuresCost} oro</span>
-            </div>
-            <div class="budget-row money-minus">
-                <span>Militare: -${militaryCost} oro</span>
-            </div>
-            <div class="budget-total money-minus">
-                Totale Uscite: ${expensesTotal} oro
+            
+            <div class="budget-col">
+                <h4>Uscite (-${totalExp})</h4>
+                <div class="budget-row"><span>Militare & Difesa</span> <span class="money-minus">${exp.upkeep_military}</span></div>
+                <div class="budget-row"><span>Corte & Prestigio</span> <span class="money-minus">${exp.upkeep_court}</span></div>
+                <div class="budget-row"><span>Civile & Mercati</span> <span class="money-minus">${exp.upkeep_civil}</span></div>
+                <div class="budget-row"><span>Infrastrutture</span> <span class="money-minus">${exp.upkeep_infrastructure}</span></div>
+                <div class="budget-row"><span>Leggi & Welfare</span> <span class="money-minus">${exp.welfare_laws}</span></div>
+                <div class="budget-row"><span>Importazioni</span> <span class="money-minus">${exp.import_costs}</span></div>
             </div>
         </div>
-        <div class="budget-net ${net >= 0 ? 'money-plus' : 'money-minus'}">
-            <strong>Netto: ${net >= 0 ? '+'+net : net} oro</strong>
+        
+        <div class="net-balance-card">
+            <div>Risultato Netto</div>
+            <div class="net-balance-val ${detailedBudget.net >= 0 ? 'money-plus' : 'money-minus'}">
+                ${detailedBudget.net > 0 ? '+' : ''}${detailedBudget.net} 💰
+            </div>
+            <div style="font-size:0.8em; color:#888; margin-top:5px;">
+                Tesoro Attuale: ${county.gold}
+            </div>
         </div>
     `;
 }
@@ -8725,39 +8907,59 @@ function endPrivateChat(key, action) {
 
 function getFeasibleActions() {
     const actions = [];
-    const poor = county.gold < 50;
+    const treasury = county.gold;
+    
+    // 1. ANALISI BISOGNI CRITICI (Priorità assoluta)
+    if (lastNeedsReport) {
+        Object.entries(lastNeedsReport).forEach(([key, data]) => {
+            // Se stanno morendo di fame per povertà (Prezzi alti, Ricchezza bassa)
+            if (data.mainIssue && data.mainIssue.includes("POVERTÀ") || data.wealth < 10) {
+                actions.push(`DONARE ORO ai ${factionLabel(key)} (Costo: 50 oro) - Risolve la crisi economica`);
+            }
+            // Se stanno morendo di fame per mancanza merce
+            else if (data.mainIssue && data.mainIssue.includes("CARESTIA")) {
+                actions.push(`IMPORTARE CIBO d'urgenza per i ${factionLabel(key)}`);
+            }
+        });
+    }
 
-    // 1. Lista edifici costruibili con le risorse attuali
-    const buildable = Object.entries(buildingData).filter(([key, data]) => {
-        // Controllo rapido risorse (semplificato per il prompt)
-        return county.gold >= data.cost.gold;
+    // 2. ANALISI FINANZIARIA (Prestiti e Confische)
+    Object.entries(populationGroups).forEach(([key, data]) => {
+        const label = factionLabel(key);
+        
+        // Se la fazione è molto ricca e il Conte ha meno di 200 oro -> Suggerisci Prestito o Tassa
+        if (data.wealth > 300 && treasury < 200) {
+            actions.push(`CHIEDERE PRESTITO ai ${label} (Ottieni 100 oro, -5 Lealtà)`);
+            if (factions[key] < 40) {
+                // Se sono già ostili, tanto vale confiscare
+                actions.push(`CONFISCARE BENI ai ${label} (Ottieni ${Math.floor(data.wealth/2)} oro, -25 Lealtà)`);
+            }
+        }
+        
+        // Se la fazione è arrabbiata (Lealtà < 40) ma non povera -> Corruzione/Regalo
+        if (factions[key] < 40 && treasury > 100) {
+            actions.push(`INVIARE DONO ai ${label} per calmarli (Costo: 50 oro)`);
+        }
     });
 
-    if (buildable.length > 0) {
-        // Prendiamone 3 a caso per non intasare il prompt
-        const examples = buildable.sort(() => 0.5 - Math.random()).slice(0, 3);
-        examples.forEach(b => {
-            actions.push(`COSTRUIRE ${b[1].name} (Costo: ${b[1].cost.gold} oro)`);
-        });
+    // 3. PROPOSTE COSTRUZIONI (Solo se pertinenti)
+    if (treasury > 100) {
+        if (county.food < 100) actions.push("COSTRUIRE Fattoria o Granaio (Priorità Cibo)");
+        if (county.security < 40) actions.push("COSTRUIRE Torre di Guardia o Caserma (Priorità Sicurezza)");
     } else {
-        actions.push("NESSUNA COSTRUZIONE POSSIBILE (Risorse insufficienti)");
+        actions.push("RISPARMIARE ORO (Nessuna costruzione consigliata)");
     }
 
-    // 2. Opzioni di emergenza se poveri
-    if (poor) {
-        actions.push("CHIEDERE AIUTO: Tassa straordinaria ai Mercanti (+ Oro, - Lealtà)");
-        actions.push("CHIEDERE AIUTO: Requisire beni alla Chiesa (+ Oro, - Lealtà)");
-    }
-
-    return actions.join("\n- ");
+    // Mescoliamo e prendiamo max 4 suggerimenti per non confondere l'IA
+    return actions.sort(() => 0.5 - Math.random()).slice(0, 4).join("\n- ");
 }
 
 function getDynamicActions(response = "") {
     const actions = [];
-    const lowerResponse = response.toLowerCase();
+    const lower = response.toLowerCase();
 
-    // Collega alla narrazione: aggiungi azioni basate su ciò che l'IA ha detto
-    if (lowerResponse.includes("costruzione") || lowerResponse.includes("edificio") || lowerResponse.includes("costruire")) {
+    // ... (tuoi controlli esistenti su costruzioni) ...
+    if (lower.includes("costruzione") || lower.includes("edificio") || lower.includes("costruire")) {
         // Edifici costruibili
         const buildable = Object.entries(buildingData).filter(([key, data]) => {
             return checkResources(data.cost);
@@ -8776,7 +8978,36 @@ function getDynamicActions(response = "") {
         });
     }
 
-    if (lowerResponse.includes("oro") || lowerResponse.includes("tesoro") || lowerResponse.includes("soldi") || lowerResponse.includes("povero")) {
+    // Rilevamento intelligente delle azioni finanziarie
+    Object.keys(populationGroups).forEach(key => {
+        const label = factionLabel(key).toLowerCase();
+        
+        // DONAZIONI
+        if (lower.includes(`donare`) && lower.includes(label)) {
+            actions.push({
+                label: `🎁 Dona 50 oro ai ${factionLabel(key)}`,
+                code: `donate_${key}`
+            });
+        }
+        
+        // PRESTITI
+        if ((lower.includes(`prestito`) || lower.includes(`chiedere oro`)) && lower.includes(label)) {
+            actions.push({
+                label: `💰 Chiedi prestito ai ${factionLabel(key)}`,
+                code: `loan_${key}`
+            });
+        }
+        
+        // CONFISCHE
+        if ((lower.includes(`confiscare`) || lower.includes(`tassa`) || lower.includes(`requisire`)) && lower.includes(label)) {
+            actions.push({
+                label: `⚖️ Confisca beni ai ${factionLabel(key)}`,
+                code: `seize_${key}`
+            });
+        }
+    });
+
+    if (lower.includes("oro") || lower.includes("tesoro") || lower.includes("soldi") || lower.includes("povero")) {
         if (county.gold < 50) {
             actions.push({
                 label: "💰 Tassa straordinaria ai Mercanti - +50 oro, lealtà mercanti -10, felicità generale -2",
@@ -8789,14 +9020,14 @@ function getDynamicActions(response = "") {
         }
     }
 
-    if (lowerResponse.includes("legge") || lowerResponse.includes("decreto") || lowerResponse.includes("regola")) {
+    if (lower.includes("legge") || lower.includes("decreto") || lower.includes("regola")) {
         actions.push({
             label: "📜 Crea una nuova legge - Personalizza effetti su tasse, produzione o fazioni",
             code: "open_law_modal"
         });
     }
 
-    if (lowerResponse.includes("milizia") || lowerResponse.includes("soldati") || lowerResponse.includes("sicurezza") || lowerResponse.includes("banditi")) {
+    if (lower.includes("milizia") || lower.includes("soldati") || lower.includes("sicurezza") || lower.includes("banditi")) {
         actions.push({
             label: "🎖️ Convoca la milizia - +10 milizia, sicurezza +5, -20 oro, lealtà contadini -2",
             code: "recruit_militia"
@@ -8859,6 +9090,23 @@ function generateDeepContext() {
     } else {
         context += "Nessun dato sui consumi disponibile (Inizio partita o turno non processato).\n";
     }
+
+    // NUOVA SEZIONE: REPORT FINANZIARIO DETTAGLIATO
+    context += `\n[BILANCIO DEL TESORO]\n`;
+    context += `Entrate Totali: ${Object.values(detailedBudget.income).reduce((a,b)=>a+b,0)} oro.\n`;
+    context += `  > Tasse Nobili: ${detailedBudget.income.taxes_nobility}, Borghesi: ${detailedBudget.income.taxes_burghers}, Contadini: ${detailedBudget.income.taxes_peasants}.\n`;
+    context += `  > Export/Commercio: ${detailedBudget.income.trade_export}.\n`;
+    
+    context += `Uscite Totali: ${Object.values(detailedBudget.expenses).reduce((a,b)=>a+b,0)} oro.\n`;
+    context += `  > Militare & Difesa: ${detailedBudget.expenses.upkeep_military} (Mura, Guardie).\n`;
+    context += `  > Corte & Lussi: ${detailedBudget.expenses.upkeep_court}.\n`;
+    context += `  > Infrastrutture: ${detailedBudget.expenses.upkeep_infrastructure} (Strade, Ponti).\n`;
+    context += `  > Welfare/Leggi: ${detailedBudget.expenses.welfare_laws}.\n`;
+    
+    context += `NETTO STAGIONALE: ${detailedBudget.net > 0 ? '+' : ''}${detailedBudget.net} Oro.\n`;
+    
+    if (detailedBudget.net < -50) context += "ATTENZIONE: Deficit grave! Rischio bancarotta.\n";
+    if (detailedBudget.expenses.upkeep_court > detailedBudget.income.taxes_nobility) context += "NOTA: Le spese di corte superano le tasse pagate dai nobili.\n";
 
     // 5. GEOGRAFIA E STRUTTURE
     context += `\n[INFRASTRUTTURE]\n`;
