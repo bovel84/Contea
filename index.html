@@ -2789,6 +2789,66 @@
     to { transform: rotate(5deg); }
 }
 
+/* Messaggi dei Sovrani Stranieri */
+.msg-foreign {
+    border-left: 4px solid; 
+    background: rgba(30, 20, 20, 0.8);
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 0 10px 10px 0;
+    position: relative;
+}
+
+.msg-foreign.auvrey { border-color: #d32f2f; } /* Rosso per Auvrey (Aggressivi) */
+.msg-foreign.falken { border-color: #1976d2; } /* Blu per Falken (Commerciali) */
+
+.foreign-badge {
+    font-size: 0.7em;
+    text-transform: uppercase;
+    background: #000;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    display: inline-block;
+    letter-spacing: 1px;
+}
+
+.msg-actions {
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(44, 62, 80, 0.5);
+    border: 1px dashed var(--accent);
+    border-radius: 12px;
+    text-align: center;
+    position: relative; /* Importante */
+    z-index: 10;        /* Assicura che sia sopra lo sfondo */
+}
+
+.action-card {
+    display: block;
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 12px;
+    background: #1f2a36;
+    border: 1px solid #34495e;
+    color: #ecf0f1;
+    border-radius: 8px;
+    cursor: pointer; /* Fondamentale per UX */
+    text-align: left;
+    transition: background 0.2s, transform 0.1s;
+    pointer-events: auto; /* Assicura che riceva i click */
+}
+
+.action-card:hover {
+    background: #2c3e50;
+    border-color: var(--accent);
+    transform: translateX(5px);
+}
+
+.action-card:active {
+    transform: scale(0.98);
+}
+
     </style>
 </head>
 
@@ -2920,13 +2980,13 @@
             <div class="stat"><i class="fas fa-shield-alt"></i> <span id="hud-security">50</span></div>
         </div>
         <div class="hud-nav-bar">
+            <button onclick="switchTab('tab-chat', this)" class="active">📜 Cronache</button>
             <button onclick="switchTab('tab-dominio', this)">🏰 Dominio</button>
             <button onclick="switchTab('tab-warehouse', this)">📦 Magazzino</button>
-            <button onclick="switchTab('tab-diplomacy', this)">⚖️ Diplomazia</button>
+            <button onclick="switchTab('tab-diplomacy', this)">⚔️ Guerra</button>
             <button onclick="switchTab('tab-map', this)">🗺️ Mappa</button>
             <button onclick="switchTab('tab-market', this)">🏪 Mercato</button>
             <button onclick="switchTab('tab-dynasty', this)">👑 Dinastia</button>
-            <button onclick="switchTab('tab-chat', this)">📜 Cronache</button>
             <button onclick="switchTab('tab-private', this)">🗣️ Interlocutori</button>
             <button onclick="openBuildingModal()">🔨 Costruzioni</button>
         </div>
@@ -2936,7 +2996,7 @@
         <div class="season-effects-text" id="season-effects-text">Il clima è mite, i raccolti prosperano.</div>
 
 <!-- ================= TAB: DOMINIO ================= -->
-<div id="tab-dominio" class="tab-view active-tab">
+<div id="tab-dominio" class="tab-view">
 
     <h2>Il Dominio del Conte</h2>
 
@@ -3193,6 +3253,16 @@
                 <div class="stat-sub">Essenza arcana</div>
                 <small class="res-delta" id="res-arcane-delta">—</small>
             </div>
+            <div class="stat-card">
+                <div class="stat-val" id="res-weapons">0</div>
+                <div class="stat-sub">Armi</div>
+                <small class="res-delta" id="res-weapons-delta">—</small>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="res-armor">0</div>
+                <div class="stat-sub">Armature</div>
+                <small class="res-delta" id="res-armor-delta">—</small>
+            </div>
         </div>
     </div>
 
@@ -3334,49 +3404,49 @@
 </div>
 <!-- ====================== TAB: DIPLOMAZIA ====================== -->
 <div id="tab-diplomacy" class="tab-view">
+    <h2>Sala della Guerra e Diplomazia</h2>
+    
+    <div class="panel" style="border-color: #f44336; margin-bottom: 20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 style="color:#f44336; margin:0;">⚔️ Gestione Esercito</h3>
+            <span id="army-status" style="font-size:0.9em; color:#aaa;">Stato: Pace</span>
+        </div>
+        
+        <div class="grid-stats">
+            <div class="stat-card">
+                <div class="stat-val" id="mil-soldiers">0</div>
+                <div class="stat-sub">Milizia (Professionisti)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="mil-levies">0</div>
+                <div class="stat-sub">Leva (Contadini)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="mil-power">0</div>
+                <div class="stat-sub">Potenza Totale</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="mil-weapons">0</div>
+                <div class="stat-sub">Armi in Magazzino</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="mil-efficiency">100%</div>
+                <div class="stat-sub">Efficienza Bellica</div>
+            </div>
+        </div>
 
-    <h2>Diplomazia con le Contee Vicine</h2>
-
-    <!-- Contea di Auvrey -->
-    <div class="diplomacy-card">
-        <h3>Contea di Auvrey</h3>
-        <div class="relation-row">
-            <span>Relazioni:</span> <span id="rel-auvrey">0</span>
-        </div>
-        <div class="relation-row">
-            <span>Potenza:</span> <span id="pow-auvrey">0</span>
-        </div>
-        <div class="relation-row">
-            <span>Aggressività:</span> <span id="agg-auvrey">0</span>
-        </div>
-        <div class="relation-row">
-            <span>Territorio:</span> <span id="land-auvrey">0</span>
-        </div>
-        <div class="diplomacy-actions">
-            <button class="btn-sec" onclick="requestTradeMeeting('auvrey')">Chiedi Incontro per Accordi Commerciali</button>
+        <div style="background:#220a0a; padding:10px; border-radius:8px; margin-top:10px; border:1px dashed #522;">
+            <p style="font-size:0.9em; color:#ccc; margin-top:0;">
+                Mobilitare i contadini fornisce un esercito numeroso ma distrugge l'economia agricola e riduce le tasse.
+            </p>
+            <button id="btn-mobilize" class="btn-main" style="background: linear-gradient(120deg, #8b0000, #4a0000); color:white;" onclick="toggleMobilization()">
+                🔔 Chiama la Leva (Mobilita Contadini)
+            </button>
         </div>
     </div>
 
-    <!-- Baronia di Falken -->
-    <div class="diplomacy-card">
-        <h3>Baronia di Falken</h3>
-        <div class="relation-row">
-            <span>Relazioni:</span> <span id="rel-falken">0</span>
+    <div id="diplomacy-list">
         </div>
-        <div class="relation-row">
-            <span>Potenza:</span> <span id="pow-falken">0</span>
-        </div>
-        <div class="relation-row">
-            <span>Aggressività:</span> <span id="agg-falken">0</span>
-        </div>
-        <div class="relation-row">
-            <span>Territorio:</span> <span id="land-falken">0</span>
-        </div>
-        <div class="diplomacy-actions">
-            <button class="btn-sec" onclick="requestTradeMeeting('falken')">Chiedi Incontro per Accordi Commerciali</button>
-        </div>
-    </div>
-
 </div>
 
 
@@ -3471,7 +3541,7 @@
 </div>
 
 <!-- ====================== TAB: CRONACHE (CHAT PUBBLICA) ====================== -->
-<div id="tab-chat" class="tab-view">
+<div id="tab-chat" class="tab-view active-tab">
     <div class="court-layout">
         
         <div class="court-main">
@@ -3614,12 +3684,21 @@
     </div>
 </div>
 
-<div id="modal-gameover" class="modal" style="z-index: 9999; background: black;">
-    <div class="modal-content" style="text-align:center; border-color: #ff4444;">
-        <h1 style="color:#ff4444; font-size: 3em;">DINASTIA ESTINTA</h1>
-        <p id="gameover-reason">Il Conte è morto senza eredi legittimi.</p>
-        <br>
-        <button class="btn-main" onclick="location.reload()">Torna al Menu Principale</button>
+<div id="modal-gameover" class="modal" style="z-index: 9999; background: rgba(0,0,0,0.95);">
+    <div class="modal-content" style="text-align:center; border: 1px solid #d32f2f; background: #1a0505; max-width: 600px;">
+        <h1 style="color:#d32f2f; font-family: 'Cinzel', serif; font-size: 3em; margin-bottom: 10px;">IL REGNO È CADUTO</h1>
+        
+        <div id="death-icon" style="font-size: 4em; margin: 20px 0;">☠️</div>
+        
+        <div id="gameover-story" style="font-style: italic; color: #e0e0e0; margin-bottom: 30px; line-height: 1.6;">
+            </div>
+        
+        <div class="stat-summary" style="display:flex; justify-content:center; gap:20px; color:#888; font-size:0.9em; margin-bottom:30px;">
+            <span>Anni di Regno: <strong id="go-years">0</strong></span>
+            <span>Eredità: <strong id="go-legacy">Dimenticato</strong></span>
+        </div>
+
+        <button class="btn-main" onclick="location.reload()">👑 Nuova Dinastia (Ricomincia)</button>
     </div>
 </div>
 
@@ -3646,12 +3725,24 @@ let dynasty = {
 
 let activeSuitorsList = []; // Per tenere traccia dei pretendenti generati
 
+// Tracciamento della rabbia accumulata per fazione
+let rebellionState = {
+    nobility: 0, clergy: 0, militia: 0, peasants: 0,
+    burghers: 0, merchants: 0, mystics: 0, outcasts: 0
+};
+
+// Soglie di pericolo
+const UNREST_WARNING = 5; // Dopo 5 turni di infelicità: Avvertimento (era 3)
+const UNREST_DANGER = 8;  // Dopo 8 turni: Tentativo di sabotaggio (era 5)
+const UNREST_REVOLT = 12;  // Dopo 12 turni: GAME OVER / Tentativo di uccisione (era 8)
+
 // Memoria della chat pubblica (ultimi 10-15 scambi)
 let publicChatHistory = [];
 
 const RESOURCE_KEYS = [
     "wood","stone","iron","copper","gold",
-    "herbs","grain","livestock","textiles","luxuries","arcane"
+    "herbs","grain","livestock","textiles","luxuries","arcane",
+    "weapons", "armor" // <--- NUOVE RISORSE
 ];
 
 const resourceLabels = {
@@ -3665,7 +3756,9 @@ const resourceLabels = {
     livestock: "Bestiame",
     textiles: "Tessuti",
     luxuries: "Beni di pregio",
-    arcane: "Essenza arcana"
+    arcane: "Essenza arcana",
+    weapons: "Armi",
+    armor: "Armature"
 };
 
 const POP_NEEDS = {
@@ -3872,7 +3965,9 @@ function createDefaultResources() {
         livestock: 80,
         textiles: 35,
         luxuries: 20,
-        arcane: 15
+        arcane: 15,
+        weapons: 0,
+        armor: 0
     };
 }
 
@@ -3903,6 +3998,23 @@ let lastHealth = county.health;
 
 // Memoria dell'ultimo stato dei bisogni per l'IA
 let lastNeedsReport = {};
+
+// AGGIUNGI QUESTO OGGETTO GLOBALE PER LA GUERRA
+let warState = {
+    active: false,           // Siamo in guerra?
+    enemy: null,             // Contro chi? (key della contea)
+    mobilized: false,        // Abbiamo chiamato la leva?
+    leviesCount: 0,          // Contadini prestati alla guerra
+    armyMorale: 50,          // Morale dell'esercito
+    lastBattleResult: null   // Ultimo esito per la cronaca
+};
+
+// Variabile per tracciare se siamo in una negoziazione attiva
+let activeDiplomacy = {
+    active: false,
+    partner: null, // 'auvrey' o 'falken'
+    type: null     // 'demand_gold', 'demand_land', 'offer_alliance', 'threat_war'
+};
 
 // Struttura globale per il bilancio dettagliato
 let detailedBudget = {
@@ -4182,13 +4294,13 @@ function handleDeathEffect(person, role) {
         addMsg("system", `⚰️ <strong>Lutto Reale:</strong> Il consorte ${name} è deceduto. La corte è in lutto.`);
         logTurnEvent(`The consort ${name} has died.`);
         dynasty.spouse = null; // Rimuovi consorte
-        county.happy = Math.max(0, county.happy - 15);
+        county.happy = Math.max(0, county.happy - 10); // Era -15
     } 
     else if (role === "heir") {
         addMsg("system", `⚰️ <strong>Tragedia:</strong> Il giovane ${name} è morto prematuramente.`);
         logTurnEvent(`The heir ${name} has died prematurely.`);
         // La rimozione dall'array avviene nel filtro all'inizio di processLifeEvents
-        county.happy = Math.max(0, county.happy - 10);
+        county.happy = Math.max(0, county.happy - 7); // Era -10
     }
     
     updateUI();
@@ -4572,10 +4684,14 @@ function createDefaultNeighbors() {
         { 
             key:"auvrey", 
             name:"Contea di Auvrey", 
-            power:65, 
-            wealth:50, 
-            relations:40, 
-            aggression:20, 
+            ruler: "Conte Emeric il Giovane",
+            traits: ["Aggressivo", "Orgoglioso", "Espansionista"],
+            power: 70, 
+            wealth: 50, 
+            relations: 40, 
+            aggression: 40, // Quanto è vicino alla guerra (0-100)
+            fear: 10,       // Quanto teme il giocatore
+            lastInteraction: 0,
             land:30,
             description: "Una contea ambiziosa guidata dal giovane Conte Emeric, che cerca di espandere i suoi confini attraverso alleanze e conquiste.",
             goals: ["Espandere territorio", "Formare alleanze matrimoniali", "Controllare rotte commerciali"],
@@ -4586,10 +4702,14 @@ function createDefaultNeighbors() {
         { 
             key:"falken", 
             name:"Baronia di Falken", 
-            power:40, 
-            wealth:30, 
-            relations:70, 
-            aggression:10, 
+            ruler: "Baronessa Lidia",
+            traits: ["Pragmatica", "Avida", "Difensiva"],
+            power: 40, 
+            wealth: 80, 
+            relations: 60, 
+            aggression: 10,
+            fear: 20,
+            lastInteraction: 0,
             land:18,
             description: "Una baronia montuosa difesa dal Barone Lothar, noto per le sue miniere e la sua neutralità.",
             goals: ["Mantenere indipendenza", "Sviluppare miniere", "Proteggere confini"],
@@ -5728,6 +5848,8 @@ function loadGame(slotKey) {
         drawCountyMap();
         drawRegionMap();
         activateScreen("screen-game");
+        refreshAllStats();
+        triggerStartupNarrative(false);
         const loadedLabel = data.meta && data.meta.label ? data.meta.label : slotKey;
         addMsg("system", `📂 Caricata la partita ${loadedLabel} (Turno ${county.turn}).`);
         closeLoadModal();
@@ -6276,52 +6398,51 @@ function drawLabel(ctx, s, size, label, color) {
     ctx.fillText(label, x, y + 2);
 }
 
+// Commentata per duplicazione
+// function drawRegionMap() {
+//     const canvas = document.getElementById("region-map");
+//     if (!canvas) return;
+//     const ctx = canvas.getContext("2d");
+//     const size = canvas.width / 8;
 
+//     // Sfondo carta antica
+//     ctx.fillStyle = "#e3d5b8"; 
+//     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-function drawRegionMap() {
-    const canvas = document.getElementById("region-map");
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    const size = canvas.width / 8;
+//     // Disegna territori
+//     for (let y = 0; y < 8; y++) {
+//         for (let x = 0; x < 8; x++) {
+//             let owner = "wild";
+//             // Logica semplice per proprietari (uguale a prima ma con colori nuovi)
+//             if (y < 2) owner = "auvrey";
+//             else if (x > 5 && y > 5) owner = "falken";
+//             else if (rand(0,10) > 4) owner = "count";
 
-    // Sfondo carta antica
-    ctx.fillStyle = "#e3d5b8"; 
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+//             const px = x * size;
+//             const py = y * size;
 
-    // Disegna territori
-    for (let y = 0; y < 8; y++) {
-        for (let x = 0; x < 8; x++) {
-            let owner = "wild";
-            // Logica semplice per proprietari (uguale a prima ma con colori nuovi)
-            if (y < 2) owner = "auvrey";
-            else if (x > 5 && y > 5) owner = "falken";
-            else if (rand(0,10) > 4) owner = "count";
-
-            const px = x * size;
-            const py = y * size;
-
-            // Disegna solo bordi colorati e leggero riempimento per effetto mappa politica
-            ctx.fillStyle = getRegionColor(owner, 0.3);
-            ctx.fillRect(px, py, size, size);
+//             // Disegna solo bordi colorati e leggero riempimento per effetto mappa politica
+//             ctx.fillStyle = getRegionColor(owner, 0.3);
+//             ctx.fillRect(px, py, size, size);
             
-            ctx.strokeStyle = getRegionColor(owner, 0.8);
-            ctx.lineWidth = 1;
-            ctx.strokeRect(px, py, size, size);
+//             ctx.strokeStyle = getRegionColor(owner, 0.8);
+//             ctx.lineWidth = 1;
+//             ctx.strokeRect(px, py, size, size);
             
-            // Disegna un simbolo per il proprietario
-            if (Math.random() > 0.7 && owner !== 'wild') {
-                ctx.font = "16px serif";
-                ctx.textAlign = "center";
-                ctx.fillStyle = "rgba(0,0,0,0.3)";
-                const symbol = owner === 'count' ? '⚜️' : (owner === 'auvrey' ? '🦁' : '🦅');
-                ctx.fillText(symbol, px + size/2, py + size/2 + 5);
-            }
-        }
-    }
+//             // Disegna un simbolo per il proprietario
+//             if (Math.random() > 0.7 && owner !== 'wild') {
+//                 ctx.font = "16px serif";
+//                 ctx.textAlign = "center";
+//                 ctx.fillStyle = "rgba(0,0,0,0.3)";
+//                 const symbol = owner === 'count' ? '⚜️' : (owner === 'auvrey' ? '🦁' : '🦅');
+//                 ctx.fillText(symbol, px + size/2, py + size/2 + 5);
+//             }
+//         }
+//     }
     
-    drawNeighborPins(ctx);
-    drawVignette(ctx, canvas.width, canvas.height);
-}
+//     drawNeighborPins(ctx);
+//     drawVignette(ctx, canvas.width, canvas.height);
+// }
 
 function getRegionColor(owner, alpha) {
     const map = {
@@ -6545,12 +6666,14 @@ const buildingData = {
         upkeep: 50
     },
     forge: {
-        name: "Forgia Reale",
-        desc: "Armi e attrezzi di qualità superiore.",
-        effect: "Sicurezza +, Artigiani ++, Milizia +",
+        name: "Forgia Militare",
+        desc: "Converte Ferro e Carbone (Legno) in Armi e Armature.",
+        effect: "Produzione Armi, Milizia ++",
         cost: { gold: 200, wood: 80, stone: 120, iron: 40 },
         time: 5,
-        upkeep: 10
+        upkeep: 15,
+        productionInput: { iron: 5, wood: 5 }, // Costo conversione
+        productionOutput: { weapons: 3, armor: 1 } // Output
     },
     stone_walls: {
         name: "Mura di Cinta",
@@ -6796,6 +6919,191 @@ function applyProduction(targetState = null, options = {}) {
     return total;
 }
 
+// AGGIUNTA IN applyProduction o funzione dedicata
+function processWarProduction() {
+    // Trova fucine attive
+    const forges = buildings.filter(b => b.type === 'forge' && b.stage === 'complete');
+    
+    forges.forEach(forge => {
+        // Controlla input (Ferro + Legno)
+        if (county.resources.iron >= 5 && county.resources.wood >= 5) {
+            county.resources.iron -= 5;
+            county.resources.wood -= 5;
+            
+            // Output
+            county.resources.weapons = (county.resources.weapons || 0) + 3;
+            county.resources.armor = (county.resources.armor || 0) + 1;
+        } else {
+            // Se mancano risorse, la forgia non lavora
+            // (Opzionale: messaggio di avviso)
+        }
+    });
+}
+
+/* ===================== SISTEMA MILITARE AVANZATO ===================== */
+
+// 1. MOBILITAZIONE (Chiamata alle Armi)
+function toggleMobilization() {
+    const peasantGroup = populationGroups.peasants;
+    
+    if (!warState.mobilized) {
+        // ATTIVA LEVA
+        if (peasantGroup.count < 100) {
+            addMsg("system", "❌ Non ci sono abbastanza uomini validi per formare un esercito.");
+            return;
+        }
+
+        // Prendi il 30% della forza lavoro contadina
+        const levyAmount = Math.floor(peasantGroup.count * 0.30);
+        
+        warState.leviesCount = levyAmount;
+        peasantGroup.count -= levyAmount; // Rimuovi dall'economia!
+        warState.mobilized = true;
+        
+        // Calo felicità immediato
+        county.happy -= 10;
+        factions.peasants -= 15;
+        
+        addMsg("system", `⚔️ <strong>LEVA GENERALE:</strong> ${levyAmount} contadini hanno lasciato i campi per prendere le armi. La produzione agricola crollerà.`);
+    } else {
+        // SCIOGLI ESERCITO (Ritorno ai campi)
+        const survivors = warState.leviesCount;
+        peasantGroup.count += survivors;
+        
+        warState.leviesCount = 0;
+        warState.mobilized = false;
+        
+        county.happy += 5;
+        factions.peasants += 5;
+        
+        addMsg("system", `🕊️ <strong>SMOBILITAZIONE:</strong> ${survivors} uomini tornano alle loro famiglie.`);
+    }
+    
+    updateUI();
+}
+
+// 2. CALCOLO POTENZA MILITARE
+/* ===================== LOGICA MILITARE AGGIORNATA ===================== */
+
+function getArmyEfficiency() {
+    const soldiers = populationGroups.militia.count; // Solo professionisti per ora
+    const levies = warState.mobilized ? warState.leviesCount : 0;
+    const totalTroops = soldiers + levies;
+
+    if (totalTroops <= 0) return 100;
+
+    // Calcolo Armi necessarie
+    // I soldati (militia) consumano 1 arma a testa per essere al 100%
+    // Le leve (contadini) possono combattere con forconi (efficienza ridotta ma non zero)
+    const weaponsStock = county.resources.weapons || 0;
+    
+    // Calcoliamo quanti soldati sono armati correttamente
+    const armedTroops = Math.min(totalTroops, weaponsStock);
+    
+    // Efficienza base: percentuale di truppe armate
+    let efficiency = (armedTroops / totalTroops) * 100;
+    
+    // Se ci sono leve non armate, hanno un'efficienza minima del 20% (forconi e bastoni)
+    // Se sono soldati professionisti senza armi, efficienza 10% (pugni?)
+    if (efficiency < 100) {
+        const unarmed = totalTroops - weaponsStock;
+        // Bonus minimo per non rendere l'esercito inutile se manca 1 spada
+        efficiency += (unarmed / totalTroops) * 15; 
+    }
+
+    return Math.min(100, Math.floor(efficiency));
+}
+
+function calculateMilitaryPower() {
+    const soldiers = populationGroups.militia.count;
+    const levies = warState.mobilized ? warState.leviesCount : 0;
+    
+    // Potenza Base
+    let rawPower = (soldiers * 5) + (levies * 1.5); // Soldati valgono molto più delle leve
+
+    // Fattore Efficienza Armamenti
+    const efficiencyPct = getArmyEfficiency();
+    
+    // Applicazione Efficienza
+    let finalPower = Math.floor(rawPower * (efficiencyPct / 100));
+
+    // Bonus Armature (Aggiunge resistenza extra, non attacco)
+    const armorStock = county.resources.armor || 0;
+    const totalTroops = soldiers + levies;
+    if (armorStock > 0 && totalTroops > 0) {
+        const armorCoverage = Math.min(1, armorStock / totalTroops);
+        finalPower *= (1 + (armorCoverage * 0.3)); // Max +30% bonus se tutti corazzati
+    }
+
+    // Bonus Difensivi (Mura)
+    finalPower += (county.security * 2);
+
+    return Math.floor(finalPower);
+}
+
+// 3. SIMULAZIONE BATTAGLIA
+function resolveBattle(enemyKey) {
+    const enemy = neighboringCounties.find(c => c.key === enemyKey);
+    if (!enemy) return;
+    
+    const myPower = calculateMilitaryPower();
+    // Il nemico ha potenza base + bonus aggressione
+    const enemyPower = (enemy.power * 10) + (enemy.aggression * 2);
+    
+    addMsg("system", `⚔️ <strong>BATTAGLIA CAMPALE contro ${enemy.name}</strong>`);
+    addMsg("system", `Noi: ${myPower} forza (Uomini: ${populationGroups.militia.count + warState.leviesCount}) vs Loro: ${enemyPower} forza.`);
+
+    // Logica Casualità
+    const luck = 0.8 + (Math.random() * 0.4); // Fattore 0.8x a 1.2x
+    const finalMyPower = myPower * luck;
+    
+    // Calcolo Perdite (Morti)
+    // Più è cruenta la battaglia, più morti ci sono. 
+    // I contadini (Leva) muoiono molto più facilmente della Milizia.
+    const baseCasualtiesPct = 0.1 + (Math.random() * 0.2); // 10-30% di perdite
+    
+    let deadMilitia = Math.floor(populationGroups.militia.count * baseCasualtiesPct * 0.5); // Milizia muore meno
+    let deadLevies = 0;
+    
+    if (warState.mobilized) {
+        deadLevies = Math.floor(warState.leviesCount * baseCasualtiesPct * 1.5); // Contadini muoiono molto
+        warState.leviesCount -= deadLevies;
+        // Nota: Questi non tornano in populationGroups.peasants! SONO MORTI PER SEMPRE.
+    }
+    populationGroups.militia.count -= deadMilitia;
+    
+    // Consumo Armi
+    const brokenWeapons = Math.floor((deadMilitia + deadLevies) * 0.8);
+    county.resources.weapons = Math.max(0, (county.resources.weapons||0) - brokenWeapons);
+
+    // ESITO
+    if (finalMyPower >= enemyPower) {
+        // VITTORIA
+        const loot = Math.floor(enemy.wealth * 2);
+        county.gold += loot;
+        enemy.power = Math.max(0, enemy.power - 20);
+        enemy.aggression = Math.max(0, enemy.aggression - 30); // Si calmano
+        county.happy += 10;
+        addMsg("system", `🏆 <strong>VITTORIA!</strong> Il nemico è in rotta. Abbiamo saccheggiato ${loot} oro.`);
+    } else {
+        // SCONFITTA - Penalità ridotte
+        const goldLost = Math.floor(county.gold * 0.2);
+        county.gold -= goldLost;
+        county.happy -= 15; // Era -20
+        county.security -= 8; // Era -10
+        county.health -= 4; // Era -5 - Feriti e malattie
+        addMsg("system", `🔥 <strong>SCONFITTA!</strong> Il nemico ha razziato le nostre terre (-${goldLost} oro).`);
+    }
+    
+    addMsg("system", `☠️ <strong>Caduti:</strong> ${deadMilitia} soldati e ${deadLevies} contadini.`);
+    
+    if (deadLevies > 50) {
+        addMsg("system", "📉 La perdita di così tanti contadini avrà conseguenze disastrose sui prossimi raccolti.");
+    }
+    
+    updateUI();
+}
+
 function degradeStructure(s, options = {}) {
     const notify = options.notify !== false;
     s.condition -= rand(0, 2);
@@ -7001,20 +7309,27 @@ function processPopNeedsSystem(targetState = null, options = {}) {
         }
         // ---------------------------------
 
-        // Conseguenze (uguali a prima)
+        // Conseguenze migliorate - più generose
         if (pScore < 0.8) {
             const severity = (1 - pScore);
-            stateCounty.health = Math.max(0, stateCounty.health - (severity * 5));
-            stateFactions[groupKey] = Math.max(0, stateFactions[groupKey] - (severity * 20));
+            stateCounty.health = Math.max(0, stateCounty.health - (severity * 3)); // Era 5
+            stateFactions[groupKey] = Math.max(0, stateFactions[groupKey] - (severity * 15)); // Era 20
         } else {
-            stateFactions[groupKey] = Math.min(100, stateFactions[groupKey] + 1);
+            stateFactions[groupKey] = Math.min(100, stateFactions[groupKey] + 2); // Era 1
         }
 
-        if (sScore < 0.6) {
-            stateCounty.happy = Math.max(0, stateCounty.happy - 2);
-            stateFactions[groupKey] = Math.max(0, stateFactions[groupKey] - 2);
-        } else if (sScore > 0.9) {
-            stateCounty.happy = Math.min(100, stateCounty.happy + 1);
+        // Bisogni secondari - più equilibrati
+        if (sScore < 0.5) { // Soglia abbassata da 0.6
+            stateCounty.happy = Math.max(0, stateCounty.happy - 1); // Era -2
+            stateFactions[groupKey] = Math.max(0, stateFactions[groupKey] - 1); // Era -2
+        } else if (sScore > 0.8) { // Soglia abbassata da 0.9
+            stateCounty.happy = Math.min(100, stateCounty.happy + 2); // Era +1
+            stateFactions[groupKey] = Math.min(100, stateFactions[groupKey] + 3); // Era +2
+        }
+        
+        // NUOVO: Bonus extra se ENTRAMBI i bisogni sono soddisfatti
+        if (pScore > 0.9 && sScore > 0.9) {
+            stateCounty.happy = Math.min(100, stateCounty.happy + 2);
             stateFactions[groupKey] = Math.min(100, stateFactions[groupKey] + 2);
         }
 
@@ -7068,27 +7383,30 @@ function applyEconomicEffects(production, consumption, deficits, stateRef = null
     const homeless = Math.max(0, totalPop - capacity);
     const vacancy = Math.max(0, capacity - totalPop);
 
-    // Effetti dei Senzatetto (Deficit Abitativo)
+    // Effetti dei Senzatetto (Deficit Abitativo) - RIDOTTI
     if (homeless > 0) {
-        // Più gente senza casa = Più infelicità e malattie
-        const severity = Math.ceil(homeless / 50); // Ogni 50 senzatetto, 1 punto malus
+        // Più gente senza casa = Più infelicità e malattie (ma meno severo)
+        const severity = Math.ceil(homeless / 100); // Era /50 - Ogni 100 senzatetto, 1 punto malus
         
-        countyRef.happy = clamp(countyRef.happy - severity);
-        countyRef.health = clamp(countyRef.health - Math.ceil(severity / 2));
+        countyRef.happy = clamp(countyRef.happy - Math.ceil(severity * 0.5)); // Era -severity
+        countyRef.health = clamp(countyRef.health - Math.ceil(severity / 3)); // Era /2
         
-        // Le fazioni popolari si arrabbiano
-        factionsRef.peasants -= 2;
-        factionsRef.outcasts += 2; // Aumenta il crimine/emarginati
+        // Le fazioni popolari si arrabbiano (meno)
+        factionsRef.peasants -= 1; // Era -2
+        factionsRef.outcasts += 1; // Era +2
         
-        // Messaggio di allarme (solo se non è una simulazione silenziosa)
-        if (!stateRef && Math.random() < 0.2) {
+        // Messaggio di allarme (meno frequente)
+        if (!stateRef && Math.random() < 0.1) { // Era 0.2
             addMsg("ai", `🏚️ <b>Emergenza Abitativa:</b> ${homeless} sudditi dormono all'aperto! La plebe mormora.`);
         }
     } 
-    // Effetti dello Spazio Libero (Incentivo alla crescita)
+    // Effetti dello Spazio Libero (Incentivo alla crescita) - MIGLIORATI
     else if (vacancy > 50) {
         // Se ci sono case libere e cibo, la gente arriva
-        if (countyRef.food > 30 && countyRef.happy > 50) {
+        if (countyRef.food > 30 && countyRef.happy > 40) { // Era > 50
+            // Immigrazione bonus e felicità aumentata
+            countyRef.happy = Math.min(100, countyRef.happy + 1);
+            factionsRef.peasants = Math.min(100, factionsRef.peasants + 1);
             // Immigrazione bonus
             const immigration = Math.floor(vacancy * 0.05); // Riempi il 5% dei posti liberi
             adjustPopulation("peasants", immigration, stateRef);
@@ -7878,12 +8196,135 @@ function updateUI() {
 }
 
 function updateDiplomacyUI() {
+    // Aggiorna Statistiche Militari
+    document.getElementById("mil-soldiers").innerText = populationGroups.militia.count;
+    document.getElementById("mil-levies").innerText = warState.leviesCount;
+    document.getElementById("mil-power").innerText = calculateMilitaryPower();
+    document.getElementById("mil-weapons").innerText = county.resources.weapons || 0;
+    
+    // Aggiorna Efficienza con colore
+    const eff = getArmyEfficiency();
+    let effColor = eff > 80 ? "#6ada91" : eff > 40 ? "#ff9800" : "#f44336";
+    const effEl = document.getElementById("mil-efficiency");
+    effEl.innerText = eff + "%";
+    effEl.style.color = effColor;
+    
+    // Aggiorna testo pulsante
+    const mobBtn = document.getElementById("btn-mobilize");
+    if (warState.mobilized) {
+        mobBtn.innerText = "🏳️ Sciogli la Leva (Torna ai campi)";
+        mobBtn.style.background = "#444";
+    } else {
+        mobBtn.innerText = "🔔 Chiama la Leva (Mobilita Contadini)";
+        mobBtn.style.background = "linear-gradient(120deg, #8b0000, #4a0000)";
+    }
+
+    // Genera Card Diplomatiche
+    const container = document.getElementById("diplomacy-list");
+    container.innerHTML = "";
+
     neighboringCounties.forEach(c => {
-        document.getElementById(`rel-${c.key}`).innerText = c.relations;
-        document.getElementById(`pow-${c.key}`).innerText = c.power;
-        document.getElementById(`agg-${c.key}`).innerText = c.aggression;
-        document.getElementById(`land-${c.key}`).innerText = c.land;
+        // Calcola stato relazione
+        let statusColor = "#aaa";
+        let statusText = "Neutrale";
+        if (c.relations > 70) { statusColor = "#6ada91"; statusText = "Alleato"; }
+        if (c.relations < 30) { statusColor = "#ff7c7c"; statusText = "Ostile"; }
+        if (warState.active && warState.enemy === c.key) { statusColor = "#f44336"; statusText = "IN GUERRA"; }
+
+        const div = document.createElement("div");
+        div.className = "diplomacy-card";
+        if (warState.active && warState.enemy === c.key) div.style.borderColor = "#f44336";
+
+        div.innerHTML = `
+            <div style="display:flex; justify-content:space-between;">
+                <h3 style="margin:0; color:var(--accent)">${c.name}</h3>
+                <span style="color:${statusColor}; font-weight:bold;">${statusText}</span>
+            </div>
+            <p style="font-size:0.85em; color:#ccc;">${c.description}</p>
+            
+            <div class="grid-stats" style="grid-template-columns:1fr 1fr 1fr 1fr; gap:5px; margin-bottom:10px;">
+                <div class="stat-card" style="padding:5px;">
+                    <div class="stat-val" style="font-size:1em;">${c.relations}</div>
+                    <div class="stat-sub">Relazione</div>
+                </div>
+                <div class="stat-card" style="padding:5px;">
+                    <div class="stat-val" style="font-size:1em;">${c.power}</div>
+                    <div class="stat-sub">Forza</div>
+                </div>
+                <div class="stat-card" style="padding:5px;">
+                    <div class="stat-val" style="font-size:1em;">${c.aggression}</div>
+                    <div class="stat-sub">Aggr.</div>
+                </div>
+                <div class="stat-card" style="padding:5px;">
+                    <div class="stat-val" style="font-size:1em;">${c.wealth}</div>
+                    <div class="stat-sub">Ricchezza</div>
+                </div>
+            </div>
+
+            <div class="diplomacy-actions">
+                ${renderDiplomacyButtons(c)}
+            </div>
+        `;
+        container.appendChild(div);
     });
+}
+
+function renderDiplomacyButtons(neighbor) {
+    if (warState.active && warState.enemy === neighbor.key) {
+        return `
+            <button class="btn-main" style="background:#f44336; color:white; width:100%;" onclick="resolveBattle('${neighbor.key}')">⚔️ ORDINA ATTACCO</button>
+            <button class="btn-sec" onclick="sueForPeace('${neighbor.key}')">🏳️ Chiedi Tregua</button>
+        `;
+    } else {
+        return `
+            <button class="btn-sec" onclick="sendDiplomaticGift('${neighbor.key}')">🎁 Invia Dono (50 oro)</button>
+            <button class="btn-sec" onclick="requestTradeMeeting('${neighbor.key}')">📜 Accordo Commerciale</button>
+            <button class="btn-sec" style="border-color:#f44336; color:#f44336;" onclick="declareWar('${neighbor.key}')">⚔️ DICHIARA GUERRA</button>
+        `;
+    }
+}
+
+// Logica Diplomatica (Funzioni di supporto)
+function declareWar(key) {
+    const target = neighboringCounties.find(c => c.key === key);
+    if (!confirm(`Sei sicuro di voler dichiarare guerra alla ${target.name}?`)) return;
+    
+    warState.active = true;
+    warState.enemy = key;
+    target.relations = 0; // Crollo relazioni
+    target.aggression = 100;
+    
+    addMsg("system", `📣 <strong>GUERRA!</strong> Hai dichiarato guerra alla ${target.name}. Prepara le truppe!`);
+    updateUI();
+}
+
+function sueForPeace(key) {
+    const target = neighboringCounties.find(c => c.key === key);
+    
+    // Costo della pace: Oro o Territorio
+    const cost = 300;
+    if (county.gold < cost) {
+        addMsg("system", `Il nemico rifiuta la pace. Chiedono ${cost} oro come riparazioni.`);
+        return;
+    }
+    
+    county.gold -= cost;
+    warState.active = false;
+    warState.enemy = null;
+    target.relations = 20; // Tregua fredda
+    
+    addMsg("system", `🏳️ <strong>PACE FIRMATA.</strong> Abbiamo pagato ${cost} oro di riparazioni.`);
+    updateUI();
+}
+
+function sendDiplomaticGift(key) {
+    const target = neighboringCounties.find(c => c.key === key);
+    if (county.gold < 50) return;
+    
+    county.gold -= 50;
+    target.relations = Math.min(100, target.relations + 15);
+    addMsg("system", `🎁 Dono inviato alla ${target.name}. Le relazioni migliorano.`);
+    updateUI();
 }
 
 function requestTradeMeeting(neighborKey) {
@@ -8500,12 +8941,202 @@ async function generateSeasonStory() {
     }
 }
 
+function refreshAllStats() {
+    // Calcola sommari senza modificare i dati (dry run)
+    updateIndustrySummary(); 
+    calculateResourceStats(); 
+    calculateHousingCapacity();
+    // Forza l'aggiornamento UI
+    updateUI(); 
+}
+
+async function triggerStartupNarrative(isNewGame) {
+    const chatLog = document.getElementById("chat-log");
+    
+    // Messaggio di caricamento
+    const loadingDiv = document.createElement("div");
+    loadingDiv.className = "msg-system";
+    loadingDiv.innerHTML = "<em>Il cronista sta rileggendo le pergamene...</em>";
+    loadingDiv.id = "startup-loader";
+    chatLog.appendChild(loadingDiv);
+
+    // Costruiamo il contesto per l'IA
+    const ctx = generateDeepContext(); // Usa la funzione esistente che include guerra e risorse
+    
+    let prompt = "";
+    if (isNewGame) {
+        prompt = `
+        SEI IL NARRATORE. È l'inizio di una nuova partita (Anno ${worldTime.year}).
+        Il giocatore è il nuovo Conte ${heroName}.
+        Descrivi brevemente l'atmosfera della contea basandoti su questi dati iniziali:
+        ${ctx}
+        Saluta il Conte e spiegagli la situazione in 2 frasi evocative.
+        `;
+    } else {
+        prompt = `
+        SEI IL NARRATORE. Il giocatore ha appena caricato la partita (Anno ${worldTime.year}).
+        Riassumi DOVE ERAVAMO RIMASTI basandoti su questi dati attuali:
+        ${ctx}
+        
+        FOCUS CRUCIALE:
+        - Se warState.active è true, RICORDA CHE SIAMO IN GUERRA contro ${warState.enemy}.
+        - Se c'è carestia, ricordalo.
+        - Concludi con "Bentornato, mio Signore. I vostri ordini?"
+        `;
+    }
+
+    try {
+        // Chiamata diretta all'API (simile a callGroq ma one-shot)
+        const resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: "POST",
+            headers: { "Content-Type":"application/json", "Authorization":"Bearer " + apiKey },
+            body: JSON.stringify({
+                model: "llama-3.1-8b-instant",
+                temperature: 0.7,
+                messages: [{ role: "system", content: prompt }]
+            })
+        });
+        
+        const data = await resp.json();
+        const text = data.choices[0].message.content;
+
+        // Rimuovi loader e aggiungi messaggio
+        const loader = document.getElementById("startup-loader");
+        if(loader) loader.remove();
+        
+        addMsg("ai", text); // Usa la tua funzione standard per aggiungere messaggi
+
+        // Aggiungi alla memoria dell'IA per mantenere il contesto
+        publicChatHistory.push({ role: "assistant", content: text });
+
+    } catch (e) {
+        console.error(e);
+        if(document.getElementById("startup-loader")) document.getElementById("startup-loader").remove();
+        addMsg("system", "Bentornato, Conte. (Impossibile recuperare la cronaca narrativa).");
+    }
+}
+
 function closeChronicleModal() {
     document.getElementById("modal-chronicle").classList.remove("active");
 }
 
 /* ============================================================
    ==================== INVIO MESSAGGI PUBBLICI =================
+   ============================================================ */
+
+/* ============================================================
+   ========== EVENTI POSITIVI CASUALI (BILANCIAMENTO) ==========
+   ============================================================ */
+
+function triggerPositiveEvents() {
+    // Probabilità base di eventi positivi: 30% per turno
+    if (Math.random() > 0.3) return;
+    
+    const events = [
+        // Eventi di felicità generale
+        {
+            condition: () => county.happy < 80,
+            trigger: () => {
+                county.happy = Math.min(100, county.happy + 5);
+                const events = [
+                    "🎭 Una compagnia di giullari visita la contea. Il popolo ride di cuore!",
+                    "🎪 Una fiera ambulante porta gioia e mercanzia esotica.",
+                    "☀️ Il bel tempo porta una stagione di raccolti abbondanti e sorrisi.",
+                    "🎵 Un trovatore compone una ballata in onore della contea. Tutti cantano!",
+                    "🏺 Viene scoperta un'antica fonte di acqua pura. Benedizione!",
+                    "🌸 I giardini del castello fioriscono magnificamente. Un buon presagio!"
+                ];
+                addMsg("system", events[Math.floor(Math.random() * events.length)]);
+            }
+        },
+        // Eventi di crescita economica
+        {
+            condition: () => county.gold < 500,
+            trigger: () => {
+                const bonus = Math.floor(50 + Math.random() * 100);
+                county.gold += bonus;
+                county.happy = Math.min(100, county.happy + 3);
+                const events = [
+                    `💰 Un mercante generoso dona ${bonus} oro per le opere pie!`,
+                    `⛏️ I minatori trovano una vena ricca! +${bonus} oro dalle miniere.`,
+                    `📦 Un carico di merci preziose arriva inaspettato. +${bonus} oro.`,
+                    `🎁 Un nobile in visita lascia doni generosi: ${bonus} oro!`
+                ];
+                addMsg("system", events[Math.floor(Math.random() * events.length)]);
+            }
+        },
+        // Eventi di salute
+        {
+            condition: () => county.health < 80,
+            trigger: () => {
+                county.health = Math.min(100, county.health + 7);
+                county.happy = Math.min(100, county.happy + 2);
+                const events = [
+                    "🌿 Un guaritore errante distribuisce rimedi efficaci. La salute migliora!",
+                    "⛪ I monaci pregano per la salute del popolo. Le malattie regrediscono!",
+                    "🍃 Le erbe di stagione hanno proprietà curative straordinarie.",
+                    "💊 Un alchimista scopre una nuova cura per le febbri comuni!"
+                ];
+                addMsg("system", events[Math.floor(Math.random() * events.length)]);
+            }
+        },
+        // Eventi che migliorano le fazioni
+        {
+            condition: () => true,
+            trigger: () => {
+                const factionKeys = Object.keys(factions);
+                const randomFaction = factionKeys[Math.floor(Math.random() * factionKeys.length)];
+                factions[randomFaction] = Math.min(100, factions[randomFaction] + 5);
+                county.happy = Math.min(100, county.happy + 2);
+                
+                const eventsMap = {
+                    nobility: "👑 Un torneo cavalleresco rinforza l'orgoglio nobiliare!",
+                    clergy: "✝️ Una reliquia sacra viene donata alla chiesa. Il clero gioisce!",
+                    militia: "⚔️ Le truppe vincono un'esercitazione. Il morale sale!",
+                    peasants: "🌾 Un raccolto eccezionale riempie i granai dei contadini!",
+                    burghers: "🔨 Gli artigiani completano un'opera magistrale. Grande orgoglio!",
+                    merchants: "🛒 I mercanti concludono affari vantaggiosi. Prosperità!",
+                    mystics: "🔮 I saggi prevedono un futuro luminoso per la contea!",
+                    outcasts: "🎭 Gli emarginati ottengono un atto di giustizia. Gratitudine!"
+                };
+                
+                addMsg("system", eventsMap[randomFaction] || `I ${factionLabel(randomFaction)} sono più contenti. (+5 Lealtà)`);
+            }
+        },
+        // Eventi di risorse bonus
+        {
+            condition: () => true,
+            trigger: () => {
+                const resources = ['grain', 'wood', 'stone', 'iron'];
+                const res = resources[Math.floor(Math.random() * resources.length)];
+                const amount = Math.floor(20 + Math.random() * 40);
+                county.resources[res] = (county.resources[res] || 0) + amount;
+                
+                const eventsMap = {
+                    grain: `🌾 Un raccolto spontaneo dona ${amount} unità di grano!`,
+                    wood: `🌲 Alberi caduti forniscono ${amount} legno stagionato!`,
+                    stone: `🪨 Scoperta una cava abbandonata con ${amount} pietre!`,
+                    iron: `⛏️ Un vecchio deposito rivela ${amount} unità di ferro!`
+                };
+                
+                addMsg("system", eventsMap[res]);
+            }
+        }
+    ];
+    
+    // Filtra eventi che soddisfano le condizioni
+    const validEvents = events.filter(e => e.condition());
+    
+    // Attiva un evento casuale tra quelli validi
+    if (validEvents.length > 0) {
+        const event = validEvents[Math.floor(Math.random() * validEvents.length)];
+        event.trigger();
+        updateUI();
+    }
+}
+
+/* ============================================================
+   ==================== PROGRESSIONE STAGIONE =================
    ============================================================ */
 
 function progressSeason(options = {}) {
@@ -8539,6 +9170,9 @@ function progressSeason(options = {}) {
     
     // 1. Aggiornamento ricchezza (Stipendi, Raccolti, Commercio)
     updateCategoryWealth(); 
+    
+    // 1.5. Produzione Bellica (Prima della produzione normale)
+    processWarProduction();
     
     // 2. Produzione (Le strutture generano risorse per il mercato)
     applyProduction(null, { skipUI: true, silent: true }); 
@@ -8615,12 +9249,12 @@ function progressSeason(options = {}) {
     county.gold -= totalExpense;
     detailedBudget.net = totalIncome - totalExpense;
 
-    // Bancarotta?
+    // Bancarotta? - PENALITÀ RIDOTTE
     if (county.gold < 0) {
         addMsg("system", "💸 <strong>BANCAROTTA!</strong> Il tesoro è vuoto. Le truppe disertano e le strutture crollano.");
         county.gold = 0;
-        county.security = Math.max(0, county.security - 10);
-        county.happy = Math.max(0, county.happy - 10);
+        county.security = Math.max(0, county.security - 5); // Era -10
+        county.happy = Math.max(0, county.happy - 5); // Era -10
     }
     
     // Eventi vari
@@ -8628,6 +9262,48 @@ function progressSeason(options = {}) {
     triggerStructureEvents({ skipUI: true });
     structureFactionEffect();
     processNeighborEconomies({ silent: true });
+    
+    // NUOVO: Eventi Positivi Casuali per bilanciare
+    if (!silent) triggerPositiveEvents();
+
+    // Crescita Demografica - CONDIZIONI MIGLIORATE
+    let popGrowth = 0;
+    if (county.food > 40 && county.health > 30 && county.happy > 25) { // Soglie abbassate
+        popGrowth = Math.floor(county.pop * 0.015); // 1.5% crescita annuale
+    } else if (county.food < 15 || county.health < 15 || county.happy < 15) { // Soglie abbassate
+        popGrowth = -Math.floor(county.pop * 0.008); // 0.8% decrescita (era 1%)
+    }
+    county.pop = Math.max(100, county.pop + popGrowth); // Minimo 100 pop
+    if (popGrowth > 0) {
+        addMsg("system", `👶 La popolazione cresce di ${popGrowth} anime grazie alla prosperità.`);
+        county.happy = Math.min(100, county.happy + 1); // NUOVO: Bonus felicità per crescita
+    } else if (popGrowth < 0) {
+        addMsg("system", `💀 La popolazione diminuisce di ${Math.abs(popGrowth)} anime a causa delle difficoltà.`);
+    }
+
+    // Effetti di Guerra
+    if (warState.mobilized) {
+        // Penalità economica per la leva: meno braccia nei campi
+        // Riduciamo la produzione di grano simulata
+        county.resources.grain = Math.floor(county.resources.grain * 0.6); 
+        addMsg("system", "📉 I raccolti soffrono a causa della mancanza di contadini (Leva attiva).");
+    }
+
+    if (warState.active) {
+        // Costo della guerra
+        const warCost = (populationGroups.militia.count * 2) + (warState.leviesCount * 1);
+        county.gold -= warCost;
+        detailedBudget.expenses.upkeep_military += warCost;
+        addMsg("system", `⚔️ Spese di guerra: -${warCost} oro per rifornimenti.`);
+        
+        // Eventuale controattacco nemico automatico
+        const enemy = neighboringCounties.find(c => c.key === warState.enemy);
+        if (Math.random() < 0.3) { // 30% probabilità di raid nemico
+            addMsg("system", `🔥 Incursione nemica! Truppe di ${enemy.name} bruciano i confini.`);
+            county.pop -= rand(10, 30);
+            county.gold -= rand(20, 50);
+        }
+    }
 
     // Snapshot Finale & Delta
     const endSnapshot = captureResourceSnapshot();
@@ -8637,6 +9313,7 @@ function progressSeason(options = {}) {
     const goldDelta = county.gold - startGold;
     const happyDelta = county.happy - startHappy;
 
+    checkInternalStability();
     updateUI();
     autoSaveGame();
 
@@ -8648,6 +9325,8 @@ function progressSeason(options = {}) {
         // L'unica cosa che deve succedere è l'apertura del popup narrativo
         setTimeout(() => {
             generateSeasonStory();
+            // Dopo la narrazione, controlla se un vicino vuole parlare
+            setTimeout(() => checkDiplomaticIntrusion(), 2000);
         }, 1000);
     }
 }
@@ -8657,23 +9336,40 @@ function progressSeason(options = {}) {
 // =======================================
 function appendActionsBlock(actions) {
     const chatLog = document.getElementById("chat-log");
+    
+    // Crea il contenitore
     const box = document.createElement("div");
-    box.classList.add("msg-actions");
-
+    box.className = "msg-actions";
+    
+    // Titolo
     const header = document.createElement("div");
-    header.classList.add("action-header");
-    header.textContent = "Azioni possibili";
+    header.className = "action-header";
+    header.textContent = "AZIONI POSSIBILI";
     box.appendChild(header);
 
+    // Crea i pulsanti
     actions.forEach(a => {
         const btn = document.createElement("button");
-        btn.classList.add("action-card");
-        btn.innerHTML = a.label;
-        btn.onclick = () => executeAction(a.code);
+        btn.className = "action-card"; // Assicurati che questa classe abbia lo stile nel CSS
+        
+        // Aggiungiamo un cursore puntatore per far capire che è cliccabile
+        btn.style.cursor = "pointer"; 
+        btn.innerHTML = a.label; // Usa innerHTML per permettere le emoji
+
+        // --- IL FIX FONDAMENTALE ---
+        // Assegniamo la funzione direttamente, non come stringa HTML
+        btn.onclick = function() {
+            console.log("Azione cliccata:", a.code); // Debug nella console
+            executeAction(a.code);
+            // Opzionale: Rimuovi i pulsanti dopo il click per evitare click doppi
+            box.remove(); 
+        };
+
         box.appendChild(btn);
     });
 
     chatLog.appendChild(box);
+    // Scroll automatico verso il basso
     chatLog.scrollTop = chatLog.scrollHeight;
 }
 
@@ -8683,6 +9379,11 @@ function appendActionsBlock(actions) {
 function executeAction(action) {
     console.log("Azione selezionata:", action);
     let userMessage = "";
+
+    if (action.startsWith("diplo_")) {
+        handleDiplomaticAction(action);
+        return;
+    }
 
     // --- NUOVI COMANDI FINANZIARI ---
     if (action.startsWith("donate_")) {
@@ -8703,10 +9404,15 @@ function executeAction(action) {
     
     // ... (i tuoi casi esistenti build_ ecc.) ...
     else if (action.startsWith("build_")) {
-        const type = action.split("_")[1];
-        orderBuilding(type);
-        const b = buildingData[type];
-        userMessage = `Ho ordinato la costruzione di ${b.name}.`;
+        const type = action.substring(6); // Rimuove "build_" per ottenere il tipo completo
+        if (buildingData[type]) {
+            orderBuilding(type);
+            const b = buildingData[type];
+            userMessage = `Ho ordinato la costruzione di ${b.name}.`;
+        } else {
+            console.error(`Edificio sconosciuto: ${type}`);
+            userMessage = `Errore: Edificio ${type} non trovato.`;
+        }
     } else if (action === "emergency_tax_merchants") {
         county.gold += 50;
         factions.burghers = Math.max(0, factions.burghers - 10);
@@ -8728,7 +9434,66 @@ function executeAction(action) {
         addMsg("system", "🎖️ Reclutati 10 uomini per la milizia: -20 oro.");
         updateUI();
         userMessage = "Ho reclutato nuovi uomini per la milizia.";
-    } else {
+    } 
+    // Aggiungi dentro executeAction(action)
+    else if (action.startsWith("revolt_crush_")) {
+        const faction = action.split("_")[2];
+        const rebels = populationGroups[faction].count;
+        const militaryPower = calculateMilitaryPower(); // Funzione creata nel passo precedente
+        
+        // Per vincere, la potenza militare deve superare la "potenza" della folla
+        // La folla è numerosa ma debole (diviso 10)
+        const rebelPower = rebels / 5; 
+        
+        if (militaryPower > rebelPower) {
+            const deadRebels = Math.floor(rebels * 0.3);
+            populationGroups[faction].count -= deadRebels;
+            factions[faction] = 10; // Sottomessi ma odiano
+            county.happy -= 20;
+            rebellionState[faction] = 0; // Reset rabbia (paura)
+            
+            addMsg("system", `🩸 <strong>MASSACRO:</strong> La milizia ha disperso la folla. ${deadRebels} morti. Il tuo trono è salvo, ma macchiato di sangue.`);
+            updateUI();
+        } else {
+            triggerGameOver("overrun", faction);
+        }
+    }
+
+    else if (action.startsWith("revolt_speak_")) {
+        // Tentativo diplomatico
+        const chance = (county.happy / 200) + 0.2; // Max ~70% se molto felici
+        if (Math.random() < chance) {
+            addMsg("system", "🗣️ Le tue parole hanno toccato il cuore della folla. Si disperdono pacificamente.");
+            rebellionState[action.split("_")[2]] = 3;
+        } else {
+            triggerGameOver("mob_kill");
+        }
+    }
+
+    else if (action === "gameover_abdicate") {
+        triggerGameOver("abdication");
+    }
+    else if (action === "coup_mercenaries") {
+        if (county.gold >= 300) {
+            county.gold -= 300;
+            addMsg("system", "💰 I mercenari hanno difeso il castello! Il traditore è stato catturato e giustiziato.");
+            rebellionState.militia = 0; // Reset rabbia
+            factions.militia = 20; // Umiliati
+        } else {
+            triggerGameOver("coup");
+        }
+    }
+    else if (action === "coup_duel") {
+        const chance = (county.health / 200) + 0.3; // Base 30% + salute
+        if (Math.random() < chance) {
+            addMsg("system", "⚔️ Hai sconfitto il traditore in duello! La milizia si sottomette.");
+            rebellionState.militia = 0;
+            factions.militia = 15;
+        } else {
+            triggerGameOver("coup");
+        }
+    }
+    else {
         userMessage = action; // Fallback
     }
 
@@ -8985,9 +9750,43 @@ function openBudgetModal() {
     }
 }
 
-function closeBudgetModal() {
-    const modal = document.getElementById("modal-budget");
-    if (modal) modal.classList.remove("active");
+function closeLawModal() {
+    document.getElementById("modal-law-creator").classList.remove("active");
+}
+
+function createLaw() {
+    const name = document.getElementById("law-name").value.trim();
+    const desc = document.getElementById("law-desc").value.trim();
+    const upkeep = parseInt(document.getElementById("law-upkeep").value) || 0;
+    const resourceKey = document.getElementById("law-resource").value;
+    const resourceAmount = parseInt(document.getElementById("law-resource-amount").value) || 0;
+
+    if (!name) {
+        alert("Inserisci un nome per la legge.");
+        return;
+    }
+
+    const lawKey = name.toLowerCase().replace(/\s+/g, '_');
+    const law = {
+        name: name,
+        desc: desc,
+        upkeepCost: upkeep,
+        consumeResource: resourceAmount > 0 ? { [resourceKey]: resourceAmount } : null
+    };
+
+    // Aggiungi alla lista delle leggi disponibili (fittizia, in realtà salva in activeLaws)
+    activeLaws.push(lawKey);
+    // Salva la definizione
+    if (!window.lawDefinitions) window.lawDefinitions = {};
+    window.lawDefinitions[lawKey] = law;
+
+    addMsg("system", `📜 Nuova legge promulgata: <strong>${name}</strong> - ${desc}`);
+    closeLawModal();
+    updateUI();
+}
+
+function getLawDefinition(key) {
+    return window.lawDefinitions ? window.lawDefinitions[key] : null;
 }
 
 function renderBudget() {
@@ -9092,28 +9891,29 @@ function renderBudget() {
    ========================= GROQ ENGINE ========================
    ============================================================ */
 
-async function callGroq(userText, mode="action") {
-
+async function callGroq(userText, mode="action", retryCount = 0) {
     if (!ensureApiKey()) {
         addMsg("system", "🔐 Inserisci una chiave API.");
         activateScreen("screen-login");
         return;
     }
 
-    // 1. Costruiamo il prompt di sistema aggiornato con le statistiche attuali
-    const promptData = buildPrompt(userText, mode);
-
-    // 2. Aggiorniamo la storia della chat
-    // Aggiungiamo il messaggio dell'utente alla memoria
-    publicChatHistory.push({ role: "user", content: userText });
-
-    // Manteniamo la memoria pulita (ultimi 10 messaggi per non consumare troppi token)
-    if (publicChatHistory.length > 10) {
-        publicChatHistory = publicChatHistory.slice(-10);
+    // Stop dopo 3 tentativi per evitare loop infiniti
+    if (retryCount > 3) {
+        addMsg("system", "⚠️ La Corte è troppo affollata (Server occupato). Riprova tra poco.");
+        return;
     }
 
-    // 3. Prepariamo il pacchetto completo per l'IA
-    // [ISTRUZIONI SISTEMA] + [STORICO CONVERSAZIONE]
+    const promptData = buildPrompt(userText, mode);
+    
+    // OTTIMIZZAZIONE 1: Riduciamo la memoria storica per risparmiare token
+    // Invece di 10 messaggi, ne teniamo solo 4 (più che sufficienti per il contesto immediato)
+    if (publicChatHistory.length > 4) {
+        publicChatHistory = publicChatHistory.slice(-4);
+    }
+
+    publicChatHistory.push({ role: "user", content: userText });
+
     const apiMessages = [
         { role: "system", content: promptData.system },
         ...publicChatHistory
@@ -9128,27 +9928,34 @@ async function callGroq(userText, mode="action") {
             },
             body: JSON.stringify({
                 model: "llama-3.1-8b-instant",
-                temperature: 0.6, // Leggermente più basso per essere fedele ai dati
+                temperature: 0.6,
                 messages: apiMessages
             })
         });
+
+        // GESTIONE ERRORE RATE LIMIT (429)
+        if (resp.status === 429) {
+            console.warn("Rate limit colpito. Attendo 2.5s...");
+            // Rimuove l'ultimo messaggio utente dalla storia per non duplicarlo nel retry
+            publicChatHistory.pop(); 
+            // Aspetta 2500ms
+            await new Promise(resolve => setTimeout(resolve, 2500));
+            // Riprova ricorsivamente
+            return callGroq(userText, mode, retryCount + 1);
+        }
 
         const data = await resp.json();
         if (!resp.ok) throw new Error(data.error?.message || 'API Error');
 
         const aiMsg = data.choices[0].message.content;
-
-        // 4. Aggiungiamo la risposta dell'IA alla memoria
-        // (Così al prossimo turno si ricorderà cosa ha risposto)
         publicChatHistory.push({ role: "assistant", content: aiMsg });
-
-        // 5. Passiamo il testo al parser grafico
         handleAIResponse(aiMsg, mode);
 
     } catch(e) {
-        addMsg("system", "⚠️ Errore Corte: " + e);
-        // In caso di errore, rimuoviamo l'ultimo messaggio utente per non bloccare la logica
-        publicChatHistory.pop();
+        // Se è un errore diverso dal 429, lo mostriamo
+        console.error(e);
+        addMsg("system", "⚠️ Il consigliere tace (Errore: " + e.message + ")");
+        publicChatHistory.pop(); // Clean up
     }
 }
 
@@ -9542,158 +10349,468 @@ function getDynamicActions(response = "") {
 }
 
 function generateDeepContext() {
-    // 1. TEMPO E STATO GENERALE
-    let context = `=== STATO DEL REGNO (Turno ${county.turn}) ===\n`;
-    context += `DATA: Anno ${worldTime.year}, ${getSeason().label}.\n`;
-    context += `REGNANTE: ${dynasty.ruler.name} (Età: ${Math.floor(dynasty.ruler.age)}, Salute: ${dynasty.ruler.health}%).\n`;
-    context += `POPOLAZIONE: ${county.pop} anime. (Felicità: ${county.happy}%, Salute Pubblica: ${county.health}%, Sicurezza: ${county.security}%).\n`;
-    context += `TESORERIA: ${county.gold} Oro.\n`;
+    // VERSIONE OTTIMIZZATA (Low Token Usage)
+    
+    // 1. Dati Base
+    let ctx = `[STATO ANNO ${worldTime.year} ${getSeason().label}]\n`;
+    ctx += `CONTE: ${dynasty.ruler.name} (Salute ${dynasty.ruler.health}%). POP: ${county.pop} (Felicità ${county.happy}%, Sicurezza ${county.security}%).\n`;
+    ctx += `ORO: ${county.gold}. CIBO: ${county.food}% fabbisogno.\n`;
 
-    // 2. ECONOMIA E RISORSE - ANALISI DETTAGLIATA MAGAZZINO
-    context += `\n[MAGAZZINI E RISORSE - ANALISI DETTAGLIATA]\n`;
-    
-    // Calcola statistiche magazzino
-    const warehouseStats = calculateResourceStats();
-    
-    // Prima mostra un riepilogo delle scorte
-    const resList = Object.entries(county.resources)
-        .map(([k, v]) => `${resourceLabels[k] || k}: ${v}`)
-        .join(", ");
-    context += `SCORTE ATTUALI: ${resList}.\n\n`;
-    
-    // Poi mostra l'analisi dettagliata per le risorse critiche
-    context += `ANALISI PRODUZIONE/CONSUMO (risorse con problemi):\n`;
-    let hasCriticalIssues = false;
-    
-    Object.entries(warehouseStats).forEach(([key, stat]) => {
-        const status = getResourceStatus(stat);
-        const label = resourceLabels[key] || key;
-        
-        // Mostra solo risorse con problemi o importanti
-        if (status === "critical" || status === "warning" || key === "food" || key === "gold") {
-            hasCriticalIssues = true;
-            let statusText = "";
-            if (stat.daysLeft <= 0) {
-                statusText = "ESAURITA!";
-            } else if (stat.daysLeft <= 2) {
-                statusText = `CRITICO - Solo ${stat.daysLeft} stagioni rimanenti`;
-            } else if (stat.daysLeft <= 5) {
-                statusText = `ATTENZIONE - ${stat.daysLeft} stagioni rimanenti`;
-            } else if (stat.net > 0) {
-                statusText = `STABILE - Produzione eccedente di +${stat.net}/stagione`;
-            } else {
-                statusText = `${stat.daysLeft} stagioni di autonomia`;
-            }
-            
-            context += `- ${label}: Stock ${stat.current}, Produzione +${stat.production}/stagione, Consumo -${stat.consumption}/stagione, Bilancio ${stat.net >= 0 ? '+' : ''}${stat.net}/stagione. ${statusText}.\n`;
-        }
+    // 2. Guerra (Solo se attiva)
+    if (warState.active) {
+        ctx += `⚠️ GUERRA ATTIVA vs ${warState.enemy}. Leve: ${warState.mobilized ? "SÌ" : "NO"}. Eff. Militare: ${getArmyEfficiency()}%.\n`;
+    }
+
+    // 3. Risorse Scarse (Non elencare tutto, solo ciò che manca o è critico)
+    const stats = calculateResourceStats();
+    let issues = [];
+    Object.entries(stats).forEach(([k, s]) => {
+        if (getResourceStatus(s) === 'critical') issues.push(`${k.toUpperCase()} ESAURITO`);
+        else if (getResourceStatus(s) === 'warning') issues.push(`${k} scaso`);
     });
-    
-    if (!hasCriticalIssues) {
-        context += `Tutte le risorse sono in stato stabile o eccedente.\n`;
-    }
-    
-    // Segnala problemi critici specifici
-    if (county.food < county.pop * 0.5) {
-        context += "\n⚠️ ALLARME CARESTIA: Le scorte di cibo sono criticamente basse rispetto alla popolazione.\n";
-    }
-    if (warehouseStats.food && warehouseStats.food.daysLeft <= 2 && warehouseStats.food.daysLeft >= 0) {
-        context += `\n⚠️ EMERGENZA ALIMENTARE: Il cibo si esaurirà tra ${warehouseStats.food.daysLeft} stagioni!\n`;
-    }
-    if (county.gold < 50) {
-        context += `\n⚠️ CRISI FINANZIARIA: Il tesoro è quasi vuoto.\n`;
-    }
-    
-    context += `\n`;
+    if (issues.length > 0) ctx += `CRISI RISORSE: ${issues.join(", ")}.\n`;
 
-    // 3. POLITICA E FAZIONI
-    context += `\n[UMORE DELLE FAZIONI (0-100)]\n`;
-    // Ordiniamo per lealtà per dare priorità a chi è arrabbiato o molto fedele
-    const sortedFactions = Object.entries(factions).sort((a, b) => a[1] - b[1]);
-    sortedFactions.forEach(([key, val]) => {
-        let status = "Neutrale";
-        if (val <= 30) status = "RIVOLTOSO/OSTILE";
-        else if (val <= 45) status = "Scontento";
-        else if (val >= 80) status = "Devoto";
-        else if (val >= 60) status = "Fedele";
-        
-        context += `- ${factionLabel(key)}: ${val} (${status})\n`;
+    // 4. Fazioni Arrabbiate (Solo quelle sotto 40)
+    let angry = [];
+    factionOrder.forEach(key => {
+        if (factions[key] < 40) angry.push(`${key} (${factions[key]}%)`);
     });
+    if (angry.length > 0) ctx += `RIVOLTE POSSIBILI: ${angry.join(", ")}.\n`;
 
-    // NUOVA SEZIONE: ECONOMIA POPOLAZIONE
-    context += `\n[ANALISI ECONOMICA E BISOGNI POPOLAZIONE]\n`;
-    context += `Nota: Se "Primari" è basso, muoiono. Se la causa è "POVERTÀ", il cibo c'è ma costa troppo.\n`;
+    // 5. Vicini
+    ctx += `VICINI: `;
+    ctx += neighboringCounties.map(n => `${n.name.split(' ')[0]} (Rel ${n.relations}, Pot ${n.power})`).join(" | ");
     
-    if (Object.keys(lastNeedsReport).length > 0) {
-        Object.entries(lastNeedsReport).forEach(([key, data]) => {
-            // Mostriamo solo se ci sono problemi o se è una classe chiave, per risparmiare token
-            // Oppure mostriamo tutto per massima precisione. Qui mostriamo tutto.
-            const label = factionLabel(key);
-            context += `- ${label}: Ricchezza ${data.wealth} oro. `;
-            context += `Bisogni Primari: ${data.primary}% coperti. Secondari: ${data.secondary}%. `;
-            context += `Stato: ${data.status}. `;
-            if (data.mainIssue !== "Nessuna") {
-                context += `⚠️ PROBLEMA: ${data.mainIssue}.`;
-            }
-            context += `\n`;
+    return ctx;
+}
+
+/* ===================== DIPLOMAZIA VIVA ===================== */
+
+function checkDiplomaticIntrusion() {
+    // Se siamo già in guerra o in dialogo, evita
+    if (activeDiplomacy.active || warState.active) return;
+
+    // 30% di probabilità che un vicino intervenga a stagione
+    if (Math.random() > 0.3) return;
+
+    const neighbor = neighboringCounties[Math.floor(Math.random() * neighboringCounties.length)];
+    const turn = county.turn;
+
+    // Evita spam (minimo 2 turni di pausa)
+    if (turn - neighbor.lastInteraction < 2) return;
+    
+    neighbor.lastInteraction = turn;
+    triggerForeignDialog(neighbor);
+}
+
+async function triggerForeignDialog(neighbor) {
+    activeDiplomacy.active = true;
+    activeDiplomacy.partner = neighbor.key;
+
+    // Determina l'intento in base alle statistiche
+    let intent = "neutral";
+    let contextPrompt = "";
+
+    // CASO 1: Minaccia di Guerra (Relazioni basse o Aggressività alta)
+    if (neighbor.relations < 30 || neighbor.aggression > 70) {
+        activeDiplomacy.type = "threat";
+        intent = "hostile";
+        contextPrompt = `
+        Il tuo obiettivo è minacciare il giocatore. Sei furioso.
+        Pretendi un tributo di ${Math.floor(county.gold * 0.2)} oro o cedi territorio, altrimenti sarà guerra.
+        Sii arrogante.
+        `;
+    }
+    // CASO 2: Richiesta Commerciale (Falken o ricchi)
+    else if (neighbor.key === 'falken' || neighbor.wealth < 30) {
+        activeDiplomacy.type = "trade";
+        intent = "mercantile";
+        contextPrompt = `
+        Vuoi comprare risorse o chiedere un prestito.
+        Sii diplomatico ma viscido. Proponi un affare.
+        `;
+    }
+    // CASO 3: Alleanza/Saluti (Relazioni alte)
+    else {
+        activeDiplomacy.type = "greeting";
+        intent = "friendly";
+        contextPrompt = `
+        Vieni a portare i saluti e a rafforzare l'alleanza.
+        Avvisa il giocatore di eventuali pericoli esterni.
+        `;
+    }
+
+    // Chiediamo all'IA di generare il messaggio di ingresso
+    const systemPrompt = `
+    SEI ${neighbor.ruler} di ${neighbor.name}.
+    Tratti: ${neighbor.traits.join(", ")}.
+    Relazione con il giocatore: ${neighbor.relations}/100.
+    
+    CONTESTO: Entri nella sala del trono del giocatore (Chat).
+    ${contextPrompt}
+    
+    Scrivi SOLO il dialogo diretto tra virgolette. Max 2 frasi.
+    `;
+
+    try {
+        const resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: "POST",
+            headers: { "Content-Type":"application/json", "Authorization":"Bearer " + apiKey },
+            body: JSON.stringify({
+                model: "llama-3.1-8b-instant",
+                temperature: 0.8,
+                messages: [{ role: "system", content: systemPrompt }]
+            })
+        });
+        
+        const data = await resp.json();
+        const msg = data.choices[0].message.content;
+
+        // Mostra in Chat con stile speciale
+        addForeignMsg(neighbor.key, neighbor.name, msg);
+        
+        // Aggiungi alla memoria IA
+        publicChatHistory.push({ role: "assistant", content: `${neighbor.name}: "${msg}"` });
+
+        // Genera le opzioni di risposta per il giocatore
+        generateDiplomaticOptions(neighbor, activeDiplomacy.type);
+
+    } catch(e) {
+        console.error(e);
+        activeDiplomacy.active = false; // Reset in caso di errore
+    }
+}
+
+function addForeignMsg(key, name, text) {
+    const log = document.getElementById("chat-log");
+    const div = document.createElement("div");
+    div.className = `msg-foreign ${key}`;
+    div.innerHTML = `
+        <span class="foreign-badge" style="color:white">${name}</span>
+        <div class="msg-text" style="color:#eee; font-style:italic;">${text}</div>
+    `;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+}
+
+function generateDiplomaticOptions(neighbor, type) {
+    const actions = [];
+    
+    if (type === "threat") {
+        const tribute = Math.floor(county.gold * 0.2);
+        actions.push({
+            label: `💸 Paga Tributo (${tribute} oro) - Evita guerra, -Orgoglio`,
+            code: `diplo_pay_${neighbor.key}_${tribute}`
+        });
+        actions.push({
+            label: `⚔️ Rifiuta e Insulta - PROBABILE GUERRA`,
+            code: `diplo_refuse_war_${neighbor.key}`
+        });
+        actions.push({
+            label: `🗣️ Cerca di negoziare (Carisma)`,
+            code: `diplo_negotiate_${neighbor.key}`
+        });
+    } else if (type === "trade") {
+        actions.push({
+            label: `🤝 Accetta accordo commerciale`,
+            code: `diplo_accept_trade_${neighbor.key}`
+        });
+        actions.push({
+            label: `✋ Declina cortesemente`,
+            code: `diplo_decline_${neighbor.key}`
         });
     } else {
-        context += "Nessun dato sui consumi disponibile (Inizio partita o turno non processato).\n";
+        actions.push({
+            label: `🍷 Offri banchetto (50 oro) - Relazioni ++`,
+            code: `diplo_banquet_${neighbor.key}`
+        });
+        actions.push({
+            label: `😐 Ringrazia e congeda`,
+            code: `diplo_dismiss_${neighbor.key}`
+        });
     }
 
-    // NUOVA SEZIONE: REPORT FINANZIARIO DETTAGLIATO
-    context += `\n[BILANCIO DEL TESORO]\n`;
-    context += `Entrate Totali: ${Object.values(detailedBudget.income).reduce((a,b)=>a+b,0)} oro.\n`;
-    context += `  > Tasse Nobili: ${detailedBudget.income.taxes_nobility}, Borghesi: ${detailedBudget.income.taxes_burghers}, Contadini: ${detailedBudget.income.taxes_peasants}.\n`;
-    context += `  > Export/Commercio: ${detailedBudget.income.trade_export}.\n`;
-    
-    context += `Uscite Totali: ${Object.values(detailedBudget.expenses).reduce((a,b)=>a+b,0)} oro.\n`;
-    context += `  > Militare & Difesa: ${detailedBudget.expenses.upkeep_military} (Mura, Guardie).\n`;
-    context += `  > Corte & Lussi: ${detailedBudget.expenses.upkeep_court}.\n`;
-    context += `  > Infrastrutture: ${detailedBudget.expenses.upkeep_infrastructure} (Strade, Ponti).\n`;
-    context += `  > Welfare/Leggi: ${detailedBudget.expenses.welfare_laws}.\n`;
-    
-    context += `NETTO STAGIONALE: ${detailedBudget.net > 0 ? '+' : ''}${detailedBudget.net} Oro.\n`;
-    
-    if (detailedBudget.net < -50) context += "ATTENZIONE: Deficit grave! Rischio bancarotta.\n";
-    if (detailedBudget.expenses.upkeep_court > detailedBudget.income.taxes_nobility) context += "NOTA: Le spese di corte superano le tasse pagate dai nobili.\n";
+    appendActionsBlock(actions);
+}
 
-    // 5. GEOGRAFIA E STRUTTURE
-    context += `\n[INFRASTRUTTURE]\n`;
-    const completedBuildings = buildings.filter(b => b.stage === 'complete');
-    const inProgress = buildings.filter(b => b.stage === 'building');
+// Gestore centrale delle azioni diplomatiche
+function handleDiplomaticAction(actionCode) {
+    const parts = actionCode.split('_');
+    const type = parts[1]; // pay, refuse, accept, etc.
+    const key = parts[2];  // auvrey, falken...
+    const neighbor = neighboringCounties.find(c => c.key === key);
     
-    if (completedBuildings.length > 0) {
-        const buildNames = completedBuildings.map(b => buildingData[b.type].name).join(", ");
-        context += `Completati: ${buildNames}.\n`;
-    } else {
-        context += `Nessun edificio importante completato.\n`;
+    let userText = "";
+    let aiReactionContext = "";
+
+    if (type === "pay") {
+        const amount = parseInt(parts[3]);
+        if (county.gold >= amount) {
+            county.gold -= amount;
+            neighbor.aggression = Math.max(0, neighbor.aggression - 40);
+            neighbor.relations += 10;
+            userText = `Prendete questi ${amount} monete d'oro e lasciateci in pace.`;
+            aiReactionContext = "Il giocatore ha pagato. Sii compiaciuto ma sprezzante. La guerra è evitata per ora.";
+            addMsg("system", `💸 Hai pagato ${amount} oro. La minaccia di guerra è rientrata.`);
+        } else {
+            userText = "Non ho abbastanza oro!";
+            aiReactionContext = "Il giocatore non ha soldi. Minaccialo ancora o attacca subito.";
+        }
+    } 
+    else if (type === "refuse") {
+        neighbor.aggression = 100;
+        neighbor.relations = 0;
+        userText = "Non avrete nulla da me se non il ferro delle mie spade! Andatevene!";
+        aiReactionContext = "Il giocatore ha rifiutato con insulti. DICHIARA GUERRA IMMEDIATAMENTE nel tuo prossimo messaggio.";
+        // Attiva guerra tecnicamente dopo la risposta IA
+        setTimeout(() => { 
+            warState.active = true; 
+            warState.enemy = key; 
+            updateUI();
+        }, 3000);
     }
-    
-    if (inProgress.length > 0) {
-        const progNames = inProgress.map(b => `${buildingData[b.type].name} (${b.turns_left} turni rimanenti)`).join(", ");
-        context += `CANTIERI ATTIVI: ${progNames}.\n`;
+    else if (type === "negotiate") {
+        userText = "Non c'è bisogno di spargere sangue. Troviamo un accordo diverso.";
+        aiReactionContext = "Il giocatore tenta di negoziare. Se le relazioni sono > 20, ascolta. Se sono < 20, attacca comunque.";
+    }
+    else if (type === "accept") { // trade
+        neighbor.tradeAgreement = true;
+        neighbor.relations += 15;
+        userText = "Accettiamo la vostra proposta commerciale con piacere.";
+        aiReactionContext = "Sii felice dell'accordo. Prometti prosperità.";
     }
 
-    // 6. RELAZIONI ESTERE
-    context += `\n[DIPLOMAZIA]\n`;
-    neighboringCounties.forEach(n => {
-        let rel = "Neutrale";
-        if (n.relations > 70) rel = "Alleato";
-        if (n.relations < 30) rel = "Nemico";
-        context += `- ${n.name}: Relazione ${n.relations}/100 (${rel}). Potenza: ${n.power}.\n`;
+    // 1. Aggiungi messaggio utente
+    addMsg("user", userText);
+    publicChatHistory.push({ role: "user", content: userText });
+
+    // 2. Chiamata IA per la reazione finale
+    callForeignReaction(neighbor, aiReactionContext);
+
+    // 3. Chiudi stato diplomatico
+    activeDiplomacy.active = false;
+    updateUI();
+}
+
+async function callForeignReaction(neighbor, context) {
+    const systemPrompt = `
+    SEI ANCORA ${neighbor.ruler}.
+    Il giocatore ha risposto.
+    
+    ISTRUZIONI DI REAZIONE:
+    ${context}
+    
+    Rispondi con una sola frase diretta.
+    `;
+
+    try {
+        const resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: "POST",
+            headers: { "Content-Type":"application/json", "Authorization":"Bearer " + apiKey },
+            body: JSON.stringify({
+                model: "llama-3.1-8b-instant",
+                messages: [{ role: "system", content: systemPrompt }]
+            })
+        });
+        const data = await resp.json();
+        const msg = data.choices[0].message.content;
+        addForeignMsg(neighbor.key, neighbor.name, msg);
+        publicChatHistory.push({ role: "assistant", content: `${neighbor.name}: "${msg}"` });
+    } catch(e) {}
+}
+
+/* ===================== SISTEMA DI STABILITÀ E GAME OVER ===================== */
+
+function checkInternalStability() {
+    let dead = false;
+
+    // 1. Controllo Statistiche Globali (Salute/Felicità 0)
+    if (county.health <= 0) {
+        triggerGameOver("plague");
+        return;
+    }
+    if (county.happy <= 0) {
+        triggerGameOver("anarchy");
+        return;
+    }
+
+    // 2. Controllo Fazioni
+    factionOrder.forEach(key => {
+        if (dead) return; // Se sei già morto, stop
+
+        const loyalty = factions[key];
+        
+        // Se la lealtà è critica (< 20), aumenta la rabbia (era <= 30)
+        if (loyalty <= 20) {
+            rebellionState[key]++;
+            handleUnrestEscalation(key, rebellionState[key]);
+        } 
+        // Se la lealtà torna alta (> 40), la rabbia scende più velocemente (era > 50)
+        else if (loyalty >= 40 && rebellionState[key] > 0) {
+            rebellionState[key] -= 2; // Scende più velocemente (era -1)
+        }
+        // Se la lealtà è media (> 30), la rabbia scende lentamente
+        else if (loyalty >= 30 && rebellionState[key] > 0) {
+            rebellionState[key]--;
+        }
     });
+}
 
-    // 7. MEMORIA A BREVE TERMINE (Ultimi eventi)
-    // Prendiamo gli ultimi 3 messaggi di sistema significativi per dare continuità narrativa
-    context += `\n[MEMORIA RECENTE - Ultimi eventi]\n`;
-    // Qui simuliamo recuperando dallo storico o da una variabile globale di log se esiste
-    // Se non hai un log strutturato, puoi lasciare generico o usare l'ultimo delta risorse
-    if (lastResourceDelta) {
-        context += `Ultimo bilancio risorse: ${formatResourceDelta(lastResourceDelta)}.\n`;
+function handleUnrestEscalation(factionKey, level) {
+    const name = factionLabel(factionKey);
+    
+    // LIVELLO 1: Avvertimento
+    if (level === UNREST_WARNING) {
+        addMsg("system", `⚠️ <strong>Tensione:</strong> I ${name} sono furiosi. Si mormora di tradimento.`);
+        publicChatHistory.push({ role: "system", content: `[ALLARME] I ${name} stanno pianificando qualcosa contro il Conte.` });
     }
     
-    return context;
+    // LIVELLO 2: Sabotaggio (Danni economici)
+    else if (level === UNREST_DANGER) {
+        addMsg("system", `🔥 <strong>Sabotaggio:</strong> I ${name} hanno colpito le tue proprietà per protesta.`);
+        
+        if (factionKey === 'nobility' || factionKey === 'merchants') {
+            county.gold = Math.max(0, county.gold - 200); // Furto o blocco fondi
+        } else {
+            // Danni fisici
+            county.security -= 5;
+            if (county.resources.grain) county.resources.grain -= 50; // Incendio granai
+        }
+        updateUI();
+    }
+    
+    // LIVELLO 3: IL COLPO FINALE (Resa dei conti)
+    else if (level >= UNREST_REVOLT) {
+        triggerRevoltEvent(factionKey);
+    }
+}
+
+function triggerRevoltEvent(factionKey) {
+    // Reset del timer per evitare loop infiniti nello stesso turno
+    rebellionState[factionKey] = 5; 
+
+    // CASO A: RIVOLTA ARMATA (Contadini, Emarginati, Borghesi)
+    if (['peasants', 'outcasts', 'burghers'].includes(factionKey)) {
+        const rebelCount = populationGroups[factionKey].count;
+        addMsg("system", `🔥 <strong>INSURREZIONE!</strong> Una folla di ${rebelCount} ${factionLabel(factionKey)} marcia sul castello con torce e forconi!`);
+        
+        // Scelta del giocatore
+        const actions = [
+            { label: "⚔️ Ordina alla Milizia di disperderli (Sangue)", code: `revolt_crush_${factionKey}` },
+            { label: "🗣️ Tenta di calmarli di persona (Rischioso)", code: `revolt_speak_${factionKey}` },
+            { label: "🏃 Fuggi dai passaggi segreti (Abdicazione)", code: `gameover_abdicate` }
+        ];
+        appendActionsBlock(actions);
+    }
+    
+    // CASO B: COLPO DI STATO MILITARE (Milizia)
+    else if (factionKey === 'militia') {
+        addMsg("system", `⚔️ <strong>TRADIMENTO!</strong> Il Capitano Ronan entra nella sala del trono con la spada sguainata. "La contea ha bisogno di un leader forte..."`);
+        
+        // Se hai mercenari o nobili fedeli, forse ti salvi
+        if (buildings.find(b => b.type === 'mercenary_camp' && b.stage === 'complete')) {
+            const actions = [
+                { label: "💰 Paga i Mercenari per difenderti (-300 oro)", code: `coup_mercenaries` },
+                { label: "💀 Affrontalo a duello", code: `coup_duel` }
+            ];
+            appendActionsBlock(actions);
+        } else {
+            triggerGameOver("coup");
+        }
+    }
+    
+    // CASO C: INTRIGO E VELENO (Nobili, Clero, Mercanti, Mistici)
+    else {
+        triggerAssassinationAttempt(factionKey);
+    }
+}
+
+// Gestione Assassinio
+function triggerAssassinationAttempt(factionKey) {
+    // Calcolo probabilità sopravvivenza - MOLTO MIGLIORATA
+    // Base 50% (era 30%) + Bonus Sicurezza (max 30%) + Bonus Spie (20%) + Bonus Edifici (10%)
+    let survivalChance = 0.5; // Base aumentata da 0.3 a 0.5
+    
+    // Bonus sicurezza più generoso
+    if (county.security > 70) survivalChance += 0.3;
+    else if (county.security > 50) survivalChance += 0.2;
+    else if (county.security > 30) survivalChance += 0.1;
+    
+    // Bonus spie
+    if (factions.outcasts > 70) survivalChance += 0.2;
+    else if (factions.outcasts > 50) survivalChance += 0.1;
+    
+    // Bonus edifici difensivi
+    if (buildings.find(b => (b.type === 'walls' || b.type === 'stone_walls') && b.stage === 'complete')) {
+        survivalChance += 0.05;
+    }
+    if (buildings.find(b => b.type === 'watchtower' && b.stage === 'complete')) {
+        survivalChance += 0.05;
+    }
+    
+    // Cap massimo al 95% (sempre un minimo rischio)
+    survivalChance = Math.min(0.95, survivalChance);
+    
+    addMsg("system", `🕵️ Un'ombra si muove nella notte... I ${factionLabel(factionKey)} hanno inviato un assassino.`);
+    
+    if (Math.random() < survivalChance) {
+        // SALVO
+        addMsg("system", `🛡️ <strong>SVENTATO!</strong> Le tue guardie hanno intercettato l'assassino all'ultimo secondo. La minaccia è passata, ma la tensione resta.`);
+        rebellionState[factionKey] = Math.max(0, rebellionState[factionKey] - 3); // Reset maggiore
+    } else {
+        // MORTO
+        triggerGameOver("assassination", factionKey);
+    }
+}
+
+async function triggerGameOver(type, factionKey = "") {
+    const modal = document.getElementById("modal-gameover");
+    const storyDiv = document.getElementById("gameover-story");
+    const factionName = factionKey ? factionLabel(factionKey) : "il destino";
+    
+    // Mostra subito il modale
+    modal.classList.add("active");
+    storyDiv.innerHTML = "<em>Scrivendo l'ultimo capitolo...</em>";
+    
+    // Prompt per l'IA
+    let promptContext = "";
+    switch(type) {
+        case "plague": promptContext = "Il Conte è morto di peste, abbandonato da tutti nel castello infetto."; break;
+        case "anarchy": promptContext = "L'anarchia regna. Il Conte è morto linciato dai suoi stessi sudditi in una rivolta generale."; break;
+        case "coup": promptContext = "Il Capitano della Guardia ha decapitato il Conte e preso il potere."; break;
+        case "assassination": promptContext = `Il Conte è stato avvelenato durante un banchetto dai ${factionName}.`; break;
+        case "overrun": promptContext = `La milizia ha fallito. Una folla di ${factionName} ha invaso il castello e fatto a pezzi il Conte.`; break;
+        case "mob_kill": promptContext = "Il Conte ha provato a parlare alla folla, ma è stato colpito da una pietra e linciato."; break;
+        case "abdication": promptContext = "Il Conte è fuggito nella notte, vivendo il resto dei suoi giorni in esilio come un mendicante."; break;
+    }
+
+    const systemPrompt = `
+    Scrivi un breve epitaffio drammatico (max 3 frasi) per il Conte ${heroName}.
+    CAUSA MORTE: ${promptContext}
+    Anno: ${worldTime.year}.
+    Usa un tono solenne e tragico.
+    `;
+
+    try {
+        const resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: "POST",
+            headers: { "Content-Type":"application/json", "Authorization":"Bearer " + apiKey },
+            body: JSON.stringify({
+                model: "llama-3.1-8b-instant",
+                messages: [{ role: "system", content: systemPrompt }]
+            })
+        });
+        const data = await resp.json();
+        storyDiv.innerText = data.choices[0].message.content;
+    } catch(e) {
+        storyDiv.innerText = promptContext;
+    }
+
+    // Aggiorna statistiche finali
+    document.getElementById("go-years").innerText = `${worldTime.year - 1325} anni`;
+    
+    // Pulisci salvataggio (Permadeath opzionale)
+    // safeStorageRemove("conte_save_autosave");
 }
 
 function buildPrompt(userText, mode) {
@@ -10046,11 +11163,11 @@ function drawCountyMap() {
     
     const tileSize = canvas.width / worldMap.width;
 
-    // 1. Sfondo carta
+    // 1. Sfondo carta pergamena con texture migliorata
     ctx.fillStyle = MEDIAEVAL_PALETTE.paper;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // 2. Disegna Terreno
+    // 2. Disegna Terreno con colori più realistici
     for (let y = 0; y < worldMap.height; y++) {
         for (let x = 0; x < worldMap.width; x++) {
             const tile = getTile(x, y);
@@ -10062,7 +11179,7 @@ function drawCountyMap() {
     // 3. Texture Carta (Sopra il terreno, sotto l'UI)
     drawPaperTexture(ctx, canvas.width, canvas.height);
 
-    // 4. Griglia leggera
+    // 4. Griglia leggera stile mappa medievale
     ctx.strokeStyle = MEDIAEVAL_PALETTE.grid;
     ctx.lineWidth = 0.5;
     ctx.beginPath();
@@ -10072,14 +11189,22 @@ function drawCountyMap() {
     }
     ctx.stroke();
 
-    // 5. Bordi Proprietà (Stile inchiostro spesso)
+    // 5. Bordi Proprietà (Stile inchiostro medievale)
     drawOwnershipBorders(ctx, tileSize);
 
-    // 6. Strutture ed Edifici
+    // 6. Insediamenti (villaggi con casette)
     drawSettlements(ctx, tileSize);
+    
+    // 7. Strutture produttive (miniere, segherie, cave, monasteri)
     drawStructureMarkers(ctx, tileSize);
     
-    // 7. Vignettatura finale
+    // 8. NUOVO: Edifici costruiti (dalla sintesi insediamenti)
+    drawBuildingMarkers(ctx, tileSize);
+    
+    // 9. NUOVO: Legenda integrata nella mappa
+    drawMapLegend(ctx, canvas.width, canvas.height);
+    
+    // 10. Vignettatura finale per effetto antico
     drawVignette(ctx, canvas.width, canvas.height);
 }
 
@@ -10159,18 +11284,449 @@ function drawStructureMarkers(ctx, tileSize) {
     drawIcon(structures.monasteries, "#800080", "⛪");
 }
 
-function drawSettlements(ctx, tileSize) {
-    ctx.fillStyle = "#5D4037"; // Marrone scuro legno
-    settlements.forEach(s => {
-        const x = s.x * tileSize + tileSize / 2 - 4;
-        const y = s.y * tileSize + tileSize / 2 - 4;
-        // Casetta semplice
+// NUOVA FUNZIONE: Disegna gli edifici costruiti sulla mappa
+function drawBuildingMarkers(ctx, tileSize) {
+    const center = tileSize / 2;
+    
+    // Mappa icone per tipo di edificio
+    const buildingIcons = {
+        market: "🏪",
+        barracks: "⚔️",
+        walls: "🏰",
+        church: "⛪",
+        grand_cathedral: "⛪",
+        forge: "🔨",
+        watchtower: "🗼",
+        library: "📚",
+        hospital: "⚕️",
+        theater: "🎭",
+        university: "🎓",
+        mint: "💰",
+        guild_hall: "🏛️",
+        courthouse: "⚖️",
+        granary: "🌾",
+        mill: "⚙️",
+        tavern: "🍺",
+        inn: "🏠",
+        stable: "🐴",
+        workshop: "🔧",
+        cottage: "🏘️",
+        tenement: "🏢",
+        noble_estate: "🏛️",
+        mercenary_camp: "⛺",
+        training_ground: "🎯",
+        armory: "🛡️",
+        siege_workshop: "🎯"
+    };
+    
+    ctx.font = "16px Segoe UI Emoji"; 
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    
+    // Disegna solo gli edifici completati
+    buildings.forEach(b => {
+        if (b.stage !== 'complete') return;
+        
+        const icon = buildingIcons[b.type] || "🏗️";
+        const x = b.x * tileSize + center;
+        const y = b.y * tileSize + center;
+        
+        // Sfondo bianco leggermente più grande per edifici importanti
+        ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
         ctx.beginPath();
-        ctx.moveTo(x, y + 8);
-        ctx.lineTo(x + 8, y + 8);
-        ctx.lineTo(x + 8, y + 3);
-        ctx.lineTo(x + 4, y); // Tetto
-        ctx.lineTo(x, y + 3);
+        ctx.arc(x, y, 10, 0, Math.PI*2);
+        ctx.fill();
+        
+        // Bordo dorato per edifici del conte
+        ctx.strokeStyle = "rgba(212, 175, 55, 0.8)";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        
+        // Icona edificio
+        ctx.fillStyle = "#000";
+        ctx.fillText(icon, x, y + 1);
+    });
+}
+
+// NUOVA FUNZIONE: Legenda integrata nella mappa
+function drawMapLegend(ctx, width, height) {
+    const legendX = 10;
+    const legendY = height - 140;
+    const lineHeight = 18;
+    
+    // Sfondo semitrasparente per la legenda
+    ctx.fillStyle = "rgba(244, 236, 216, 0.95)";
+    ctx.strokeStyle = "#8b7355";
+    ctx.lineWidth = 2;
+    ctx.fillRect(legendX, legendY, 145, 130);
+    ctx.strokeRect(legendX, legendY, 145, 130);
+    
+    // Titolo legenda
+    ctx.fillStyle = "#3e2723";
+    ctx.font = "bold 11px Georgia";
+    ctx.textAlign = "left";
+    ctx.fillText("Legenda Dettagliata", legendX + 10, legendY + 15);
+    
+    // Voci della legenda con descrizioni
+    ctx.font = "9px Georgia";
+    const legendItems = [
+        { icon: "🏘️", text: "Insediamenti" },
+        { icon: "🏪", text: "Piazza Mercato" },
+        { icon: "🏠", text: "Case & Strade" },
+        { icon: "⛏️", text: "Miniere" },
+        { icon: "🪚", text: "Segherie" },
+        { icon: "🧱", text: "Cave di Pietra" },
+        { icon: "⛪", text: "Luoghi Sacri" },
+        { icon: "🏰", text: "Edifici Speciali" }
+    ];
+    
+    legendItems.forEach((item, i) => {
+        const y = legendY + 32 + (i * lineHeight);
+        // Icona
+        ctx.font = "11px Segoe UI Emoji";
+        ctx.fillText(item.icon, legendX + 12, y);
+        // Testo
+        ctx.font = "9px Georgia";
+        ctx.fillStyle = "#3e2723";
+        ctx.fillText(item.text, legendX + 32, y);
+    });
+    
+    // Nota in basso
+    ctx.font = "italic 8px Georgia";
+    ctx.fillStyle = "#666";
+    ctx.fillText("Zoom sulla mappa", legendX + 10, legendY + 125);
+    ctx.fillText("per vedere i dettagli", legendX + 10, legendY + 135);
+}
+
+function drawSettlements(ctx, tileSize) {
+    settlements.forEach((s, index) => {
+        const baseX = s.x * tileSize;
+        const baseY = s.y * tileSize;
+        const centerX = baseX + tileSize / 2;
+        const centerY = baseY + tileSize / 2;
+        
+        // Determina dimensione del villaggio
+        const villageSize = s.size || (index === 0 ? 3 : 2); // Il primo è il più grande
+        
+        // 1. SFONDO AREA INSEDIAMENTO (terreno ripulito)
+        ctx.fillStyle = "rgba(245, 235, 220, 0.6)";
+        ctx.fillRect(baseX + 2, baseY + 2, tileSize - 4, tileSize - 4);
+        
+        // 2. STRADE PRINCIPALI (croce centrale)
+        ctx.strokeStyle = "#b8a88a";
+        ctx.lineWidth = 3;
+        ctx.lineCap = "round";
+        
+        // Strada verticale
+        ctx.beginPath();
+        ctx.moveTo(centerX, baseY);
+        ctx.lineTo(centerX, baseY + tileSize);
+        ctx.stroke();
+        
+        // Strada orizzontale
+        ctx.beginPath();
+        ctx.moveTo(baseX, centerY);
+        ctx.lineTo(baseX + tileSize, centerY);
+        ctx.stroke();
+        
+        // Bordi strade (più scuri)
+        ctx.strokeStyle = "#9a8b72";
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(centerX - 1.5, baseY);
+        ctx.lineTo(centerX - 1.5, baseY + tileSize);
+        ctx.moveTo(centerX + 1.5, baseY);
+        ctx.lineTo(centerX + 1.5, baseY + tileSize);
+        ctx.moveTo(baseX, centerY - 1.5);
+        ctx.lineTo(baseX + tileSize, centerY - 1.5);
+        ctx.moveTo(baseX, centerY + 1.5);
+        ctx.lineTo(baseX + tileSize, centerY + 1.5);
+        ctx.stroke();
+        
+        // 3. PIAZZA CENTRALE CON MERCATO
+        drawMarketSquare(ctx, centerX, centerY, villageSize);
+        
+        // 4. CASE DISPOSTE LUNGO LE STRADE
+        const housePositions = [
+            // Quadrante Nord-Ovest
+            {x: centerX - 12, y: centerY - 12, rotation: 0},
+            {x: centerX - 20, y: centerY - 8, rotation: 0},
+            {x: centerX - 12, y: centerY - 20, rotation: 0},
+            // Quadrante Nord-Est
+            {x: centerX + 8, y: centerY - 12, rotation: 0},
+            {x: centerX + 16, y: centerY - 8, rotation: 0},
+            {x: centerX + 8, y: centerY - 20, rotation: 0},
+            // Quadrante Sud-Ovest
+            {x: centerX - 12, y: centerY + 8, rotation: 0},
+            {x: centerX - 20, y: centerY + 12, rotation: 0},
+            {x: centerX - 12, y: centerY + 16, rotation: 0},
+            // Quadrante Sud-Est
+            {x: centerX + 8, y: centerY + 8, rotation: 0},
+            {x: centerX + 16, y: centerY + 12, rotation: 0},
+            {x: centerX + 8, y: centerY + 16, rotation: 0}
+        ];
+        
+        // Disegna case in base alla dimensione del villaggio
+        const numHouses = Math.min(housePositions.length, 4 + (villageSize * 3));
+        for (let i = 0; i < numHouses; i++) {
+            const pos = housePositions[i];
+            drawHouse(ctx, pos.x, pos.y, pos.rotation);
+        }
+        
+        // 5. EDIFICI SPECIALI se presenti
+        drawVillageBuildings(ctx, s, centerX, centerY, tileSize);
+        
+        // 6. MURA se costruite
+        drawVillageWalls(ctx, baseX, baseY, tileSize, s);
+    });
+}
+
+function drawHouse(ctx, x, y, rotation) {
+    ctx.save();
+    ctx.translate(x, y);
+    if (rotation) ctx.rotate(rotation * Math.PI / 180);
+    
+    // Ombra
+    ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
+    ctx.fillRect(1, 1, 6, 5);
+    
+    // Corpo casa (legno)
+    ctx.fillStyle = "#8B6F47";
+    ctx.fillRect(0, 2, 6, 4);
+    ctx.strokeStyle = "#5D4037";
+    ctx.lineWidth = 0.5;
+    ctx.strokeRect(0, 2, 6, 4);
+    
+    // Tetto (rosso/marrone)
+    ctx.fillStyle = "#A0522D";
+    ctx.beginPath();
+    ctx.moveTo(-1, 2);
+    ctx.lineTo(3, -1);
+    ctx.lineTo(7, 2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    // Dettagli tetto
+    ctx.strokeStyle = "#7a3d1f";
+    ctx.lineWidth = 0.3;
+    ctx.beginPath();
+    ctx.moveTo(0, 1.5);
+    ctx.lineTo(6, 1.5);
+    ctx.moveTo(-0.5, 1);
+    ctx.lineTo(6.5, 1);
+    ctx.stroke();
+    
+    // Porta
+    ctx.fillStyle = "#4a3728";
+    ctx.fillRect(2, 3, 2, 3);
+    
+    // Finestra
+    ctx.fillStyle = "#e8d7b8";
+    ctx.fillRect(0.5, 3.5, 1.2, 1.2);
+    
+    ctx.restore();
+}
+
+function drawMarketSquare(ctx, centerX, centerY, size) {
+    // Piazza pavimentata
+    ctx.fillStyle = "#d4c5a9";
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 8, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Bordo piazza
+    ctx.strokeStyle = "#a89c7a";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    
+    // Pattern pavimentazione
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.08)";
+    ctx.lineWidth = 0.3;
+    for (let i = -8; i <= 8; i += 2) {
+        ctx.beginPath();
+        ctx.moveTo(centerX + i, centerY - 8);
+        ctx.lineTo(centerX + i, centerY + 8);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(centerX - 8, centerY + i);
+        ctx.lineTo(centerX + 8, centerY + i);
+        ctx.stroke();
+    }
+    
+    // Bancarella mercato
+    const marketStalls = [
+        {x: -4, y: -4},
+        {x: 4, y: -4},
+        {x: -4, y: 4},
+        {x: 4, y: 4}
+    ];
+    
+    marketStalls.forEach(stall => {
+        // Tenda
+        ctx.fillStyle = "#c74440";
+        ctx.beginPath();
+        ctx.moveTo(centerX + stall.x - 2, centerY + stall.y);
+        ctx.lineTo(centerX + stall.x, centerY + stall.y - 2);
+        ctx.lineTo(centerX + stall.x + 2, centerY + stall.y);
+        ctx.lineTo(centerX + stall.x + 2, centerY + stall.y + 2);
+        ctx.lineTo(centerX + stall.x - 2, centerY + stall.y + 2);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.strokeStyle = "#8b2e2b";
+        ctx.lineWidth = 0.3;
+        ctx.stroke();
+        
+        // Strisce tenda
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 0.2;
+        ctx.beginPath();
+        ctx.moveTo(centerX + stall.x - 1, centerY + stall.y - 1.5);
+        ctx.lineTo(centerX + stall.x - 1, centerY + stall.y + 2);
+        ctx.moveTo(centerX + stall.x + 1, centerY + stall.y - 1.5);
+        ctx.lineTo(centerX + stall.x + 1, centerY + stall.y + 2);
+        ctx.stroke();
+    });
+    
+    // Fontana/pozzo centrale (se villaggio grande)
+    if (size >= 3) {
+        ctx.fillStyle = "#8a8a8a";
+        ctx.strokeStyle = "#5a5a5a";
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        
+        // Acqua
+        ctx.fillStyle = "#6bb6ff";
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 1.2, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function drawVillageBuildings(ctx, settlement, centerX, centerY, tileSize) {
+    // Cerca edifici completati in questa posizione
+    const localBuildings = buildings.filter(b => 
+        b.stage === 'complete' && 
+        b.x === settlement.x && 
+        b.y === settlement.y
+    );
+    
+    if (localBuildings.length === 0) return;
+    
+    // Posizioni per edifici speciali (fuori dal centro)
+    const buildingSpots = [
+        {x: centerX - 18, y: centerY - 18, type: 'large'},
+        {x: centerX + 14, y: centerY - 18, type: 'large'},
+        {x: centerX - 18, y: centerY + 14, type: 'medium'},
+        {x: centerX + 14, y: centerY + 14, type: 'medium'}
+    ];
+    
+    localBuildings.slice(0, 4).forEach((building, i) => {
+        const spot = buildingSpots[i];
+        if (!spot) return;
+        
+        const buildingInfo = buildingData[building.type];
+        if (!buildingInfo) return;
+        
+        // Disegna edificio più grande e dettagliato
+        const width = spot.type === 'large' ? 10 : 8;
+        const height = spot.type === 'large' ? 12 : 10;
+        
+        // Ombra
+        ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+        ctx.fillRect(spot.x + 1, spot.y + 1, width, height);
+        
+        // Edificio principale
+        ctx.fillStyle = "#c9b998";
+        ctx.fillRect(spot.x, spot.y, width, height);
+        
+        // Bordi
+        ctx.strokeStyle = "#8a7a5a";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(spot.x, spot.y, width, height);
+        
+        // Finestre
+        ctx.fillStyle = "#6b8bad";
+        for (let row = 0; row < 2; row++) {
+            for (let col = 0; col < 2; col++) {
+                ctx.fillRect(
+                    spot.x + 2 + col * 4,
+                    spot.y + 2 + row * 4,
+                    2, 2
+                );
+            }
+        }
+        
+        // Tetto
+        ctx.fillStyle = "#8b4513";
+        ctx.beginPath();
+        ctx.moveTo(spot.x - 1, spot.y);
+        ctx.lineTo(spot.x + width/2, spot.y - 4);
+        ctx.lineTo(spot.x + width + 1, spot.y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        
+        // Porta
+        ctx.fillStyle = "#4a3728";
+        ctx.fillRect(spot.x + width/2 - 1.5, spot.y + height - 4, 3, 4);
+    });
+}
+
+function drawVillageWalls(ctx, baseX, baseY, tileSize, settlement) {
+    // Controlla se ci sono mura costruite
+    const hasWalls = buildings.some(b => 
+        (b.type === 'walls' || b.type === 'stone_walls') && 
+        b.stage === 'complete' &&
+        b.x === settlement.x && 
+        b.y === settlement.y
+    );
+    
+    if (!hasWalls) return;
+    
+    // Disegna mura perimetrali
+    ctx.strokeStyle = "#8a8a8a";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(baseX + 4, baseY + 4, tileSize - 8, tileSize - 8);
+    
+    // Dettagli merlature
+    ctx.strokeStyle = "#6a6a6a";
+    ctx.lineWidth = 1;
+    const merlonSpacing = 6;
+    
+    // Merlature superiori
+    for (let x = baseX + 4; x < baseX + tileSize - 4; x += merlonSpacing) {
+        ctx.fillStyle = "#8a8a8a";
+        ctx.fillRect(x, baseY + 3, 3, 2);
+    }
+    
+    // Torri angolari
+    const towers = [
+        {x: baseX + 4, y: baseY + 4},
+        {x: baseX + tileSize - 8, y: baseY + 4},
+        {x: baseX + 4, y: baseY + tileSize - 8},
+        {x: baseX + tileSize - 8, y: baseY + tileSize - 8}
+    ];
+    
+    towers.forEach(tower => {
+        // Base torre
+        ctx.fillStyle = "#9a9a9a";
+        ctx.fillRect(tower.x, tower.y, 4, 4);
+        ctx.strokeStyle = "#6a6a6a";
+        ctx.lineWidth = 0.5;
+        ctx.strokeRect(tower.x, tower.y, 4, 4);
+        
+        // Tetto torre
+        ctx.fillStyle = "#c74440";
+        ctx.beginPath();
+        ctx.moveTo(tower.x - 0.5, tower.y);
+        ctx.lineTo(tower.x + 2, tower.y - 2);
+        ctx.lineTo(tower.x + 4.5, tower.y);
+        ctx.closePath();
         ctx.fill();
     });
 }
@@ -10252,6 +11808,9 @@ function startGame() {
     
     // Aggiorna nuovamente l'UI dopo che lo schermo è attivo
     setTimeout(() => updateUI(), 100);
+
+    refreshAllStats();
+    triggerStartupNarrative(true);
 
     addMsg("ai", `📜 Benvenuto, ${heroName}. Il tuo regno attende le tue decisioni.`);
     if (personalitySettings && personalitySettings.notes) {
@@ -10765,27 +12324,30 @@ function renderMarket() {
     const stats = getResourceStats();
     const marketDynamics = calculateMarketDemand();
 
-    // Intestazione
-    let html = `<h4>Mercato Reale</h4>
-    <p style="font-size:0.85em; color:#aaa; margin-bottom:15px;">
-       Digita la quantità nella casella centrale per comprare o vendere in blocco.
-    </p>`;
+    let html = `
+        <!-- Summary Cards -->
+        <div class="warehouse-summary" style="margin-bottom: 20px;">
+            <div class="warehouse-stat">
+                <div class="warehouse-stat-value">${county.gold}</div>
+                <div class="warehouse-stat-label">💰 Oro Disponibile</div>
+            </div>
+            <div class="warehouse-stat">
+                <div class="warehouse-stat-value">${seasonalTransactions.marketPurchases || 0}</div>
+                <div class="warehouse-stat-label">Acquisti Stagione</div>
+            </div>
+            <div class="warehouse-stat">
+                <div class="warehouse-stat-value">${seasonalTransactions.marketSales || 0}</div>
+                <div class="warehouse-stat-label">Vendite Stagione</div>
+            </div>
+        </div>
 
-    html += `
-        <table class="market-table">
-            <thead>
-                <tr>
-                    <th>Risorsa</th>
-                    <th>Stock</th>
-                    <th>Fabbisogno</th>
-                    <th>Domanda</th>
-                    <th>Offerta</th>
-                    <th>Compra (u)</th>
-                    <th>Vendi (u)</th>
-                    <th>Azioni</th>
-                </tr>
-            </thead>
-            <tbody>
+        <!-- Market Resources Grid -->
+        <div class="warehouse-section">
+            <h3 style="color: var(--accent); margin-top: 0; margin-bottom: 15px;">📊 Mercato Globale</h3>
+            <p style="font-size:0.85em; color:var(--text-soft); margin-bottom:20px;">
+                Compra e vendi risorse ai prezzi di mercato. I prezzi variano in base alla domanda e offerta.
+            </p>
+            <div class="resource-list">
     `;
 
     RESOURCE_KEYS.forEach(key => {
@@ -10795,150 +12357,165 @@ function renderMarket() {
         
         // Calcolo Prezzi
         let priceMultiplier = 1.0;
-        if (demand > supply) priceMultiplier = 1.0 + (demand - supply) * 0.005; // Ridotto impatto per stabilità
+        if (demand > supply) priceMultiplier = 1.0 + (demand - supply) * 0.005;
         else if (supply > demand) priceMultiplier = Math.max(0.5, 1.0 - (supply - demand) * 0.005);
         
         const basePrice = prices[key];
         const buyPrice = Math.max(1, Math.round(basePrice * priceMultiplier * 1.3)); 
-        const sellPrice = Math.max(1, Math.round(basePrice * priceMultiplier * 0.8)); 
+        const sellPrice = Math.max(1, Math.round(basePrice * priceMultiplier * 0.8));
 
         const fabbisogno = stats[key].consumption;
         const icon = resourceIcon(key);
         const inputId = `qty-${key}`;
+        
+        // Determina lo stato della risorsa
+        const net = stats[key].net;
+        let statusClass = "healthy";
+        if (net < 0) statusClass = "critical";
+        else if (net < fabbisogno / 2) statusClass = "warning";
 
         html += `
-            <tr>
-                <td>${icon} ${resourceLabels[key] || key}</td>
-                <td><strong>${have}</strong></td>
-                <td>${fabbisogno}</td>
-                <td>${demand}</td>
-                <td>${supply}</td>
-                <td style="color:#ff7c7c">${buyPrice} 💰</td>
-                <td style="color:#6ada91">${sellPrice} 💰</td>
-                <td>
-                    <div style="display:flex; align-items:center; justify-content:center; gap:4px; margin-bottom:4px;">
-                        <button class="btn-sec" style="padding:2px 6px; font-size:0.7em;" onclick="document.getElementById('${inputId}').value=1">1</button>
-                        <input id="${inputId}" type="number" class="market-qty-input" value="1" min="1">
-                        <button class="btn-sec" style="padding:2px 6px; font-size:0.7em;" onclick="document.getElementById('${inputId}').value=10">10</button>
+            <div class="resource-item ${statusClass}">
+                <div class="resource-header-w">
+                    <div style="display: flex; align-items: center;">
+                        <span class="resource-icon-w">${icon}</span>
+                        <span class="resource-name-w">${resourceLabels[key] || key}</span>
+                    </div>
+                    <div class="resource-quantity">${have}</div>
+                </div>
+                
+                <div class="resource-details-w">
+                    <div class="resource-row-w">
+                        <span>Fabbisogno:</span>
+                        <span>${fabbisogno}/turno</span>
+                    </div>
+                    <div class="resource-row-w ${net >= 0 ? 'positive' : 'negative'}">
+                        <span>Bilancio:</span>
+                        <span>${net >= 0 ? '+' : ''}${net}/turno</span>
+                    </div>
+                    <div class="resource-row-w">
+                        <span>Domanda:</span>
+                        <span>${demand}</span>
+                    </div>
+                    <div class="resource-row-w">
+                        <span>Offerta:</span>
+                        <span>${supply}</span>
+                    </div>
+                </div>
+
+                <div style="margin: 12px 0; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: #ff7c7c; font-weight: bold;">💰 Acquisto: ${buyPrice}</span>
+                        <span style="color: #6ada91; font-weight: bold;">💰 Vendita: ${sellPrice}</span>
                     </div>
                     
-                    <div style="display:flex; gap:6px; justify-content:center;">
-                        <button class="btn-sec" style="border-color:#ff7c7c" 
+                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+                        <button class="btn-sec" style="padding: 4px 8px; font-size: 0.75em;" 
+                            onclick="document.getElementById('${inputId}').value=1">1</button>
+                        <input id="${inputId}" type="number" class="market-qty-input" 
+                            value="1" min="1" style="flex: 1; padding: 6px; text-align: center;">
+                        <button class="btn-sec" style="padding: 4px 8px; font-size: 0.75em;" 
+                            onclick="document.getElementById('${inputId}').value=10">10</button>
+                        <button class="btn-sec" style="padding: 4px 8px; font-size: 0.75em;" 
+                            onclick="document.getElementById('${inputId}').value=50">50</button>
+                    </div>
+                    
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-sec" style="flex: 1; background: rgba(255, 124, 124, 0.1); border-color: #ff7c7c;" 
                             onclick="buyResource('${key}', ${buyPrice}, getQtyValue('${inputId}'))">
                             Compra
                         </button>
-                        <button class="btn-sec" style="border-color:#6ada91" 
+                        <button class="btn-sec" style="flex: 1; background: rgba(106, 218, 145, 0.1); border-color: #6ada91;" 
                             onclick="sellResource('${key}', ${sellPrice}, getQtyValue('${inputId}'))" 
                             ${have > 0 ? '' : 'disabled'}>
                             Vendi
                         </button>
                     </div>
-                </td>
-            </tr>
+                </div>
+            </div>
         `;
     });
 
-    html += `</tbody></table>`;
-    
-    // --- SEZIONE MERCATO INTERNO (SURPLUS / DEFICIT) ---
-    // (Manteniamo la logica esistente per i riquadri sotto, che sono già abbastanza responsive, 
-    // ma potresti voler aggiungere la logica bulk anche qui in futuro. Per ora lasciamoli semplici 
-    // per non complicare troppo l'interfaccia).
-    
-    const surplus = [];
-    const deficits = [];
-    RESOURCE_KEYS.forEach(key => {
-        if (stats[key].net > 0) surplus.push(key);
-        if (stats[key].net < 0) deficits.push(key);
-    });
+    html += `
+            </div>
+        </div>
+    `;
 
-    if (surplus.length > 0) {
-        html += `<div class="market-section"><h5>Surplus - Risorse che Produciamo</h5>`;
-        surplus.forEach(key => {
-            const have = county.resources[key] || 0;
-            const demand = Math.round(marketDynamics.demand[key] || 0);
-            const supply = Math.round(marketDynamics.supply[key] || 0);
-            const priceMultiplier = supply > demand ? 0.8 : 1.0; // Prezzi più bassi se surplus
-            const sellPrice = Math.round(prices[key] * priceMultiplier * 0.6);
-            const icon = resourceIcon(key);
-            html += `
-                <div class="market-item surplus">
-                    <div class="market-header">
-                        <span>${icon} ${resourceLabels[key] || key}</span>
-                        <span>Hai: ${have}</span>
-                    </div>
-                    <div class="market-prices">
-                        <button class="btn-sec" onclick="sellResource('${key}', ${sellPrice})" ${have > 0 ? '' : 'disabled'}>Vendi Interno - ${sellPrice}💰</button>
-                    </div>
-                    <div class="market-stats">
-                        Surplus: +${stats[key].net} | Domanda: ${demand} | Offerta: ${supply}
-                    </div>
-                </div>
-            `;
-        });
-        html += `</div>`;
-    }
-
-    if (deficits.length > 0) {
-        html += `<div class="market-section"><h5>Deficit - Risorse che Ci Mancano</h5>`;
-        deficits.forEach(key => {
-            const have = county.resources[key] || 0;
-            const demand = Math.round(marketDynamics.demand[key] || 0);
-            const supply = Math.round(marketDynamics.supply[key] || 0);
-            const priceMultiplier = demand > supply ? 1.2 : 1.0; // Prezzi più alti se deficit
-            const buyPrice = Math.round(prices[key] * priceMultiplier * 1.4);
-            const icon = resourceIcon(key);
-            html += `
-                <div class="market-item deficit">
-                    <div class="market-header">
-                        <span>${icon} ${resourceLabels[key] || key}</span>
-                        <span>Hai: ${have}</span>
-                    </div>
-                    <div class="market-prices">
-                        <button class="btn-sec" onclick="buyResource('${key}', ${buyPrice})">Compra Interno - ${buyPrice}💰</button>
-                    </div>
-                    <div class="market-stats">
-                        Deficit: ${stats[key].net} | Domanda: ${demand} | Offerta: ${supply}
-                    </div>
-                </div>
-            `;
-        });
-        html += `</div>`;
-    }
-
-    // Merci speciali dai regni vicini (solo con accordo commerciale)
+    // Sezione Merci Speciali
     const tradePartners = neighboringCounties.filter(c => c.tradeAgreement);
     if (tradePartners.length > 0) {
-        html += `<h4>Merci Speciali dai Regni Alleati</h4>`;
+        html += `
+            <div class="warehouse-section">
+                <h3 style="color: var(--accent); margin-top: 0; margin-bottom: 15px;">✨ Merci Speciali dai Regni Alleati</h3>
+                <div class="resource-list">
+        `;
+        
         tradePartners.forEach(c => {
             const special = c.specialResource;
             if (special) {
-                const relationModifier = c.relations / 100; // 0-1
+                const relationModifier = c.relations / 100;
                 const basePrice = prices[special] || 10;
-                const buyPrice = Math.round(basePrice * 1.2 * (2 - relationModifier)); // Più economico con accordo
+                const buyPrice = Math.round(basePrice * 1.2 * (2 - relationModifier));
                 const icon = resourceIcon(special);
+                const have = county.resources[special] || 0;
 
                 html += `
-                    <div class="market-item special">
-                        <div class="market-header">
-                            <span>${icon} ${resourceLabels[special] || special} da ${c.name}</span>
-                            <span>Accordo Commerciale</span>
+                    <div class="resource-item" style="border-color: var(--accent); background: rgba(212, 175, 55, 0.08);">
+                        <div class="resource-header-w">
+                            <div style="display: flex; align-items: center;">
+                                <span class="resource-icon-w">${icon}</span>
+                                <span class="resource-name-w">${resourceLabels[special] || special}</span>
+                            </div>
+                            <div class="resource-quantity" style="color: var(--accent);">${have}</div>
                         </div>
-                        <div class="market-prices">
-                            <button class="btn-sec" onclick="buySpecialResource('${c.key}', '${special}', ${buyPrice})">Compra (1) - ${buyPrice}💰</button>
+                        
+                        <div class="resource-details-w">
+                            <div class="resource-row-w">
+                                <span>Origine:</span>
+                                <span>${c.name}</span>
+                            </div>
+                            <div class="resource-row-w ${c.relations >= 70 ? 'positive' : c.relations >= 50 ? '' : 'negative'}">
+                                <span>Relazioni:</span>
+                                <span>${c.relations}/100</span>
+                            </div>
+                            <div class="resource-row-w">
+                                <span>Accordo:</span>
+                                <span style="color: var(--accent);">✓ Attivo</span>
+                            </div>
                         </div>
-                        <div class="market-desc">
-                            Risorsa pregiata da ${c.name}. Relazioni: ${c.relations > 50 ? 'Buone' : 'Tese'}. Prezzi ridotti grazie all'accordo.
+
+                        <div style="margin-top: 12px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                            <div style="text-align: center; margin-bottom: 8px; color: var(--accent); font-weight: bold;">
+                                💰 Prezzo Speciale: ${buyPrice} oro
+                            </div>
+                            <button class="btn-main" style="width: 100%; padding: 10px;" 
+                                onclick="buySpecialResource('${c.key}', '${special}', ${buyPrice})">
+                                Acquista (1 unità)
+                            </button>
+                            <p style="font-size: 0.75em; color: var(--text-soft); margin-top: 8px; margin-bottom: 0; text-align: center;">
+                                Risorsa pregiata esclusiva. Prezzi vantaggiosi grazie all'alleanza.
+                            </p>
                         </div>
                     </div>
                 `;
             }
         });
+        
+        html += `
+                </div>
+            </div>
+        `;
     } else {
-        html += `<h4>Merci Speciali</h4><p style="color: var(--text-soft); font-size: 0.9em;">Firma accordi commerciali in diplomazia per accedere alle merci speciali dei regni vicini.</p>`;
+        html += `
+            <div class="warehouse-section" style="text-align: center; padding: 30px;">
+                <h3 style="color: var(--text-soft); margin-top: 0;">✨ Merci Speciali</h3>
+                <p style="color: var(--text-soft); font-size: 0.9em;">
+                    Firma accordi commerciali in diplomazia per accedere alle merci speciali dei regni vicini.
+                </p>
+            </div>
+        `;
     }
 
-    html += `</div>`;
     container.innerHTML = html;
 }
 
@@ -11007,51 +12584,219 @@ function drawRegionMap() {
     const ctx = canvas.getContext("2d");
     const size = canvas.width / 8;
 
-    // Sfondo carta antica
-    ctx.fillStyle = "#e3d5b8"; 
+    // Sfondo carta antica con texture migliorata
+    ctx.fillStyle = "#e8dcc0"; 
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Aggiungi texture pergamena più realistica
+    ctx.fillStyle = "rgba(139, 115, 85, 0.08)";
+    for (let i = 0; i < 80; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const w = Math.random() * 30 + 5;
+        const h = Math.random() * 30 + 5;
+        ctx.fillRect(x, y, w, h);
+    }
 
-    // Disegna territori
+    // Disegna territori con sistema più coerente
+    const territoryMap = [
+        ['auvrey', 'auvrey', 'wild', 'wild', 'wild', 'count', 'count', 'count'],
+        ['auvrey', 'auvrey', 'wild', 'count', 'count', 'count', 'count', 'wild'],
+        ['wild', 'wild', 'count', 'count', 'count', 'count', 'wild', 'wild'],
+        ['wild', 'count', 'count', 'count', 'count', 'count', 'wild', 'wild'],
+        ['count', 'count', 'count', 'count', 'count', 'wild', 'wild', 'wild'],
+        ['wild', 'wild', 'count', 'count', 'wild', 'wild', 'falken', 'falken'],
+        ['wild', 'wild', 'wild', 'wild', 'wild', 'falken', 'falken', 'falken'],
+        ['wild', 'wild', 'wild', 'wild', 'wild', 'wild', 'falken', 'falken']
+    ];
+
     for (let y = 0; y < 8; y++) {
         for (let x = 0; x < 8; x++) {
-            let owner = "wild";
-            // Logica semplice per proprietari (uguale a prima ma con colori nuovi)
-            if (y < 2) owner = "auvrey";
-            else if (x > 5 && y > 5) owner = "falken";
-            else if (rand(0,10) > 4) owner = "count";
-
+            const owner = territoryMap[y][x];
             const px = x * size;
             const py = y * size;
 
-            // Disegna solo bordi colorati e leggero riempimento per effetto mappa politica
-            ctx.fillStyle = getRegionColor(owner, 0.3);
+            // Riempimento con gradiente per profondità e rilievo
+            const gradient = ctx.createLinearGradient(px, py, px + size, py + size);
+            gradient.addColorStop(0, getRegionColor(owner, 0.25));
+            gradient.addColorStop(0.5, getRegionColor(owner, 0.35));
+            gradient.addColorStop(1, getRegionColor(owner, 0.45));
+            ctx.fillStyle = gradient;
             ctx.fillRect(px, py, size, size);
             
-            ctx.strokeStyle = getRegionColor(owner, 0.8);
-            ctx.lineWidth = 1;
+            // Bordi più definiti e visibili
+            ctx.strokeStyle = getRegionColor(owner, 0.9);
+            ctx.lineWidth = 1.5;
             ctx.strokeRect(px, py, size, size);
             
-            // Disegna un simbolo per il proprietario
-            if (Math.random() > 0.7 && owner !== 'wild') {
-                ctx.font = "16px serif";
-                ctx.textAlign = "center";
-                ctx.fillStyle = "rgba(0,0,0,0.3)";
-                const symbol = owner === 'count' ? '⚜️' : (owner === 'auvrey' ? '🦁' : '🦅');
-                ctx.fillText(symbol, px + size/2, py + size/2 + 5);
+            // Aggiungi texture interna casuale per simulare terreno
+            if (Math.random() < 0.3) {
+                ctx.fillStyle = getRegionColor(owner, 0.15);
+                ctx.fillRect(px + size * 0.2, py + size * 0.2, size * 0.6, size * 0.6);
             }
         }
     }
     
+    // Disegna strade principali più visibili
+    ctx.strokeStyle = "rgba(101, 67, 33, 0.7)";
+    ctx.lineWidth = 4;
+    ctx.setLineDash([8, 4]);
+    
+    // Strada principale diagonale NW-SE
+    ctx.beginPath();
+    ctx.moveTo(0, canvas.height * 0.2);
+    ctx.lineTo(canvas.width * 0.4, canvas.height * 0.5);
+    ctx.lineTo(canvas.width, canvas.height * 0.8);
+    ctx.stroke();
+    
+    // Strada principale diagonale NE-SW
+    ctx.beginPath();
+    ctx.moveTo(canvas.width, canvas.height * 0.3);
+    ctx.lineTo(canvas.width * 0.6, canvas.height * 0.5);
+    ctx.lineTo(0, canvas.height * 0.7);
+    ctx.stroke();
+    
+    // Strada orizzontale centrale
+    ctx.beginPath();
+    ctx.moveTo(0, canvas.height * 0.5);
+    ctx.lineTo(canvas.width, canvas.height * 0.5);
+    ctx.stroke();
+    
+    ctx.setLineDash([]);
+    
+    // Disegna fiumi stilizzati
+    ctx.strokeStyle = "rgba(100, 150, 200, 0.4)";
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.moveTo(canvas.width * 0.3, 0);
+    ctx.quadraticCurveTo(
+        canvas.width * 0.4, canvas.height * 0.5,
+        canvas.width * 0.6, canvas.height
+    );
+    ctx.stroke();
+    
+    // Etichette dei territori
+    const labels = [
+        { name: "Contea di Auvrey", x: 1, y: 1, owner: 'auvrey' },
+        { name: "Terre del Conte", x: 4, y: 3, owner: 'count' },
+        { name: "Contea di Falken", x: 6, y: 6, owner: 'falken' },
+        { name: "Terre Selvagge", x: 2, y: 5, owner: 'wild' }
+    ];
+    
+    labels.forEach(label => {
+        const px = label.x * size + size/2;
+        const py = label.y * size + size/2;
+        
+        // Sfondo etichetta
+        ctx.fillStyle = "rgba(244, 236, 216, 0.85)";
+        ctx.font = "bold 10px Georgia";
+        const textWidth = ctx.measureText(label.name).width;
+        ctx.fillRect(px - textWidth/2 - 4, py - 8, textWidth + 8, 16);
+        
+        // Bordo etichetta
+        ctx.strokeStyle = getRegionColor(label.owner, 1);
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(px - textWidth/2 - 4, py - 8, textWidth + 8, 16);
+        
+        // Testo
+        ctx.fillStyle = "#3e2723";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(label.name, px, py);
+    });
+    
+    // Disegna città/capitali
+    drawRegionalCities(ctx, size);
+    
+    // Pins delle contee vicine
     drawNeighborPins(ctx);
+    
+    // Vignettatura
     drawVignette(ctx, canvas.width, canvas.height);
+    
+    // Legenda migliorata
+    drawRegionalLegend(ctx, canvas.width, canvas.height);
+}
+
+// NUOVA FUNZIONE: Disegna città importanti sulla mappa regionale
+function drawRegionalCities(ctx, size) {
+    const cities = [
+        { x: 4, y: 3, name: "Capitale", size: "large" },  // Città principale del conte
+        { x: 1, y: 1, name: "Auvrey", size: "medium" },
+        { x: 6, y: 6, name: "Falken", size: "medium" }
+    ];
+    
+    cities.forEach(city => {
+        const px = city.x * size + size/2;
+        const py = city.y * size + size/2;
+        const radius = city.size === "large" ? 6 : 4;
+        
+        // Cerchio città
+        ctx.fillStyle = "#3e2723";
+        ctx.strokeStyle = "#d4af37";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(px, py, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        
+        // Stella per capitale
+        if (city.size === "large") {
+            ctx.fillStyle = "#d4af37";
+            ctx.font = "12px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("★", px, py - 12);
+        }
+    });
+}
+
+// NUOVA FUNZIONE: Legenda regionale migliorata
+function drawRegionalLegend(ctx, width, height) {
+    const legendX = 10;
+    const legendY = height - 100;
+    
+    // Sfondo legenda
+    ctx.fillStyle = "rgba(244, 236, 216, 0.95)";
+    ctx.strokeStyle = "#8b7355";
+    ctx.lineWidth = 2;
+    ctx.fillRect(legendX, legendY, 140, 90);
+    ctx.strokeRect(legendX, legendY, 140, 90);
+    
+    ctx.font = "bold 11px Georgia";
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#3e2723";
+    ctx.fillText("Legenda Regionale:", legendX + 10, legendY + 15);
+    
+    const owners = [
+        { key: "count", name: "Terre del Conte" },
+        { key: "auvrey", name: "Contea Auvrey" },
+        { key: "falken", name: "Contea Falken" },
+        { key: "wild", name: "Terre Selvagge" }
+    ];
+    
+    ctx.font = "10px Georgia";
+    owners.forEach((o, i) => {
+        const y = legendY + 32 + i * 16;
+        
+        // Quadrato colore
+        ctx.fillStyle = getRegionColor(o.key, 0.8);
+        ctx.fillRect(legendX + 10, y - 8, 12, 12);
+        ctx.strokeStyle = getRegionColor(o.key, 1);
+        ctx.lineWidth = 1;
+        ctx.strokeRect(legendX + 10, y - 8, 12, 12);
+        
+        // Testo
+        ctx.fillStyle = "#3e2723";
+        ctx.fillText(o.name, legendX + 28, y);
+    });
 }
 
 function getRegionColor(owner, alpha) {
     const map = {
-        count: `rgba(212, 175, 55, ${alpha})`,  // Oro
-        auvrey: `rgba(180, 40, 40, ${alpha})`,  // Rosso scuro
-        falken: `rgba(20, 60, 120, ${alpha})`,  // Blu scuro
-        wild: `rgba(100, 100, 100, ${alpha})`   // Grigio neutro
+        count: `rgba(212, 175, 55, ${alpha})`,  // Oro per il conte
+        auvrey: `rgba(180, 40, 40, ${alpha})`,  // Rosso scuro per Auvrey
+        falken: `rgba(20, 60, 120, ${alpha})`,  // Blu scuro per Falken
+        wild: `rgba(100, 100, 100, ${alpha})`   // Grigio neutro per terre selvagge
     };
     return map[owner] || map.wild;
 }
@@ -11080,6 +12825,11 @@ function drawNeighborPins(ctx) {
         ctx.textAlign = "center";
         ctx.fillText(c.name.split(" ")[0], x, y + 3);
     });
+}
+
+function closeBudgetModal() {
+    const modal = document.getElementById("modal-budget");
+    if (modal) modal.classList.remove("active");
 }
 
 document.addEventListener("DOMContentLoaded", initStartScreen);
@@ -11116,6 +12866,43 @@ document.addEventListener("DOMContentLoaded", initStartScreen);
         </div>
 
         <button class="btn-main" onclick="closeChronicleModal()" style="margin-top:20px;">Continua a Governare</button>
+    </div>
+</div>
+
+<!-- MODALE CREAZIONE LEGGI -->
+<div id="modal-law-creator" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>📜 Crea una Nuova Legge</h3>
+            <button class="close-btn" onclick="closeLawModal()">✕</button>
+        </div>
+        <div style="padding: 20px;">
+            <div style="margin-bottom: 15px;">
+                <label>Nome della Legge:</label>
+                <input type="text" id="law-name" placeholder="Es. Legge sul Pane" style="width: 100%; padding: 8px; margin-top: 5px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label>Descrizione:</label>
+                <textarea id="law-desc" placeholder="Descrivi gli effetti della legge..." rows="3" style="width: 100%; padding: 8px; margin-top: 5px;"></textarea>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label>Costo di Mantenimento (oro/turno):</label>
+                <input type="number" id="law-upkeep" min="0" value="0" style="width: 100%; padding: 8px; margin-top: 5px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label>Risorsa da Consumare (opzionale):</label>
+                <select id="law-resource" style="width: 48%; padding: 8px; margin-top: 5px;">
+                    <option value="">Nessuna</option>
+                    <option value="grain">Grano</option>
+                    <option value="wood">Legno</option>
+                    <option value="stone">Pietra</option>
+                    <option value="iron">Ferro</option>
+                    <option value="gold">Oro</option>
+                </select>
+                <input type="number" id="law-resource-amount" min="0" value="0" placeholder="Quantità" style="width: 48%; padding: 8px; margin-top: 5px; margin-left: 4%;">
+            </div>
+            <button class="btn-main" onclick="createLaw()" style="width: 100%;">Promulga la Legge</button>
+        </div>
     </div>
 </div>
 
