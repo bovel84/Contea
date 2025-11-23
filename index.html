@@ -1255,7 +1255,7 @@
     }
 
     .chat-panel {
-        height: 65vh;
+        height: calc(100vh - 130px);
         min-height: auto;
     }
 
@@ -3710,6 +3710,12 @@
 let apiKey = "";
 let heroName = "";
 
+// Helper per formattare denaro a centesimi
+function fmtMoney(v) {
+    const n = Number(v) || 0;
+    return n.toFixed(2);
+}
+
 // --- DATI DINASTIA ---
 let dynasty = {
     ruler: {
@@ -3740,9 +3746,14 @@ const UNREST_REVOLT = 12;  // Dopo 12 turni: GAME OVER / Tentativo di uccisione 
 let publicChatHistory = [];
 
 const RESOURCE_KEYS = [
-    "wood","stone","iron","copper","gold",
-    "herbs","grain","livestock","textiles","luxuries","arcane",
-    "weapons", "armor" // <--- NUOVE RISORSE
+    // Materie Prime
+    "wood","stone","iron","copper","gold","grain","livestock","wool","herbs","clay",
+    // Semilavorati
+    "flour", "iron_ingots", "fabric", "leather",
+    // Prodotti Finiti (Alto valore)
+    "bread", "tools", "clothes", "weapons", "armor", "furniture", "pottery",
+    // Speciali
+    "luxuries","arcane","textiles","cotton"
 ];
 
 const resourceLabels = {
@@ -3754,44 +3765,58 @@ const resourceLabels = {
     herbs: "Erbe",
     grain: "Grano",
     livestock: "Bestiame",
+    wool: "Lana",
+    clay: "Argilla",
+    flour: "Farina",
+    iron_ingots: "Lingotti di Ferro",
+    fabric: "Stoffa",
+    leather: "Pelle",
+    bread: "Pane",
+    tools: "Utensili",
+    clothes: "Vestiti",
+    furniture: "Mobili",
+    pottery: "Ceramica",
     textiles: "Tessuti",
     luxuries: "Beni di pregio",
     arcane: "Essenza arcana",
     weapons: "Armi",
-    armor: "Armature"
+    armor: "Armature",
+    cotton: "Cotone"
 };
 
 const POP_NEEDS = {
     peasants: {
-        primary: { grain: 0.1 },        // Sopravvivenza: Cibo base
-        secondary: { wood: 0.05, textiles: 0.01 } // Comfort: Legna, Vestiti
-    },
-    militia: {
-        primary: { grain: 0.15, iron: 0.02 }, // Cibo + Manutenzione armi
-        secondary: { livestock: 0.05, textiles: 0.02 }
+        // Mangiano pane (o grano se poveri)
+        primary: { bread: 0.5 }, 
+        // Vestiti base
+        secondary: { clothes: 0.1, tools: 0.05 } 
     },
     burghers: {
-        primary: { grain: 0.1, textiles: 0.05 },
-        secondary: { livestock: 0.1, luxuries: 0.01, wood: 0.05 }
-    },
-    merchants: {
-        primary: { grain: 0.1, textiles: 0.1 },
-        secondary: { luxuries: 0.05, livestock: 0.1, gold: 0.1 } // Accumulo ricchezza
+        primary: { bread: 1.0, clothes: 0.2 },
+        secondary: { furniture: 0.1, luxuries: 0.05 }
     },
     nobility: {
-        primary: { livestock: 0.2, textiles: 0.1 },
-        secondary: { luxuries: 0.1, arcane: 0.01, gold: 0.5 }
+        primary: { bread: 1.5, clothes: 0.5 }, // Vestiti di lusso (consumano di più)
+        secondary: { luxuries: 0.5, weapons: 0.1, furniture: 0.2 }
+    },
+    militia: {
+        primary: { bread: 1.2 },
+        secondary: { weapons: 0.1, armor: 0.05 } // La milizia consuma equipaggiamento
+    },
+    merchants: {
+        primary: { bread: 0.8, clothes: 0.3 },
+        secondary: { luxuries: 0.1, furniture: 0.1 }
     },
     clergy: {
-        primary: { grain: 0.1, herbs: 0.05 },
-        secondary: { luxuries: 0.02, arcane: 0.02 }
+        primary: { bread: 0.7, clothes: 0.2 },
+        secondary: { luxuries: 0.05, arcane: 0.02 }
     },
     mystics: {
-        primary: { grain: 0.05, herbs: 0.1 },
+        primary: { bread: 0.3, herbs: 0.1 },
         secondary: { arcane: 0.05, luxuries: 0.01 }
     },
     outcasts: {
-        primary: { grain: 0.05 }, // Mangiano poco
+        primary: { bread: 0.2 }, // Mangiano poco
         secondary: { wood: 0.02 }
     }
 };
@@ -4072,14 +4097,14 @@ const TOTAL_LAND = 100;
 /* ===================== POPOLAZIONE ===================== */
 function createDefaultPopulation() {
     return {
-        nobility: { count: 25, wealth: 500, resources: createEmptyResourceBag() },
-        clergy: { count: 15, wealth: 200, resources: createEmptyResourceBag() },
-        militia: { count: 60, wealth: 50, resources: createEmptyResourceBag() },
-        peasants: { count: 900, wealth: 10, resources: createEmptyResourceBag() },
-        burghers: { count: 120, wealth: 100, resources: createEmptyResourceBag() },
-        merchants: { count: 80, wealth: 150, resources: createEmptyResourceBag() },
-        mystics: { count: 10, wealth: 30, resources: createEmptyResourceBag() },
-        outcasts: { count: 40, wealth: 5, resources: createEmptyResourceBag() }
+        nobility: { count: 25, wealth: 500, literacy: 90, workforceRatio: 0.2, employed: 0, resources: createEmptyResourceBag() },
+        clergy: { count: 15, wealth: 200, literacy: 95, workforceRatio: 0.8, employed: 0, resources: createEmptyResourceBag() },
+        militia: { count: 60, wealth: 50, literacy: 20, workforceRatio: 1.0, employed: 0, resources: createEmptyResourceBag() },
+        peasants: { count: 900, wealth: 10, literacy: 5, workforceRatio: 0.7, employed: 0, resources: createEmptyResourceBag() },
+        burghers: { count: 120, wealth: 100, literacy: 40, workforceRatio: 0.8, employed: 0, resources: createEmptyResourceBag() },
+        merchants: { count: 80, wealth: 150, literacy: 70, workforceRatio: 0.9, employed: 0, resources: createEmptyResourceBag() },
+        mystics: { count: 10, wealth: 30, literacy: 30, workforceRatio: 0.5, employed: 0, resources: createEmptyResourceBag() },
+        outcasts: { count: 40, wealth: 5, literacy: 0, workforceRatio: 0.6, employed: 0, resources: createEmptyResourceBag() }
     };
 }
 
@@ -5068,75 +5093,207 @@ function summarizeStructureOutput(list = []) {
 function updateAssetSummaryUI(summaryRef = null) {
     const container = document.getElementById("asset-summary");
     if (!container) return;
-    const summary = summaryRef || getIndustrySummary();
-    if (!summary) {
-        container.innerHTML = '<div class="asset-card">Dati non disponibili.</div>';
-        return;
-    }
-    const flows = getCachedAssetFlows() || calculateAssetFlows(summary);
-    const cards = [];
-    (flows.detail || []).forEach(entry => {
-        cards.push(`
-            <div class="asset-card">
-                <h4>${entry.label}</h4>
-                <div>Strutture controllate: ${entry.count}</div>
-                <div class="asset-flow">Produzione: ${formatFlowMap(entry.production)}</div>
-                <div class="asset-flow">Consumi: ${formatFlowMap(entry.consumption)}</div>
-                ${entry.gold ? `<div class="asset-flow">Oro necessario: ${entry.gold}</div>` : ""}
-            </div>
-        `);
-    });
+    
+    // 1. Eseguiamo il calcolo per avere i dati aggiornati di staff ed efficienza
+    calculateLaborAndEducation();
 
-    const structuralSets = [
-        { key:"mines", label:"Miniere", list: ownedStructures(structures.mines) },
-        { key:"sawmills", label:"Segherie", list: ownedStructures(structures.sawmills) },
-        { key:"quarries", label:"Cave", list: ownedStructures(structures.quarries) },
-        { key:"monasteries", label:"Monasteri", list: ownedStructures(structures.monasteries) }
+    container.innerHTML = "";
+    
+    // 2. Creiamo una lista UNIFICATA di tutti i luoghi di lavoro
+    let allWorkplaces = [];
+
+    // A. Aggiungi Edifici Costruiti (che hanno già un ID)
+    const activeBuildings = buildings.filter(b => b.stage === 'complete');
+    allWorkplaces = allWorkplaces.concat(activeBuildings);
+
+    // B. Aggiungi Strutture Mappa (Assegnando ID se mancano e normalizzando il TIPO)
+    // Nota: Mappiamo i tipi "generici" della mappa ai tipi specifici di buildingData
+    const mapStructures = [
+        { list: structures.mines, type: 'iron_mine' }, 
+        { list: structures.sawmills, type: 'sawmill' },
+        { list: structures.quarries, type: 'stone_quarry' },
+        { list: structures.monasteries, type: 'monastery' } // Assicurati che 'monastery' esista in buildingData o usa 'church'
     ];
 
-    structuralSets.forEach(item => {
-        const count = item.list.length;
-        if (!count) return;
-        const output = summarizeStructureOutput(item.list);
-        cards.push(`
-            <div class="asset-card">
-                <h4>${item.label}</h4>
-                <div>Impianti attivi: ${count}</div>
-                <div class="asset-flow">Produzione attesa: ${formatFlowMap(output)}</div>
-                <div class="asset-flow">Consumi: richieste di personale e manutenzione</div>
-            </div>
-        `);
+    mapStructures.forEach(group => {
+        if(group.list) {
+            group.list.forEach((s, index) => {
+                // Se la struttura non ha ID, gliene diamo uno stabile basato sulle coordinate
+                if (!s.id) s.id = `struct_${group.type}_${s.x}_${s.y}`;
+                
+                // Creiamo un oggetto riferimento che usa il tipo corretto per buildingData
+                // IMPORTANTE: Modifichiamo l'oggetto originale per mantenere i dati sincronizzati
+                s.realType = group.type; // Salviamo il tipo compatibile
+                allWorkplaces.push(s);
+            });
+        }
     });
 
-    // Aggiungi edifici costruiti
-    const completedBuildings = buildings.filter(b => b.stage === 'complete');
-    if (completedBuildings.length > 0) {
-        // Raggruppa per tipo
-        const buildingCounts = {};
-        completedBuildings.forEach(b => {
-            buildingCounts[b.type] = (buildingCounts[b.type] || 0) + 1;
-        });
+    if (allWorkplaces.length === 0) {
+        container.innerHTML = '<div class="asset-card">Nessuna attività produttiva operativa.</div>';
+        return;
+    }
 
-        Object.entries(buildingCounts).forEach(([type, count]) => {
-            const data = buildingData[type];
-            if (data) {
-                cards.push(`
-                    <div class="asset-card">
-                        <h4>${data.name}</h4>
-                        <div>Edifici completati: ${count}</div>
-                        <div class="asset-flow">Effetto: ${data.effect}</div>
-                        <div class="asset-flow">Manutenzione: ${data.upkeep * count} oro/stagione</div>
-                    </div>
-                `);
+    // --- NOVITÀ: RAGGRUPPAMENTO ---
+    const groups = {};
+
+    allWorkplaces.forEach(b => {
+        const typeKey = b.realType || b.type;
+        const data = buildingData[typeKey];
+        if (!data) return; // Skip se dati mancanti
+
+        // Inizializza gruppo se non esiste
+        if (!groups[typeKey]) {
+            groups[typeKey] = {
+                name: data.name,
+                count: 0,
+                totalStaff: 0,
+                totalReq: 0,
+                avgEff: 0,
+                ids: [], // Teniamo traccia degli ID per azioni di gruppo
+                staffType: data.staff ? data.staff.type : 'none',
+                produceIcon: ""
+            };
+
+            // Determina icona produzione
+            if(data.productionOutput) {
+                const resKey = Object.keys(data.productionOutput)[0];
+                groups[typeKey].produceIcon = `➡️ ${resourceLabels[resKey] || resKey}`;
+            } else if (typeKey === 'iron_mine') groups[typeKey].produceIcon = "➡️ Ferro";
+            else if (typeKey === 'sawmill') groups[typeKey].produceIcon = "➡️ Legno";
+            else if (typeKey === 'stone_quarry') groups[typeKey].produceIcon = "➡️ Pietra";
+        }
+
+        // Aggregazione dati
+        groups[typeKey].count++;
+        groups[typeKey].totalStaff += (b.currentStaff || 0);
+        // Se priorità è low, requiredStaff potrebbe essere 0 nella logica di calcolo, 
+        // ma per la UI vogliamo mostrare quanto servirebbe.
+        const baseReq = data.staff ? data.staff.amount : 0;
+        groups[typeKey].totalReq += baseReq;
+        groups[typeKey].avgEff += (b.currentEfficiency || 0);
+        groups[typeKey].ids.push(b.id);
+    });
+
+    // 3. Generazione Card Raggruppate
+    Object.keys(groups).sort().forEach(typeKey => {
+        const g = groups[typeKey];
+        
+        // Se non serve staff, magari non lo mostriamo qui o lo mostriamo semplificato
+        if (g.totalReq === 0 && g.staffType !== 'none') return;
+
+        // Calcola media efficienza percentuale
+        const avgEffPct = g.count > 0 ? Math.floor((g.avgEff / g.count) * 100) : 0;
+        
+        // Colore barra efficienza
+        let effColor = avgEffPct < 50 ? '#f44336' : (avgEffPct < 100 ? '#ffeb3b' : '#6ada91');
+
+        const card = document.createElement("div");
+        card.className = "asset-card";
+        // Stile leggermente diverso per far capire che è un gruppo
+        card.style.borderLeft = "4px solid var(--accent)"; 
+        
+        card.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <div style="font-weight:bold; color:var(--accent); font-size:1.05em;">
+                    ${g.name} <span style="color:#fff; background:#333; padding:1px 6px; border-radius:4px; font-size:0.8em;">x${g.count}</span>
+                </div>
+                <div style="font-size:0.8em; color:#ccc;">${g.produceIcon}</div>
+            </div>
+            
+            <div style="font-size:0.9em; margin-bottom:6px; display:flex; justify-content:space-between;">
+                <span>👷 <strong>Staff Totale:</strong> ${g.totalStaff} / ${g.totalReq}</span>
+                <span style="color:#aaa; font-size:0.85em;">(${factionLabel(g.staffType)})</span>
+            </div>
+            
+            <div style="background:#222; height:8px; border-radius:4px; margin-bottom:8px; overflow:hidden; border:1px solid #444;">
+                <div style="background:${effColor}; width:${avgEffPct}%; height:100%;"></div>
+            </div>
+            <div style="text-align:right; font-size:0.8em; color:${effColor}; margin-bottom:8px;">Efficienza Media: ${avgEffPct}%</div>
+
+            <div style="display:flex; gap:5px; border-top:1px solid #333; padding-top:8px;">
+                <button class="btn-sec" style="flex:1; font-size:0.75em; padding:6px;" onclick="setGroupPriority('${typeKey}', 'high')">🔥 Tutti Alta</button>
+                <button class="btn-sec" style="flex:1; font-size:0.75em; padding:6px;" onclick="setGroupPriority('${typeKey}', 'normal')">⚖️ Tutti Norm</button>
+                <button class="btn-sec" style="flex:1; font-size:0.75em; padding:6px;" onclick="setGroupPriority('${typeKey}', 'low')">⛔ Tutti Fermi</button>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+// Funzione helper per cambiare priorità
+function setBuildingPriority(id, level) {
+    let target = null;
+
+    // 1. Cerca negli edifici costruiti
+    target = buildings.find(b => b.id === id);
+
+    // 2. Se non trovato, cerca nelle strutture della mappa
+    if (!target) {
+        const allStructs = [
+            ...structures.mines, 
+            ...structures.sawmills, 
+            ...structures.quarries, 
+            ...structures.monasteries
+        ];
+        // Nota: Qui assumiamo che 'updateAssetSummaryUI' abbia già assegnato gli ID agli oggetti in memoria
+        target = allStructs.find(s => s.id === id);
+    }
+
+    if (target) {
+        target.priority = level;
+        
+        // Feedback visivo immediato
+        addMsg("system", `⚙️ Priorità aggiornata a <strong>${level.toUpperCase()}</strong> per la struttura.`);
+        
+        // Ricalcola immediatamente il lavoro per vedere l'effetto sull'efficienza
+        calculateLaborAndEducation();
+        
+        // Aggiorna l'interfaccia
+        updateUI(); 
+    } else {
+        console.error("Struttura non trovata per ID:", id);
+    }
+}
+
+function setGroupPriority(typeKey, level) {
+    let count = 0;
+
+    // 1. Aggiorna Edifici Costruiti
+    buildings.forEach(b => {
+        if (b.type === typeKey && b.stage === 'complete') {
+            b.priority = level;
+            count++;
+        }
+    });
+
+    // 2. Aggiorna Strutture Mappa
+    // Helper per cercare nelle liste di strutture
+    const updateStructList = (list, targetRealType) => {
+        if (!list) return;
+        list.forEach(s => {
+            // Controlla se l'oggetto ha il realType assegnato o se stiamo mappando manualmente
+            // (La funzione updateAssetSummaryUI assegna realType, ma qui potremmo operare sui dati grezzi)
+            // Usiamo la logica inversa: se il tipo passato corrisponde alla lista
+            if (targetRealType === typeKey) {
+                s.priority = level;
+                count++;
             }
         });
-    }
+    };
 
-    if (!cards.length) {
-        container.innerHTML = '<div class="asset-card">Nessun asset controllato al momento.</div>';
-    } else {
-        container.innerHTML = cards.join("");
-    }
+    updateStructList(structures.mines, 'iron_mine');
+    updateStructList(structures.sawmills, 'sawmill');
+    updateStructList(structures.quarries, 'stone_quarry');
+    updateStructList(structures.monasteries, 'monastery');
+
+    // Feedback
+    const priorityLabel = level === 'high' ? "ALTA" : (level === 'low' ? "FERMO" : "NORMALE");
+    addMsg("system", `⚙️ Priorità impostata su <strong>${priorityLabel}</strong> per tutte le strutture di tipo: <em>${buildingName(typeKey) || typeKey}</em>.`);
+
+    // Ricalcola e aggiorna UI
+    calculateLaborAndEducation();
+    updateUI();
 }
 
 function calculateLogisticNeeds(stateRef = null) {
@@ -6552,15 +6709,87 @@ function autogenerateStructures() {
 
 let buildings = [];  // Lista edifici in costruzione
 
+let laborEfficiency = {}; // Mappa globale efficienza per tipo edificio
+
 const buildingData = {
-    // --- SOPRAVVIVENZA & AGRICOLTURA ---
-    village_well: {
-        name: "Pozzo del Villaggio",
-        desc: "Acqua pulita per prevenire malattie nei quartieri poveri.",
-        effect: "Salute +, Contadini +",
-        cost: { gold: 30, stone: 20 },
-        time: 2,
-        upkeep: 1
+    // --- SETTORE PRIMARIO (Estrazione) ---
+    // Non hanno input, producono e basta in base alla fertilità/risorse naturali
+    wheat_farm: {
+        name: "Fattoria di Grano",
+        desc: "Produce grano grezzo.",
+        cost: { gold: 50, wood: 20 },
+        time: 3,
+        staff: { type: 'peasants', amount: 10 }, // Bassa qualifica
+        recipe: { output: { grain: 20 } }
+    },
+    sheep_farm: {
+        name: "Allevamento Ovini",
+        desc: "Produce lana grezza.",
+        cost: { gold: 60, wood: 30 },
+        time: 3,
+        staff: { type: 'peasants', amount: 8 },
+        recipe: { output: { wool: 15, livestock: 2 } }
+    },
+
+    // --- SETTORE SECONDARIO (Trasformazione Base) ---
+    mill: {
+        name: "Mulino a Vento",
+        desc: "Macina il grano in farina.",
+        cost: { gold: 100, wood: 50, stone: 20 },
+        time: 4,
+        staff: { type: 'peasants', amount: 5 }, // Richiede pochi ma costanti
+        recipe: { 
+            input: { grain: 10 }, 
+            output: { flour: 12 } // Resa leggermente superiore per valore
+        }
+    },
+    weaver: {
+        name: "Filanda",
+        desc: "Tesse la lana grezza in tessuti.",
+        cost: { gold: 150, wood: 60 },
+        time: 5,
+        staff: { type: 'burghers', amount: 8 }, // Richiede artigiani (Borghesi)
+        minLiteracy: 15, // Richiede un minimo di istruzione per i telai
+        recipe: { 
+            input: { wool: 10 }, 
+            output: { fabric: 8 } 
+        }
+    },
+
+    // --- SETTORE TERZIARIO (Prodotti Finiti) ---
+    bakery: {
+        name: "Forno Comunale",
+        desc: "Cuoce il pane per il popolo.",
+        cost: { gold: 80, stone: 40 },
+        time: 3,
+        staff: { type: 'burghers', amount: 4 },
+        recipe: { 
+            input: { flour: 5, wood: 2 }, // Consuma anche legna per il forno!
+            output: { bread: 20 } 
+        }
+    },
+    tailor: {
+        name: "Sartoria",
+        desc: "Confeziona abiti finiti.",
+        cost: { gold: 200, wood: 50, stone: 10 },
+        time: 6,
+        staff: { type: 'burghers', amount: 6 },
+        minLiteracy: 30, // Alta qualifica
+        recipe: { 
+            input: { fabric: 5 }, 
+            output: { clothes: 5 } 
+        }
+    },
+    tool_smith: {
+        name: "Fabbro Utensili",
+        desc: "Crea attrezzi per migliorare il lavoro.",
+        cost: { gold: 150, iron: 20, stone: 50 },
+        time: 5,
+        staff: { type: 'burghers', amount: 5 },
+        recipe: { 
+            input: { iron: 5, wood: 5 }, 
+            output: { tools: 5 } 
+        }
     },
     wheat_field: {
         name: "Campi di Grano Estesi",
@@ -6611,7 +6840,9 @@ const buildingData = {
         cost: { gold: 90, wood: 60, stone: 30 },
         time: 4,
         upkeep: 5,
-        isStructure: true
+        isStructure: true,
+        staff: { type: 'peasants', amount: 15 },
+        minLiteracy: 0
     },
     stone_quarry: {
         name: "Cava di Pietra",
@@ -6620,7 +6851,20 @@ const buildingData = {
         cost: { gold: 85, wood: 40, stone: 40 },
         time: 5,
         upkeep: 8,
-        isStructure: true
+        isStructure: true,
+        staff: { type: 'peasants', amount: 20 },
+        minLiteracy: 0
+    },
+    monastery: {
+        name: "Monastero Antico",
+        desc: "Centro spirituale e di apprendimento.",
+        effect: "Fede ++, Istruzione +",
+        cost: { gold: 120, stone: 60, wood: 40 },
+        time: 6,
+        upkeep: 12,
+        isStructure: true,
+        staff: { type: 'clergy', amount: 8 },
+        minLiteracy: 0
     },
     iron_mine: {
         name: "Miniera di Ferro",
@@ -6629,7 +6873,9 @@ const buildingData = {
         cost: { gold: 140, wood: 40, stone: 80, iron: 20 },
         time: 6,
         upkeep: 15,
-        isStructure: true
+        isStructure: true,
+        staff: { type: 'peasants', amount: 30 },
+        minLiteracy: 0
     },
     mint: {
         name: "Zecca Ducale",
@@ -6647,7 +6893,8 @@ const buildingData = {
         effect: "Sicurezza ++, Aggressività Vicini --",
         cost: { gold: 120, stone: 70, wood: 20 },
         time: 4,
-        upkeep: 10
+        upkeep: 10,
+        staff: { type: 'militia', amount: 5 }
     },
     barracks: {
         name: "Caserma della Guardia",
@@ -6725,7 +6972,9 @@ const buildingData = {
         effect: "Artigiani ++, Mistici +, Efficienza tasse",
         cost: { gold: 180, wood: 100, stone: 20 },
         time: 5,
-        upkeep: 10
+        upkeep: 10,
+        staff: { type: 'clergy', amount: 5 },
+        isEducational: true
     },
     library: {
         name: "Biblioteca del Conte",
@@ -6770,7 +7019,64 @@ const buildingData = {
         housing: 20,
         cost: { gold: 300, stone: 100, luxuries: 20 },
         time: 6,
-        upkeep: 0
+        upkeep: 0,
+        staff: { type: 'peasants', amount: 10 }
+    },
+    
+    // --- NUOVI EDIFICI ---
+    cotton_plantation: {
+        name: "Piantagione di Cotone",
+        desc: "Coltivazione intensiva per la produzione tessile.",
+        effect: "Cotone (produzione auto)",
+        cost: { gold: 60, wood: 20 },
+        time: 3,
+        upkeep: 5,
+        staff: { type: 'peasants', amount: 40 }, // Richiede 40 contadini
+        minLiteracy: 0
+    },
+    textile_factory: {
+        name: "Manifattura Tessile",
+        desc: "Trasforma il cotone grezzo in tessuti pregiati.",
+        effect: "Converte Cotone in Tessuti (Alto valore)",
+        cost: { gold: 200, wood: 80, stone: 40, iron: 10 },
+        time: 6,
+        upkeep: 15,
+        staff: { type: 'burghers', amount: 20 }, // Richiede artigiani (Borghesi)
+        minLiteracy: 30, // Richiede istruzione minima
+        productionInput: { cotton: 5 },
+        productionOutput: { textiles: 8 }
+    },
+    school: {
+        name: "Scuola Comunale",
+        desc: "Aumenta l'alfabetizzazione della popolazione locale.",
+        effect: "Istruzione ++, Mobilità Sociale",
+        cost: { gold: 150, wood: 100, stone: 20 },
+        time: 5,
+        upkeep: 10,
+        staff: { type: 'clergy', amount: 5 }, // Richiede Clero come insegnanti
+        isEducational: true
+    },
+    local_shop: {
+        name: "Bottega Generale",
+        desc: "Distribuisce beni e aumenta la velocità del denaro.",
+        effect: "Oro ++, Felicità +",
+        cost: { gold: 80, wood: 40 },
+        time: 3,
+        upkeep: 5,
+        staff: { type: 'burghers', amount: 5 },
+        minLiteracy: 20
+    },
+    
+    // ... (altri edifici come Scuole e Case rimangono invariati) ...
+    sawmill: {
+        name: "Segheria Reale",
+        desc: "Impianto idraulico per il taglio del legname.",
+        effect: "Legno (produzione auto)",
+        cost: { gold: 90, wood: 60, stone: 30 },
+        time: 4,
+        upkeep: 5,
+        staff: { type: 'peasants', amount: 15 }, // Richiede manodopera
+        isStructure: true
     }
 };
 
@@ -6850,6 +7156,208 @@ function calculateSeasonalBudget() {
 
 function buildingName(type){
     return buildingData[type].name;
+}
+
+function calculateLaborAndEducation() {
+    // 1. Reset Occupazione
+    Object.keys(populationGroups).forEach(k => populationGroups[k].employed = 0);
+    
+    // 2. Calcolo Forza Lavoro Totale Disponibile
+    const availableLabor = {};
+    Object.keys(populationGroups).forEach(k => {
+        availableLabor[k] = Math.floor(populationGroups[k].count * (populationGroups[k].workforceRatio || 0.6));
+    });
+
+    // 3. Creazione lista posti di lavoro UNIFICATA (Stessa logica della UI)
+    let activeWorkplaces = [];
+
+    // A. Edifici
+    buildings.filter(b => b.stage === 'complete').forEach(b => activeWorkplaces.push(b));
+
+    // B. Strutture (Usiamo i tipi mappati per accedere a buildingData)
+    // Assegniamo 'realType' al volo se manca, per coerenza con la UI
+    structures.mines.forEach(s => { s.realType = 'iron_mine'; activeWorkplaces.push(s); });
+    structures.sawmills.forEach(s => { s.realType = 'sawmill'; activeWorkplaces.push(s); });
+    structures.quarries.forEach(s => { s.realType = 'stone_quarry'; activeWorkplaces.push(s); });
+    structures.monasteries.forEach(s => { s.realType = 'monastery'; activeWorkplaces.push(s); });
+
+    // --- ORDINAMENTO PER PRIORITÀ ---
+    const priorityValue = { 'high': 2, 'normal': 1, 'low': 0 };
+    
+    activeWorkplaces.sort((a, b) => {
+        const pA = priorityValue[a.priority || 'normal'];
+        const pB = priorityValue[b.priority || 'normal'];
+        return pB - pA; // Ordine decrescente (Alta prima)
+    });
+
+    // 4. Assegnazione
+    activeWorkplaces.forEach(building => {
+        // Usa realType se esiste (strutture), altrimenti type (edifici)
+        const typeKey = building.realType || building.type;
+        const data = buildingData[typeKey];
+        
+        // Se priorità è 'low', spegni
+        if (building.priority === 'low') {
+            building.currentEfficiency = 0;
+            building.currentStaff = 0;
+            building.requiredStaff = data && data.staff ? data.staff.amount : 0;
+            return;
+        }
+
+        // Se non ci sono dati o staff richiesto, efficienza 100% (o gestita altrove)
+        if (!data || !data.staff) {
+            building.currentEfficiency = 1.0;
+            return;
+        }
+
+        const workerType = data.staff.type;
+        const required = data.staff.amount;
+        const minLit = data.minLiteracy || 0;
+
+        // Preleviamo lavoratori
+        let hired = 0;
+        if (availableLabor[workerType] >= required) {
+            hired = required;
+            availableLabor[workerType] -= required;
+        } else {
+            hired = availableLabor[workerType]; 
+            availableLabor[workerType] = 0;
+        }
+
+        // Salvataggio dati sull'istanza
+        building.currentStaff = hired;
+        building.requiredStaff = required;
+
+        populationGroups[workerType].employed += hired;
+
+        // Calcolo Efficienza
+        let efficiency = required > 0 ? hired / required : 0;
+
+        // Malus Istruzione
+        const currentLiteracy = populationGroups[workerType].literacy || 0;
+        if (currentLiteracy < minLit) {
+            const literacyPenalty = (minLit - currentLiteracy) * 0.015;
+            efficiency = Math.max(0.1, efficiency - literacyPenalty);
+        }
+
+        building.currentEfficiency = efficiency;
+    });
+    
+    // 4. Gestione Istruzione (Scolarizzazione)
+    const schools = buildings.filter(b => b.type === 'school' && b.stage === 'complete');
+    // Efficienza scuole dipende se hanno insegnanti (Clero)
+    let educationPower = 0;
+    schools.forEach(s => educationPower += (s.currentEfficiency || 0) * 2); // Ogni scuola dà +2 punti crescita max
+
+    // Crescita graduale alfabetizzazione
+    Object.keys(populationGroups).forEach(k => {
+        const group = populationGroups[k];
+        // Target naturale basato sulla classe + bonus scuole
+        let targetLiteracy = 0;
+        if(k === 'nobility') targetLiteracy = 90;
+        else if(k === 'clergy') targetLiteracy = 95;
+        else if(k === 'burghers') targetLiteracy = 50 + (educationPower * 5);
+        else if(k === 'peasants') targetLiteracy = 5 + (educationPower * 3);
+        
+        // Avvicinamento lento al target
+        if (group.literacy < targetLiteracy) {
+            group.literacy += 0.5; // Crescita lenta
+        }
+    });
+
+    // 5. Mobilità Sociale basata su Salari/Lavoro
+    // Se ci sono posti di lavoro qualificati (Burghers) liberi e Contadini istruiti -> Promozione
+    // Eseguiamo solo se c'è richiesta non soddisfatta
+    const burgherDemand = activeWorkplaces
+        .filter(b => buildingData[(b.realType || b.type)]?.staff?.type === 'burghers')
+        .reduce((acc, b) => acc + buildingData[(b.realType || b.type)].staff.amount, 0);
+    
+    const burghersAvailable = Math.floor(populationGroups.burghers.count * 0.8);
+    
+    if (burgherDemand > burghersAvailable && populationGroups.peasants.literacy > 20) {
+        // Promozione sociale
+        const promoted = Math.min(10, Math.floor(populationGroups.peasants.count * 0.01));
+        populationGroups.peasants.count -= promoted;
+        populationGroups.burghers.count += promoted;
+        if(promoted > 0) logTurnEvent(`${promoted} contadini istruiti sono diventati artigiani per coprire la domanda di lavoro.`);
+    }
+}
+
+function processProductionChains(targetState = null) {
+    const stateRef = targetState ? targetState.county : county;
+    const resourceBag = stateRef.resources;
+    const report = { produced: {}, consumed: {}, shortages: [] };
+
+    // Ordine di esecuzione: Prima le materie prime, poi i trasformati
+    // (Per permettere al mulino di usare il grano raccolto nello stesso turno)
+    const productionOrder = [
+        ['wheat_farm', 'sheep_farm', 'iron_mine', 'sawmill'], // Tier 1
+        ['mill', 'weaver', 'forge'], // Tier 2
+        ['bakery', 'tailor', 'tool_smith', 'textile_factory'] // Tier 3
+    ];
+
+    // Appiattisci l'array per il loop, ma mantieni la logica concettuale
+    const buildingsList = buildings.filter(b => b.stage === 'complete');
+
+    // Eseguiamo in 3 passaggi per simulare la catena nello stesso turno
+    productionOrder.forEach(tierGroup => {
+        
+        buildingsList.filter(b => tierGroup.includes(b.type)).forEach(building => {
+            const data = buildingData[building.type];
+            if (!data || !data.recipe) return;
+
+            // 1. Recupera Efficienza (calcolata dalla funzione Labor/Education precedente)
+            // Se non c'è staff, efficienza è 0. Se c'è sciopero, è 0.
+            let efficiency = building.currentEfficiency || 0;
+            
+            if (efficiency <= 0) return; // Fabbrica ferma
+
+            // 2. Calcola Input necessari (Scalati per efficienza)
+            // Nota: Anche se lavorano al 50%, consumano il 50% delle risorse
+            let maxProductionRatio = efficiency; 
+
+            // Verifica disponibilità risorse Input
+            if (data.recipe.input) {
+                for (const [resKey, amount] of Object.entries(data.recipe.input)) {
+                    const needed = amount * efficiency;
+                    const available = resourceBag[resKey] || 0;
+                    
+                    if (available < needed) {
+                        // Collo di bottiglia! Riduciamo la produzione in base alle risorse disponibili
+                        const ratio = available / amount; // Quanto possiamo produrre realmente?
+                        maxProductionRatio = Math.min(maxProductionRatio, ratio);
+                        
+                        if (!report.shortages.includes(resKey)) report.shortages.push(resKey);
+                    }
+                }
+            }
+
+            // Se non abbiamo risorse nemmeno per produrre un po', salta
+            if (maxProductionRatio <= 0.01) return;
+
+            // 3. Consuma Input
+            if (data.recipe.input) {
+                for (const [resKey, amount] of Object.entries(data.recipe.input)) {
+                    const realCost = amount * maxProductionRatio;
+                    resourceBag[resKey] -= realCost;
+                    
+                    report.consumed[resKey] = (report.consumed[resKey] || 0) + realCost;
+                }
+            }
+
+            // 4. Genera Output
+            if (data.recipe.output) {
+                for (const [resKey, amount] of Object.entries(data.recipe.output)) {
+                    const realOutput = amount * maxProductionRatio;
+                    resourceBag[resKey] = (resourceBag[resKey] || 0) + realOutput;
+                    
+                    report.produced[resKey] = (report.produced[resKey] || 0) + realOutput;
+                }
+            }
+        });
+    });
+
+    return report;
 }
 
 </script>
@@ -7341,9 +7849,50 @@ function processPopNeedsSystem(targetState = null, options = {}) {
 }
 
 function calculateVillageProduction(stateRef = null) {
+    // Eseguiamo prima il calcolo occupazione
+    if(!stateRef) calculateLaborAndEducation(); 
+
     const summary = getIndustrySummary(stateRef);
     const flows = getCachedAssetFlows(stateRef) || calculateAssetFlows(summary, stateRef);
     const production = { ...flows.production };
+
+    // Applica efficienza lavoro agli edifici manifatturieri (Fabbriche, ecc.)
+    const buildingsRef = stateRef ? stateRef.buildings : buildings;
+    buildingsRef.forEach(b => {
+        if (b.stage !== 'complete') return;
+        const data = buildingData[b.type];
+        
+        // Se è un edificio produttivo custom (es. Fabbrica Tessile)
+        if (data.productionOutput && b.currentEfficiency > 0) {
+            // Controlla input (es. Cotone)
+            let hasInput = true;
+            if (data.productionInput) {
+                for(let res in data.productionInput) {
+                    if ((county.resources[res] || 0) < data.productionInput[res]) hasInput = false;
+                }
+            }
+
+            if (hasInput) {
+                // Consuma input
+                if (data.productionInput) {
+                    for(let res in data.productionInput) {
+                        county.resources[res] -= data.productionInput[res] * b.currentEfficiency; // Consumo scalato? O fisso? Facciamo scalato
+                    }
+                }
+                // Genera output scalato per efficienza
+                for(let res in data.productionOutput) {
+                    production[res] = (production[res] || 0) + (data.productionOutput[res] * b.currentEfficiency);
+                }
+            }
+        }
+        
+        // Piantagioni Cotone (senza input)
+        if (b.type === 'cotton_plantation') {
+             production.cotton = (production.cotton || 0) + (15 * b.currentEfficiency);
+        }
+    });
+
+    // Applica moltiplicatori standard
     Object.keys(production).forEach(key => {
         const mult = getProductionMultiplier(key, stateRef);
         production[key] = Math.max(0, Math.floor(production[key] * mult));
@@ -8078,6 +8627,55 @@ function seizeAssets(factionKey) {
     updateUI();
 }
 
+function renderPopulationDetails() {
+    const grid = document.querySelector('.social-classes-grid'); // O crea un nuovo contenitore
+    if(!grid) return;
+    
+    // Esempio di HTML arricchito per ogni card
+    let html = "";
+    Object.entries(populationGroups).forEach(([key, data]) => {
+        const workforce = Math.floor(data.count * (data.workforceRatio || 0.6));
+        const employed = data.employed || 0;
+        const unemployed = Math.max(0, workforce - employed);
+        const unempPct = workforce > 0 ? Math.round((unemployed / workforce) * 100) : 0;
+        
+        // Colore stato occupazione
+        let jobColor = "#6ada91";
+        if (unempPct > 20) jobColor = "#ff9800"; // Disoccupazione media
+        if (unempPct > 50) jobColor = "#f44336"; // Disoccupazione alta
+        if (employed >= workforce) jobColor = "#2196f3"; // Piena occupazione (Labor shortage)
+
+        html += `
+        <div class="social-class-card">
+            <div class="social-class-header">
+                <span class="social-class-icon">${FACTION_ICONS[key] || '👤'}</span>
+                <span class="social-class-name">${factionLabel(key)}</span>
+            </div>
+            <div class="social-class-stats">
+                <div class="social-class-count" style="font-size:1.2em">${data.count}</div>
+                <div class="social-class-wealth" style="color:#ffd700">${fmtMoney(data.wealth)} 💰</div>
+                
+                <div style="margin-top:6px; border-top:1px solid #333; padding-top:4px; font-size:0.75em;">
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>📚 Istr:</span>
+                        <span>${Math.floor(data.literacy)}%</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; color:${jobColor}">
+                        <span>⚒️ Occ:</span>
+                        <span>${Math.floor((employed/workforce)*100)}%</span>
+                    </div>
+                    <div style="font-size:0.9em; text-align:right; opacity:0.7">
+                        (${unemployed} in cerca)
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    });
+    
+    grid.innerHTML = html;
+}
+
 function updateUI() {
     ensureWorldSystems();
     const summary = updateIndustrySummary();
@@ -8128,12 +8726,6 @@ function updateUI() {
     lastFood = county.food;
     lastHealth = county.health;
     
-    // Helper per formattare denaro a centesimi
-    function fmtMoney(v) {
-        const n = Number(v) || 0;
-        return n.toFixed(2);
-    }
-
     // ... resto della funzione
 
     document.getElementById("val-gold").innerText = fmtMoney(county.gold);
@@ -8148,25 +8740,8 @@ function updateUI() {
     document.getElementById("land-clergy").innerText = landOwnership.clergy;
     document.getElementById("land-commons").innerText = landOwnership.commons;
 
-    // Aggiorna classi sociali con ricchezza
-    if (document.getElementById("nobility-count") && populationGroups) {
-        document.getElementById("nobility-count").innerText = populationGroups.nobility?.count || 0;
-        document.getElementById("nobility-wealth").innerText = fmtMoney(populationGroups.nobility?.wealth || 0) + "💰";
-        document.getElementById("clergy-count").innerText = populationGroups.clergy?.count || 0;
-        document.getElementById("clergy-wealth").innerText = fmtMoney(populationGroups.clergy?.wealth || 0) + "💰";
-        document.getElementById("militia-count").innerText = populationGroups.militia?.count || 0;
-        document.getElementById("militia-wealth").innerText = fmtMoney(populationGroups.militia?.wealth || 0) + "💰";
-        document.getElementById("burghers-count").innerText = populationGroups.burghers?.count || 0;
-        document.getElementById("burghers-wealth").innerText = fmtMoney(populationGroups.burghers?.wealth || 0) + "💰";
-        document.getElementById("peasants-count").innerText = populationGroups.peasants?.count || 0;
-        document.getElementById("peasants-wealth").innerText = fmtMoney(populationGroups.peasants?.wealth || 0) + "💰";
-        document.getElementById("mystics-count").innerText = populationGroups.mystics?.count || 0;
-        document.getElementById("mystics-wealth").innerText = fmtMoney(populationGroups.mystics?.wealth || 0) + "💰";
-        document.getElementById("outcasts-count").innerText = populationGroups.outcasts?.count || 0;
-        document.getElementById("outcasts-wealth").innerText = fmtMoney(populationGroups.outcasts?.wealth || 0) + "💰";
-        document.getElementById("merchants-count").innerText = populationGroups.merchants?.count || 0;
-        document.getElementById("merchants-wealth").innerText = fmtMoney(populationGroups.merchants?.wealth || 0) + "💰";
-    }
+    // Aggiorna classi sociali con ricchezza dettagliata
+    renderPopulationDetails();
 
     updateResourceUI();
     updateDiplomacyUI();
@@ -8669,6 +9244,35 @@ function updateCategoryWealth() {
     });
 }
 
+function updateCategoryWealthBasedOnJobs() {
+    // Salari base per tipo di lavoro
+    const WAGES = {
+        peasants: 0.5,   // Basso salario agricolo
+        burghers: 2.5,   // Salario artigiano
+        clergy: 2.0,     // Salario insegnante/prete
+        nobility: 5.0,   // Rendita amministrativa
+        // ...
+    };
+
+    Object.entries(populationGroups).forEach(([key, data]) => {
+        const wage = WAGES[key] || 1;
+        const incomeFromJobs = (data.employed || 0) * wage;
+        
+        // Aggiungi al wealth esistente
+        data.wealth += incomeFromJobs;
+        
+        // Sussistenza disoccupati (costa ricchezza o crea povertà)
+        const workforce = Math.floor(data.count * (data.workforceRatio || 0.6));
+        const unemployed = Math.max(0, workforce - (data.employed || 0));
+        
+        if (unemployed > 0) {
+            data.wealth -= unemployed * 0.2; // Costo della vita senza salario
+        }
+        
+        data.wealth = Math.max(0, data.wealth); // Mai sotto zero
+    });
+}
+
 function ensureNeighborResources(countyRef) {
     if (!countyRef.resources) {
         countyRef.resources = {
@@ -9168,16 +9772,24 @@ function progressSeason(options = {}) {
     
     processLifeEvents(); 
     
-    // 1. Aggiornamento ricchezza (Stipendi, Raccolti, Commercio)
-    updateCategoryWealth(); 
+    // 1. Calcola dinamiche lavorative (PRIMA della produzione)
+    calculateLaborAndEducation(); 
+    
+    // 1.5 Aggiorna ricchezza (Salari) - Modifica updateCategoryWealth per usare i salari
+    updateCategoryWealthBasedOnJobs(); 
     
     // 1.5. Produzione Bellica (Prima della produzione normale)
     processWarProduction();
     
-    // 2. Produzione (Le strutture generano risorse per il mercato)
-    applyProduction(null, { skipUI: true, silent: true }); 
-    
-    // 3. Consumo (Bisogni e Povertà)
+    // 2. CICLO DI PRODUZIONE (Sostituisce applyProduction)
+    const productionReport = processProductionChains();
+
+    // 3. Gestione Carenze (Feedback all'IA)
+    if (productionReport.shortages.length > 0) {
+        logTurnEvent(`⚠️ Produzione rallentata per mancanza di materie prime: ${productionReport.shortages.join(', ')}.`);
+    }
+
+    // 4. Consumo (Bisogni e Povertà)
     processPopNeedsSystem(null, { silent: silent });
     
     // 1. CALCOLO ENTRATE (Tasse Dettagliate)
@@ -9493,6 +10105,34 @@ function executeAction(action) {
             triggerGameOver("coup");
         }
     }
+    // Aggiungi dentro executeAction(action)
+    else if (action === "edict_prioritize_food") {
+        // Imposta priorità ALTA a tutte le fattorie e mulini
+        buildings.forEach(b => {
+            if (['wheat_farm', 'sheep_farm', 'mill', 'bakery', 'granary'].includes(b.type)) {
+                b.priority = 'high';
+            } else {
+                b.priority = 'normal'; // Normalizza gli altri per liberare risorse
+            }
+        });
+        addMsg("system", "📜 <strong>Editto del Pane:</strong> Tutte le strutture alimentari hanno priorità assoluta sulla manodopera.");
+        updateUI();
+        userMessage = "Ho ordinato che tutti i lavoratori disponibili si concentrino sulla produzione di cibo!";
+    }
+    
+    else if (action === "edict_prioritize_industry") {
+        buildings.forEach(b => {
+            if (['iron_mine', 'sawmill', 'forge', 'textile_factory', 'tool_smith'].includes(b.type)) {
+                b.priority = 'high';
+            } else {
+                b.priority = 'normal';
+            }
+        });
+        addMsg("system", "📜 <strong>Editto Industriale:</strong> Priorità alle miniere e manifatture.");
+        updateUI();
+        userMessage = "Voglio che l'industria lavori a pieno regime, spostate i contadini nelle miniere!";
+    }
+
     else {
         userMessage = action; // Fallback
     }
@@ -10345,6 +10985,22 @@ function getDynamicActions(response = "") {
         });
     }
 
+    // Se c'è carestia o mancanza di cibo
+    if (county.food < 40 || (lastNeedsReport && Object.values(lastNeedsReport).some(r => r.mainIssue.includes("CARESTIA")))) {
+        actions.push({
+            label: "🌾 Priorità Cibo (Editto) - Sposta lavoratori su campi e forni",
+            code: "edict_prioritize_food"
+        });
+    }
+
+    // Se c'è disoccupazione alta o richiesta armi
+    if (warState.active || county.resources.weapons < 10) {
+        actions.push({
+            label: "⚒️ Priorità Industria (Editto) - Sposta lavoratori su miniere e fucine",
+            code: "edict_prioritize_industry"
+        });
+    }
+
     return actions;
 }
 
@@ -10380,6 +11036,24 @@ function generateDeepContext() {
     // 5. Vicini
     ctx += `VICINI: `;
     ctx += neighboringCounties.map(n => `${n.name.split(' ')[0]} (Rel ${n.relations}, Pot ${n.power})`).join(" | ");
+    
+    // CALCOLO STATISTICHE LAVORO PER IA
+    let laborStats = "";
+    const totalWorkforce = Object.values(populationGroups).reduce((sum, g) => sum + Math.floor(g.count * (g.workforceRatio||0.6)), 0);
+    const totalEmployed = Object.values(populationGroups).reduce((sum, g) => sum + (g.employed || 0), 0);
+    const unemploymentRate = Math.floor(((totalWorkforce - totalEmployed) / totalWorkforce) * 100);
+    
+    laborStats += `DISOCCUPAZIONE: ${unemploymentRate}% (Forza Lavoro: ${totalWorkforce}, Occupati: ${totalEmployed}).\n`;
+    
+    // Evidenzia problemi specifici
+    if (populationGroups.burghers.employed >= Math.floor(populationGroups.burghers.count * 0.8)) {
+        laborStats += "CRITICO: Mancano artigiani qualificati per le fabbriche.\n";
+    }
+    if (populationGroups.peasants.literacy < 10) {
+        laborStats += "ISTRUZIONE: Bassa. Difficile trovare lavoratori qualificati.\n";
+    }
+
+    ctx += laborStats;
     
     return ctx;
 }
@@ -10961,7 +11635,7 @@ function handleAIResponse(response, mode) {
             }
             chatLog.scrollTop = chatLog.scrollHeight;
 
-        }, index * 1200);
+        }, index * 2200);
     });
 
     if (actionsContent) {
@@ -12034,11 +12708,33 @@ function renderResourceStats() {
     container.innerHTML = html;
 }
 
-function getMarketPrices() {
-    const prices = {
-        wood: 5, stone: 8, iron: 15, copper: 12, gold: 1, // Base prices
-        herbs: 4, grain: 3, livestock: 10, textiles: 20, luxuries: 50, arcane: 100
+function getBasePrices() {
+    return {
+        // Materie Prime (Basso costo)
+        grain: 2, wool: 3, iron: 5, wood: 2, clay: 1,
+        
+        // Semilavorati (Valore aggiunto dalla manodopera)
+        flour: 5,       // Da grain (2)
+        fabric: 8,      // Da wool (3)
+        iron_ingots: 10,// Da iron (5) + carbone/legno
+        leather: 6,     // Da livestock
+        
+        // Prodotti Finiti (Alto valore di mercato)
+        bread: 8,       // Cibo di qualità
+        clothes: 25,    // Vestiti (richiesti dalla popolazione)
+        tools: 20,      // Utensili (aumentano efficienza)
+        furniture: 15,  // Mobili (comfort)
+        weapons: 40, 
+        armor: 60,
+        pottery: 5,
+        
+        // Altri
+        stone: 8, copper: 12, gold: 1, herbs: 4, livestock: 10, textiles: 20, luxuries: 50, arcane: 100
     };
+}
+
+function getMarketPrices() {
+    const prices = getBasePrices();
     // Modifica basati su relazioni e accordi commerciali
     neighboringCounties.forEach(c => {
         const relation = c.relations || 50;
