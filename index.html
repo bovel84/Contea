@@ -1666,44 +1666,207 @@
             padding: 14px;
         }
 
-.building-card-ui {
-    background: rgba(18, 18, 18, 0.95);
-    border: 1px solid var(--border-soft);
+/* === STILE CARTE COSTRUZIONE V3 (Grafica Avanzata) === */
+
+/* Griglia principale */
+#building-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+    padding: 10px;
+}
+
+/* La Carta */
+.building-card-v3 {
+    background-color: #1a1a1a;
+    border: 1px solid #444;
     border-radius: 12px;
-    padding: 14px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    transition: transform 0.2s;
 }
-.building-card-ui:hover {
-    border-color: var(--accent);
-    transform: translateY(-2px);
+
+.building-card-v3:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent); /* Oro */
+    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.15);
 }
-.b-header {
+
+.building-card-v3.disabled {
+    opacity: 0.6;
+    filter: grayscale(80%);
+    border-color: #333;
+}
+
+/* Immagine in alto */
+.card-img-top {
+    height: 130px;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    background-color: #222;
+    position: relative;
+    border-bottom: 2px solid var(--accent);
+}
+
+/* Badge del tempo sopra l'immagine */
+.card-time-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    border: 1px solid #555;
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    border-bottom: 1px dashed rgba(255,255,255,0.1);
+    align-items: center;
+    gap: 4px;
+}
+
+/* Corpo della carta */
+.card-body {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 8px;
+}
+
+.card-title {
+    font-family: 'Georgia', serif;
+    color: var(--accent);
+    font-size: 1.1em;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #333;
     padding-bottom: 6px;
+}
+
+.card-desc {
+    font-size: 0.85em;
+    color: #aaa;
+    font-style: italic;
+    line-height: 1.3;
     margin-bottom: 4px;
 }
-.b-title { color: var(--accent); font-weight: bold; font-size: 0.95em; }
-.b-time { font-size: 0.75em; color: #aaa; }
-.b-desc { font-size: 0.85em; color: #ddd; line-height: 1.3; flex-grow: 1; }
-.b-effect { font-size: 0.75em; color: #81c784; margin-top: 4px; }
-.b-cost { 
-    display: flex; 
-    gap: 8px; 
-    flex-wrap: wrap; 
-    font-size: 0.75em; 
-    color: var(--text-soft); 
-    background: rgba(0,0,0,0.3);
-    padding: 6px;
+
+/* Sezione Produzione (Input -> Output) */
+.card-production-box {
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 6px;
+    padding: 8px;
+    font-size: 0.85em;
+    border: 1px dashed #555;
 }
-.cost-item { display: flex; align-items: center; gap: 3px; }
-.cost-item.missing { color: #ff6b6b; }
+
+.prod-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #eee;
+}
+
+.prod-arrow { color: var(--accent); font-weight: bold; font-size: 1.2em; }
+
+/* Sezione Manodopera */
+.card-labor {
+    font-size: 0.8em;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.card-labor.available {
+    color: #6ada91;
+    background: rgba(106, 218, 145, 0.1);
+    border: 1px solid rgba(106, 218, 145, 0.3);
+}
+
+.card-labor.missing {
+    color: #ff7c7c;
+    background: rgba(255, 124, 124, 0.1);
+    border: 1px solid rgba(255, 124, 124, 0.3);
+}
+
+/* Footer con Costi e Bottone */
+.card-footer {
+    background: #111;
+    padding: 12px;
+    border-top: 1px solid #333;
+    margin-top: auto;
+}
+
+.cost-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.cost-badge {
+    font-size: 0.8em;
+    background: #222;
+    border: 1px solid #444;
+    padding: 3px 6px;
+    border-radius: 4px;
+    color: #ccc;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cost-badge.missing {
+    border-color: #ff4444;
+    color: #ff7c7c;
+    background: rgba(255, 0, 0, 0.1);
+}
+
+.btn-build-v3 {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(135deg, var(--accent), #8a6e22);
+    color: #000;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-build-v3:hover { filter: brightness(1.2); }
+.btn-build-v3:disabled {
+    background: #444;
+    color: #888;
+    cursor: not-allowed;
+    filter: none;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .building-card-v2 {
+        padding: 16px;
+    }
+    
+    .building-card-v2 .card-image {
+        height: 100px;
+    }
+    
+    .building-grid-v2 {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 16px;
+    }
+}
 
 /* Stile per il pannello cantieri */
 .const-card {
@@ -2021,7 +2184,7 @@
         margin-bottom: 6px;
     }
 
-    .building-card-ui {
+    .building-card-v2 {
         padding: 12px;
         font-size: 0.9em;
     }
@@ -2344,7 +2507,7 @@
         padding: 8px;
     }
 
-    .building-card-ui {
+    .building-card-v2 {
         padding: 10px;
     }
 
@@ -2931,60 +3094,340 @@
 }
 
 /* ===================== CLASSI SOCIALI ===================== */
+/* ===================== NUOVE CARD CATEGORIE SOCIALI ===================== */
 .social-classes-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
     margin-bottom: 16px;
 }
 
 .social-class-card {
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 10px;
+    background: linear-gradient(135deg, var(--bg-panel) 0%, var(--bg-panel-alt) 100%);
+    border: 2px solid var(--border-soft);
+    border-radius: 20px;
+    padding: 0;
     text-align: center;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
 }
 
 .social-class-card:hover {
     border-color: var(--accent);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 25px rgba(212,175,55,0.3);
+    transform: translateY(-5px);
+}
+
+.social-class-card.expanded {
+    grid-column: 1 / -1;
+    max-width: 100%;
 }
 
 .social-class-header {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    margin-bottom: 8px;
-    font-size: 0.9em;
-    font-weight: 500;
+    gap: 12px;
+    padding: 30px 20px;
+    background: linear-gradient(135deg, rgba(212,175,55,0.05), transparent);
+    border-bottom: 1px solid var(--border-soft);
 }
 
 .social-class-icon {
-    font-size: 1.2em;
+    font-size: 5em;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+    transition: all 0.3s ease;
+}
+
+.social-class-card:hover .social-class-icon {
+    transform: scale(1.1);
 }
 
 .social-class-name {
-    color: var(--text);
+    color: var(--accent);
+    font-size: 1.4em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 .social-class-stats {
     display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    gap: 15px;
+}
+
+.social-class-stat-item {
+    display: flex;
     flex-direction: column;
-    gap: 2px;
+    align-items: center;
+    gap: 5px;
 }
 
 .social-class-count {
-    font-size: 1.1em;
+    font-size: 1.8em;
     font-weight: bold;
     color: var(--text);
 }
 
 .social-class-wealth {
+    font-size: 1.1em;
+    color: var(--accent-muted);
+}
+
+.social-class-label {
     font-size: 0.8em;
     color: var(--text-soft);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Dettagli espansi della card */
+.social-class-details {
+    display: none;
+    padding: 25px;
+    background: rgba(0,0,0,0.3);
+    border-top: 1px solid var(--border-soft);
+    text-align: left;
+}
+
+.social-class-card.expanded .social-class-details {
+    display: block;
+}
+
+.detail-section {
+    margin-bottom: 20px;
+}
+
+.detail-section h4 {
+    color: var(--accent);
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.detail-section p {
+    color: var(--text-soft);
+    line-height: 1.6;
+    margin: 5px 0;
+}
+
+.detail-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.detail-section li {
+    color: var(--text-soft);
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.detail-section li:before {
+    content: "▸ ";
+    color: var(--accent);
+    font-weight: bold;
+}
+
+.chat-link-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(120deg, var(--accent), var(--accent-muted));
+    color: black;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.chat-link-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(212,175,55,0.5);
+}
+
+/* ===================== MENU LATERALE STATISTICHE ===================== */
+.domain-stats-sidebar {
+    position: fixed;
+    right: -350px;
+    top: 0;
+    width: 350px;
+    height: 100vh;
+    background: linear-gradient(135deg, var(--bg-panel) 0%, var(--bg-main) 100%);
+    border-left: 2px solid var(--accent);
+    box-shadow: -5px 0 25px rgba(0,0,0,0.5);
+    z-index: 1000;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.domain-stats-sidebar.open {
+    right: 0;
+}
+
+.sidebar-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    color: var(--accent);
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.sidebar-close-btn:hover {
+    transform: rotate(90deg);
+}
+
+.sidebar-header {
+    color: var(--accent);
+    font-size: 1.3em;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--accent);
+}
+
+.sidebar-stat-group {
+    margin-bottom: 25px;
+    padding: 15px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px;
+    border: 1px solid var(--border-soft);
+}
+
+.sidebar-stat-group h4 {
+    color: var(--accent-muted);
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+.sidebar-stat-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.sidebar-stat-item:last-child {
+    border-bottom: none;
+}
+
+.sidebar-stat-label {
+    color: var(--text-soft);
+    font-size: 0.9em;
+}
+
+.sidebar-stat-value {
+    color: var(--text);
+    font-weight: bold;
+}
+
+.sidebar-toggle-btn {
+    position: fixed;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, var(--accent), var(--accent-muted));
+    border: none;
+    color: black;
+    padding: 15px 8px;
+    border-radius: 8px 0 0 8px;
+    cursor: pointer;
+    font-size: 1.2em;
+    z-index: 3000;
+    box-shadow: -3px 0 15px rgba(212,175,55,0.4);
+    transition: all 0.3s ease;
+}
+
+.sidebar-toggle-btn:hover {
+    padding-right: 12px;
+    box-shadow: -5px 0 25px rgba(212,175,55,0.6);
+}
+
+/* Popup modale per statistiche dettagliate */
+.stats-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.stats-popup.active {
+    display: flex;
+}
+
+.stats-popup-content {
+    background: linear-gradient(135deg, var(--bg-panel), var(--bg-panel-alt));
+    border: 2px solid var(--accent);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 50px rgba(212,175,55,0.3);
+}
+
+.stats-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--accent);
+}
+
+.stats-popup-title {
+    color: var(--accent);
+    font-size: 1.5em;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.popup-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--accent);
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.popup-close-btn:hover {
+    transform: rotate(90deg);
+}
+
+@media (max-width: 768px) {
+    .domain-stats-sidebar {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .sidebar-toggle-btn {
+        right: 5px;
+        padding: 12px 6px;
+        font-size: 1em;
+    }
 }
 
 /* ===================== STILI MERCATO MIGLIORATI ===================== */
@@ -3230,7 +3673,7 @@
 
 /* Spaziatura contenuto principale per non finire sotto la barra */
 .system-toolbar {
-    margin-top: 80px; 
+    margin-top: 130px; 
     padding: 20px;
 }
 
@@ -3317,9 +3760,34 @@
 
     /* Aggiustiamo i margini del contenuto */
     .system-toolbar {
-        margin-top: 60px; /* Spazio per stats sopra */
+        margin-top: 110px; /* Spazio per stats sopra */
         margin-bottom: 80px; /* Spazio per nav sotto */
         padding: 10px;
+    }
+
+    .domain-quick-nav {
+        position: static;
+        top: auto;
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 8px 4px;
+    }
+
+    .domain-quick-nav button {
+        flex: 0 0 auto;
+        font-size: 0.7em;
+    }
+
+    .domain-quick-btn {
+        width: auto;
+        min-width: 120px;
+    }
+
+    .domain-quick-summary {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 8px;
     }
     
     /* Nascondiamo la vecchia bottom-nav se presente nel codice originale per evitare duplicati */
@@ -3509,10 +3977,677 @@
     transform: scale(0.98);
 }
 
-    </style>
+.resource-warning {
+    animation: pulse-red 2s infinite;
+    border-color: red;
+}
+
+@keyframes pulse-red {
+    0% { border-color: red; }
+    50% { border-color: #ff4444; }
+    100% { border-color: red; }
+}
+
+.budget-delta {
+    font-size: 0.8em;
+    margin-left: 5px;
+    font-weight: bold;
+}
+
+.budget-delta.pos {
+    color: #4caf50;
+}
+
+.budget-delta.neg {
+    color: #f44336;
+}
+
+.map-context-menu {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 10px;
+    display: none;
+    z-index: 1000;
+    min-width: 150px;
+}
+
+.map-context-menu .map-menu-btn {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--text);
+    padding: 8px;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.map-context-menu .map-menu-btn:hover {
+    background: var(--accent);
+    color: var(--bg-main);
+}
+
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    background: rgba(0, 0, 0, 0.8);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    border-left: 4px solid var(--accent);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease-out;
+    max-width: 300px;
+    word-wrap: break-word;
+}
+
+.toast.toast-warning {
+    border-left-color: #ff9800;
+}
+
+.toast.toast-error {
+    border-left-color: #f44336;
+}
+
+.toast.toast-success {
+    border-left-color: #4caf50;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.faction-power-btn {
+    background: linear-gradient(135deg, var(--accent), #b8860b);
+    border: 1px solid var(--accent);
+    color: var(--bg-main);
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: all 0.2s;
+}
+
+.faction-power-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+}
+
+.faction-power-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.io-chain {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0;
+    font-size: 0.85em;
+}
+
+.io-arrow {
+    color: var(--accent);
+    font-weight: bold;
+}
+
+.io-missing {
+    color: #f44336;
+    font-weight: bold;
+}
+
+/* Production Chain Styles */
+.production-chain {
+    margin: 15px 0;
+    padding: 12px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 8px;
+    border: 1px solid var(--border-soft);
+}
+
+.chain-inputs, .chain-outputs {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.chain-inputs h5, .chain-outputs h5 {
+    margin: 0 0 6px 0;
+    color: var(--accent);
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.chain-building {
+    background: var(--bg-panel);
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 2px solid var(--accent);
+    font-weight: bold;
+    color: var(--text);
+    text-align: center;
+    min-width: 120px;
+}
+
+.chain-arrow {
+    color: var(--accent);
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0 8px;
+}
+
+.chain-resource {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    background: rgba(255,255,255,0.1);
+}
+
+.chain-resource.input {
+    background: rgba(255, 124, 124, 0.2);
+    border-left: 3px solid #ff7c7c;
+}
+
+.chain-resource.output {
+    background: rgba(106, 218, 145, 0.2);
+    border-left: 3px solid #6ada91;
+}
+
+.chain-resource.upkeep {
+    background: rgba(255, 193, 7, 0.2);
+    border-left: 3px solid #ffc107;
+}
+
+.chain-upkeep {
+    margin-top: 10px;
+    padding: 8px;
+    background: rgba(255, 193, 7, 0.1);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.chain-upkeep h5 {
+    margin: 0 0 6px 0;
+    color: #ffc107;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.upkeep-gold {
+    color: #ffc107;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.upkeep-resources {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+    
+
+/* ===== MIGLIORAMENTI VISUALI (NON TOCCA CODICE ESISTENTE) ===== */
+
+/* Top Statistics Bar */
+.top-stats-bar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    z-index: 3000;
+    background: linear-gradient(135deg, rgba(15,15,15,0.98), rgba(8,8,8,0.95));
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid var(--border-soft);
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.top-stats-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.top-stats-logo {
+    font-size: 1.8em;
+    animation: floatLogo 3s ease-in-out infinite;
+}
+
+@keyframes floatLogo {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+}
+
+.top-stats-title {
+    font-size: 1.2em;
+    color: var(--accent);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.top-stats-right {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.stat-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: var(--bg-panel-alt);
+    border: 2px solid var(--border-soft);
+    border-radius: 20px;
+    font-size: 0.95em;
+    transition: all 0.3s ease;
+    cursor: help;
+}
+
+.stat-badge:hover {
+    border-color: var(--accent-muted);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(212,175,55,0.2);
+}
+
+.stat-icon {
+    font-size: 1.2em;
+}
+
+.stat-value {
+    color: var(--accent);
+    font-weight: bold;
+    min-width: 40px;
+    text-align: right;
+}
+
+/* Navigazione rapida sezione Dominio */
+.domain-quick-nav {
+    position: sticky;
+    top: 120px;
+    z-index: 2500;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    padding: 12px 0;
+    background: linear-gradient(180deg, rgba(5,5,5,0.95), rgba(5,5,5,0));
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.domain-quick-nav { box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset; }
+.domain-overview-grid { box-shadow: 0 6px 30px rgba(0,0,0,0.6); padding: 6px; }
+
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: translateY(0);} }
+.domain-stat { animation: fadeInUp 0.35s ease both; }
+
+.domain-quick-nav button {
+    background: rgba(20,20,20,0.9);
+    border: 1px solid var(--border-soft);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.8em;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.domain-quick-nav button:hover,
+.domain-quick-nav button.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 4px 12px rgba(212,175,55,0.2);
+}
+
+.domain-quick-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 15px 0 25px;
+}
+
+.summary-card {
+    background: rgba(10,10,10,0.8);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.summary-card .summary-label {
+    font-size: 0.85em;
+    letter-spacing: 1px;
+    color: var(--text-soft);
+    text-transform: uppercase;
+}
+
+.summary-card .summary-value {
+    font-size: 1.6em;
+    font-weight: bold;
+}
+
+.summary-card .summary-hint {
+    font-size: 0.85em;
+    color: var(--text-soft);
+}
+
+.summary-card.status-ok {
+    border-color: rgba(106,218,145,0.4);
+    box-shadow: inset 0 0 10px rgba(106,218,145,0.08);
+}
+
+.summary-card.status-warn {
+    border-color: rgba(255,152,0,0.5);
+    box-shadow: inset 0 0 10px rgba(255,152,0,0.08);
+}
+
+.summary-card.status-critical {
+    border-color: rgba(244,67,54,0.6);
+    box-shadow: inset 0 0 12px rgba(244,67,54,0.15);
+}
+
+.summary-card:hover {
+    transform: translateY(-2px);
+}
+
+/* Domain quick nav buttons - specific override to avoid global button styles */
+.domain-quick-btn {
+    background: linear-gradient(180deg,#121212,#0d0d0d);
+    border: 1px solid rgba(255,255,255,0.06);
+    color: var(--text);
+    padding: 10px 14px;
+    border-radius: 6px;
+    width: 100%;
+    min-width: 0;
+    font-size: 0.9em;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+}
+
+.domain-quick-btn:hover { 
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.domain-quick-btn.active {
+    background: linear-gradient(180deg, rgba(212,175,55,0.12), rgba(212,175,55,0.06));
+    border-color: rgba(212,175,55,0.28);
+    color: var(--accent);
+    transform: translateY(-2px);
+}
+
+/* Layout per grid overview */
+.domain-overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.domain-stat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(180deg, rgba(22,22,22,0.95), rgba(12,12,12,0.85));
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 10px 12px;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* Status visual for domain-stat (green/yellow/red) */
+.domain-stat.status-ok { border-left: 4px solid rgba(106,218,145,0.7); }
+.domain-stat.status-warn { border-left: 4px solid rgba(255,152,0,0.8); }
+.domain-stat.status-critical { border-left: 4px solid rgba(244,67,54,0.9); }
+
+.domain-stat:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.6); }
+.domain-stat .stat-icon { font-size: 1.6em; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.8));
+    width: 44px; height: 44px; display:flex; align-items:center; justify-content:center; border-radius:8px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03); }
+.domain-stat .stat-body { display:flex; flex-direction: column; gap: 3px; }
+.domain-stat .stat-label { color: var(--text-soft); font-size: 0.8em; text-transform: uppercase; letter-spacing: 1px; }
+.domain-stat .stat-value { color: var(--accent); font-weight: 700; font-size: 1.25em; }
+.domain-stat .stat-value.pulse { animation: pulseValue 0.8s ease both; }
+@keyframes pulseValue { 0% { transform: scale(1); } 40% { transform: scale(1.08); } 100% { transform: scale(1); } }
+.domain-stat .stat-hint { font-size: 0.8em; color: var(--text-soft); opacity:0.9 }
+
+@media (max-width: 600px) {
+    .domain-overview-grid { grid-template-columns: repeat(1,1fr); }
+    .domain-stat { padding: 10px; }
+}
+
+/* Celebrate animation */
+@keyframes celebrate {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.15) rotate(-5deg); }
+    50% { transform: scale(1.15) rotate(0deg); }
+    75% { transform: scale(1.15) rotate(5deg); }
+}
+
+.celebrate {
+    animation: celebrate 0.6s ease-in-out;
+}
+
+/* Tooltip migliorato */
+.tooltip {
+    position: relative;
+}
+
+.tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-5px);
+    background: var(--bg-panel);
+    border: 2px solid var(--accent);
+    color: var(--text);
+    padding: 6px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    font-size: 0.85em;
+    z-index: 1000;
+}
+
+.tooltip:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-8px);
+}
+
+/* Miglioramenti hover per elementi esistenti */
+.btn-main {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.btn-main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.6s ease;
+}
+
+.btn-main:hover::before {
+    left: 100%;
+}
+
+.btn-main:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(212,175,55,0.4);
+}
+
+.btn-main:active {
+    transform: translateY(0);
+}
+
+/* Cards con hover migliorato */
+.start-card:hover,
+.action-card:hover,
+.panel:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    border-color: var(--accent-muted);
+}
+
+.start-card,
+.action-card,
+.panel {
+    transition: all 0.3s ease;
+}
+
+/* Tabs migliorate */
+.tab-btn {
+    transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+    transform: translateY(-2px);
+}
+
+.tab-btn.active {
+    box-shadow: 0 4px 20px rgba(212,175,55,0.3);
+}
+
+/* Scrollbar migliorata */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-panel);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-muted);
+}
+
+/* Focus states accessibili */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* Responsive per top bar */
+@media (max-width: 768px) {
+    .top-stats-bar {
+        top: 50px;
+        flex-direction: column;
+        padding: 10px 15px;
+    }
+    
+    .top-stats-right {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .stat-badge {
+        font-size: 0.85em;
+        padding: 6px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .top-stats-right {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        width: 100%;
+    }
+    
+    .stat-badge {
+        justify-content: center;
+    }
+}
+
+
+</style>
 </head>
 
 <body>
+
+<!-- ===== TOP STATISTICS BAR (MIGLIORAMENTO) ===== -->
+<div class="top-stats-bar" id="top-stats-bar" style="display: none;">
+    <div class="top-stats-left">
+        <span class="top-stats-logo">👑</span>
+        <span id="top-hero-name" class="top-stats-title">Il Conte</span>
+    </div>
+    <div class="top-stats-right">
+        <div class="stat-badge tooltip" data-tooltip="Popolazione totale">
+            <span class="stat-icon">👥</span>
+            <span class="stat-value" id="top-pop">0</span>
+        </div>
+        <div class="stat-badge tooltip" data-tooltip="Tesoro del Conte">
+            <span class="stat-icon">💰</span>
+            <span class="stat-value" id="top-gold">0</span>
+        </div>
+        <div class="stat-badge tooltip" data-tooltip="Disponibilità cibo">
+            <span class="stat-icon">🌾</span>
+            <span class="stat-value" id="top-food">0%</span>
+        </div>
+        <div class="stat-badge tooltip" data-tooltip="Felicità generale">
+            <span class="stat-icon">😊</span>
+            <span class="stat-value" id="top-happiness">0%</span>
+        </div>
+    </div>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+<div id="map-menu" class="map-context-menu"></div>
 
 <!-- MENU INIZIALE MIGLIORATO -->
 <div id="screen-start" class="screen active">
@@ -3726,100 +4861,89 @@
 <!-- ================= TAB: DOMINIO (RIORGANIZZATO) ================= -->
 <div id="tab-dominio" class="tab-view">
 
-    <!-- ===== SEZIONE 1: PANORAMICA DEL DOMINIO ===== -->
-    <div style="margin-bottom: 35px; border-left: 3px solid var(--accent); padding-left: 15px;">
+    <!-- Pulsante toggle per menu statistiche laterale -->
+    <button class="sidebar-toggle-btn" onclick="toggleStatsSidebar()" title="Apri Statistiche">
+        📊
+    </button>
+
+    <div class="domain-quick-nav" role="tablist" aria-label="Navigazione Dominio">
+        <button class="domain-quick-btn active" aria-selected="true" onclick="scrollDomainSection('domain-overview-section', this)">Panoramica</button>
+        <button class="domain-quick-btn" onclick="scrollDomainSection('domain-society-section', this)">Società</button>
+        <button class="domain-quick-btn" onclick="scrollDomainSection('domain-economy-section', this)">Economia</button>
+        <button class="domain-quick-btn" onclick="scrollDomainSection('domain-development-section', this)">Sviluppo</button>
+    </div>
+
+    <!-- ===== SEZIONE 1: PANORAMICA DEL DOMINIO (spostata nel sidebar) ===== -->
+    <div id="domain-overview-section" style="margin-bottom: 35px; border-left: 3px solid var(--accent); padding-left: 15px;">
         <div style="font-size: 1.1em; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; font-weight: bold; display: flex; align-items: center; gap: 10px;">
             <span style="width: 30px; height: 2px; background: var(--accent);"></span>
-            📊 Panoramica del Dominio
+            📊 Il Tuo Dominio
         </div>
 
         <h3>Descrizione</h3>
-        <p id="visual-desc">Una giovane contea in attesa del suo destino…</p>
+        <p id="visual-desc" style="font-size: 1.1em; line-height: 1.7; color: var(--text-soft); font-style: italic; padding: 15px; background: rgba(0,0,0,0.2); border-left: 3px solid var(--accent); border-radius: 8px;">
+            Una giovane contea in attesa del suo destino…
+        </p>
+        
+        <p style="color: var(--text-soft); font-size: 0.9em; margin-top: 20px;">
+            💡 Clicca sui tab per navigare rapidamente le sezioni del dominio, o usa i badge qui sotto per una panoramica rapida
+        </p>
 
-        <!-- Statistiche Principali -->
-        <h3>Statistiche Principali</h3>
-        <div class="grid-stats">
-            <div class="stat-card">
-                <div class="stat-val" id="val-pop">0</div>
-                <div id="pop-delta" class="stat-delta pop-delta"></div>
-                <div class="stat-sub">Popolazione</div>
+        <!-- OVERVIEW GRID -->
+        <div class="domain-overview-grid" id="domain-overview-grid" aria-live="polite">
+            <div class="domain-stat" id="stat-pop">
+                <div class="stat-icon">👥</div>
+                <div class="stat-body">
+                    <div class="stat-label">Popolazione</div>
+                    <div class="stat-value" id="stat-pop-value">0</div>
+                    <div class="stat-hint" id="stat-pop-hint">Capacità 0</div>
+                </div>
             </div>
-
-            <div class="stat-card" style="cursor:pointer;" onclick="openBudgetModal()">
-                <div class="stat-val" id="val-gold">0</div>
-                <div id="gold-delta" class="stat-delta" aria-hidden="true"></div>
-                <div class="stat-sub">Oro</div>
+            <div class="domain-stat" id="stat-food">
+                <div class="stat-icon">🌾</div>
+                <div class="stat-body">
+                    <div class="stat-label">Scorte Cibo</div>
+                    <div class="stat-value" id="stat-food-value">0%</div>
+                    <div class="stat-hint" id="stat-food-hint">Stato scorte</div>
+                </div>
             </div>
-        </div>
-
-        <!-- Indicatori di Benessere -->
-        <h3>Indicatori di Benessere</h3>
-        <div class="need-row">
-            <div class="need-header">
-                <span>Cibo</span>
-                <span id="txt-food">0%</span>
-                <span id="food-delta" class="stat-delta" aria-hidden="true"></span>
+            <div class="domain-stat" id="stat-happy">
+                <div class="stat-icon">😊</div>
+                <div class="stat-body">
+                    <div class="stat-label">Felicità</div>
+                    <div class="stat-value" id="stat-happy-value">0%</div>
+                    <div class="stat-hint" id="stat-happy-hint">Umore</div>
+                </div>
             </div>
-            <div class="need-bar-bg">
-                <div class="need-bar-fill fill-food" id="bar-food"></div>
+            <div class="domain-stat" id="stat-stability">
+                <div class="stat-icon">⚖️</div>
+                <div class="stat-body">
+                    <div class="stat-label">Stabilità</div>
+                    <div class="stat-value" id="stat-stability-value">0%</div>
+                    <div class="stat-hint" id="stat-stability-hint">Influenze fazioni</div>
+                </div>
             </div>
-        </div>
-
-        <div class="need-row">
-            <div class="need-header">
-                <span>Salute</span>
-                <span id="txt-health">0%</span>
-                <span id="health-delta" class="stat-delta" aria-hidden="true"></span>
+            <div class="domain-stat" id="stat-gold">
+                <div class="stat-icon">💰</div>
+                <div class="stat-body">
+                    <div class="stat-label">Tesoro</div>
+                    <div class="stat-value" id="stat-gold-value">0</div>
+                    <div class="stat-hint" id="stat-gold-hint">Risorse oro</div>
+                </div>
             </div>
-            <div class="need-bar-bg">
-                <div class="need-bar-fill fill-health" id="bar-health"></div>
-            </div>
-        </div>
-
-        <div class="need-row">
-            <div class="need-header">
-                <span>Felicità</span>
-                <span id="txt-happy">0%</span>
-            </div>
-            <div class="need-bar-bg">
-                <div class="need-bar-fill fill-happy" id="bar-happy"></div>
-            </div>
-        </div>
-
-        <div class="need-row">
-            <div class="need-header">
-                <span>Stabilità Sociale</span>
-                <span id="txt-stability">0%</span>
-            </div>
-            <div class="need-bar-bg">
-                <div class="need-bar-fill fill-stability" id="bar-stability"></div>
-            </div>
-        </div>
-
-        <!-- Territorio -->
-        <h3>Territorio</h3>
-        <div class="grid-stats">
-            <div class="stat-card">
-                <div class="stat-val" id="land-count">0</div>
-                <div class="stat-sub">Terre del Conte</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-val" id="land-nobility">0</div>
-                <div class="stat-sub">Nobiltà</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-val" id="land-clergy">0</div>
-                <div class="stat-sub">Clero</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-val" id="land-commons">0</div>
-                <div class="stat-sub">Comuni</div>
+            <div class="domain-stat" id="stat-security">
+                <div class="stat-icon">🛡️</div>
+                <div class="stat-body">
+                    <div class="stat-label">Sicurezza</div>
+                    <div class="stat-value" id="stat-security-value">0%</div>
+                    <div class="stat-hint" id="stat-security-hint">Difese locali</div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- ===== SEZIONE 2: SOCIETÀ ===== -->
-    <div style="margin-bottom: 35px; border-left: 3px solid var(--accent); padding-left: 15px;">
+    <div id="domain-society-section" style="margin-bottom: 35px; border-left: 3px solid var(--accent); padding-left: 15px;">
         <div style="font-size: 1.1em; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; font-weight: bold; display: flex; align-items: center; gap: 10px;">
             <span style="width: 30px; height: 2px; background: var(--accent);"></span>
             👥 Società e Fazioni
@@ -3828,91 +4952,307 @@
         <!-- Classi Sociali -->
         <h3>Classi Sociali</h3>
         <div class="social-classes-grid">
-            <div class="social-class-card">
+            <div class="social-class-card" onclick="toggleClassCard(this, 'nobility')" data-class="nobility">
                 <div class="social-class-header">
-                    <span class="social-class-icon">👑</span>
+                    <span class="social-class-icon" id="icon-nobility">👑</span>
                     <span class="social-class-name">Nobiltà</span>
                 </div>
                 <div class="social-class-stats">
-                    <div class="social-class-count" id="nobility-count">0</div>
-                    <div class="social-class-wealth" id="nobility-wealth">0💰</div>
+                    <div class="social-class-stat-item">
+                        <div class="social-class-count" id="nobility-count">0</div>
+                        <div class="social-class-label">Membri</div>
+                    </div>
+                    <div class="social-class-stat-item">
+                        <div class="social-class-wealth" id="nobility-wealth">0💰</div>
+                        <div class="social-class-label">Ricchezza</div>
+                    </div>
+                </div>
+                <div class="social-class-details" id="details-nobility">
+                    <div class="detail-section">
+                        <h4>📋 Bisogni e Necessità</h4>
+                        <ul id="needs-nobility">
+                            <li>Prestigio e riconoscimento sociale</li>
+                            <li>Terre e proprietà</li>
+                            <li>Influenza politica</li>
+                        </ul>
+                    </div>
+                    <div class="detail-section">
+                        <h4>💎 Ricchezza Dettagliata</h4>
+                        <p id="wealth-details-nobility">La nobiltà controlla vaste proprietà e terre. Il loro benessere dipende da tasse, rendite fondiarie e privilegi.</p>
+                    </div>
+                    <div class="detail-section">
+                        <h4>🎯 Aspirazioni</h4>
+                        <p id="desires-nobility">Espandere i propri domini, ottenere titoli nobiliari superiori, influenzare le decisioni del conte.</p>
+                    </div>
+                    <button class="chat-link-btn" onclick="event.stopPropagation(); startFactionChat('nobility')">
+                        💬 Colloquio con Lord Emeric
+                    </button>
                 </div>
             </div>
             
-            <div class="social-class-card">
+            <div class="social-class-card" onclick="toggleClassCard(this, 'clergy')" data-class="clergy">
                 <div class="social-class-header">
-                    <span class="social-class-icon">⛪</span>
+                    <span class="social-class-icon" id="icon-clergy">⛪</span>
                     <span class="social-class-name">Clero</span>
                 </div>
                 <div class="social-class-stats">
-                    <div class="social-class-count" id="clergy-count">0</div>
-                    <div class="social-class-wealth" id="clergy-wealth">0💰</div>
+                    <div class="social-class-stat-item">
+                        <div class="social-class-count" id="clergy-count">0</div>
+                        <div class="social-class-label">Membri</div>
+                    </div>
+                    <div class="social-class-stat-item">
+                        <div class="social-class-wealth" id="clergy-wealth">0💰</div>
+                        <div class="social-class-label">Ricchezza</div>
+                    </div>
+                </div>
+                <div class="social-class-details" id="details-clergy">
+                    <div class="detail-section">
+                        <h4>📋 Bisogni e Necessità</h4>
+                        <ul id="needs-clergy">
+                            <li>Luoghi di culto e chiese</li>
+                            <li>Rispetto delle tradizioni religiose</li>
+                            <li>Sostegno alle opere di carità</li>
+                        </ul>
+                    </div>
+                    <div class="detail-section">
+                        <h4>💎 Ricchezza Dettagliata</h4>
+                        <p id="wealth-details-clergy">Il clero accumula ricchezza attraverso donazioni, decime e proprietà ecclesiastiche.</p>
+                    </div>
+                    <div class="detail-section">
+                        <h4>🎯 Aspirazioni</h4>
+                        <p id="desires-clergy">Espandere l'influenza religiosa, costruire nuove chiese, convertire i pagani e gli eretici.</p>
+                    </div>
+                    <button class="chat-link-btn" onclick="event.stopPropagation(); startFactionChat('clergy')">
+                        💬 Colloquio con Vescovo Aldebrando
+                    </button>
                 </div>
             </div>
             
-            <div class="social-class-card">
+            <div class="social-class-card" onclick="toggleClassCard(this, 'militia')" data-class="militia">
                 <div class="social-class-header">
-                    <span class="social-class-icon">⚔️</span>
+                    <span class="social-class-icon" id="icon-militia">⚔️</span>
                     <span class="social-class-name">Milizia</span>
                 </div>
                 <div class="social-class-stats">
-                    <div class="social-class-count" id="militia-count">0</div>
-                    <div class="social-class-wealth" id="militia-wealth">0💰</div>
+                    <div class="social-class-stat-item">
+                        <div class="social-class-count" id="militia-count">0</div>
+                        <div class="social-class-label">Soldati</div>
+                    </div>
+                    <div class="social-class-stat-item">
+                        <div class="social-class-wealth" id="militia-wealth">0💰</div>
+                        <div class="social-class-label">Ricchezza</div>
+                    </div>
+                </div>
+                <div class="social-class-details" id="details-militia">
+                    <div class="detail-section">
+                        <h4>📋 Bisogni e Necessità</h4>
+                        <ul id="needs-militia">
+                            <li>Equipaggiamento e armi</li>
+                            <li>Addestramento regolare</li>
+                            <li>Compensi adeguati</li>
+                        </ul>
+                    </div>
+                    <div class="detail-section">
+                        <h4>💎 Ricchezza Dettagliata</h4>
+                        <p id="wealth-details-militia">La milizia riceve stipendi dalla contea e bottini di guerra. Il loro benessere dipende dal mantenimento militare.</p>
+                    </div>
+                    <div class="detail-section">
+                        <h4>🎯 Aspirazioni</h4>
+                        <p id="desires-militia">Espandere l'esercito, conquistare nuove terre, ottenere gloria in battaglia e migliori ricompense.</p>
+                    </div>
+                    <button class="chat-link-btn" onclick="event.stopPropagation(); startFactionChat('militia')">
+                        💬 Colloquio con Capitano Ronan
+                    </button>
                 </div>
             </div>
             
-            <div class="social-class-card">
+            <div class="social-class-card" onclick="toggleClassCard(this, 'burghers')" data-class="burghers">
                 <div class="social-class-header">
-                    <span class="social-class-icon">🏛️</span>
+                    <span class="social-class-icon" id="icon-burghers">🏛️</span>
                     <span class="social-class-name">Borghesi</span>
                 </div>
                 <div class="social-class-stats">
-                    <div class="social-class-count" id="burghers-count">0</div>
-                    <div class="social-class-wealth" id="burghers-wealth">0💰</div>
+                    <div class="social-class-stat-item">
+                        <div class="social-class-count" id="burghers-count">0</div>
+                        <div class="social-class-label">Membri</div>
+                    </div>
+                    <div class="social-class-stat-item">
+                        <div class="social-class-wealth" id="burghers-wealth">0💰</div>
+                        <div class="social-class-label">Ricchezza</div>
+                    </div>
+                </div>
+                <div class="social-class-details" id="details-burghers">
+                    <div class="detail-section">
+                        <h4>📋 Bisogni e Necessità</h4>
+                        <ul id="needs-burghers">
+                            <li>Opportunità commerciali</li>
+                            <li>Infrastrutture urbane</li>
+                            <li>Sicurezza per le attività</li>
+                        </ul>
+                    </div>
+                    <div class="detail-section">
+                        <h4>💎 Ricchezza Dettagliata</h4>
+                        <p id="wealth-details-burghers">I borghesi prosperano attraverso commercio, artigianato e piccole imprese nelle città.</p>
+                    </div>
+                    <div class="detail-section">
+                        <h4>🎯 Aspirazioni</h4>
+                        <p id="desires-burghers">Espandere i mercati, ottenere privilegi commerciali, influenzare le politiche economiche.</p>
+                    </div>
+                    <button class="chat-link-btn" onclick="event.stopPropagation(); startFactionChat('burghers')">
+                        💬 Colloquio con Maestro Bernard
+                    </button>
                 </div>
             </div>
             
-            <div class="social-class-card">
+            <div class="social-class-card" onclick="toggleClassCard(this, 'peasants')" data-class="peasants">
                 <div class="social-class-header">
-                    <span class="social-class-icon">👥</span>
+                    <span class="social-class-icon" id="icon-peasants">👥</span>
                     <span class="social-class-name">Contadini</span>
                 </div>
                 <div class="social-class-stats">
-                    <div class="social-class-count" id="peasants-count">0</div>
-                    <div class="social-class-wealth" id="peasants-wealth">0💰</div>
+                    <div class="social-class-stat-item">
+                        <div class="social-class-count" id="peasants-count">0</div>
+                        <div class="social-class-label">Membri</div>
+                    </div>
+                    <div class="social-class-stat-item">
+                        <div class="social-class-wealth" id="peasants-wealth">0💰</div>
+                        <div class="social-class-label">Ricchezza</div>
+                    </div>
+                </div>
+                <div class="social-class-details" id="details-peasants">
+                    <div class="detail-section">
+                        <h4>📋 Bisogni e Necessità</h4>
+                        <ul id="needs-peasants">
+                            <li>Cibo sufficiente</li>
+                            <li>Tasse ridotte</li>
+                            <li>Protezione da carestie</li>
+                        </ul>
+                    </div>
+                    <div class="detail-section">
+                        <h4>💎 Ricchezza Dettagliata</h4>
+                        <p id="wealth-details-peasants">I contadini vivono di agricoltura e allevamento. La loro ricchezza è minima e instabile.</p>
+                    </div>
+                    <div class="detail-section">
+                        <h4>🎯 Aspirazioni</h4>
+                        <p id="desires-peasants">Ridurre le corvée, ottenere terre proprie, protezione dai signori locali, vita migliore per i figli.</p>
+                    </div>
+                    <button class="chat-link-btn" onclick="event.stopPropagation(); startFactionChat('peasants')">
+                        💬 Colloquio con Odric il Lavoratore
+                    </button>
                 </div>
             </div>
             
-            <div class="social-class-card">
+            <div class="social-class-card" onclick="toggleClassCard(this, 'mystics')" data-class="mystics">
                 <div class="social-class-header">
-                    <span class="social-class-icon">🔮</span>
+                    <span class="social-class-icon" id="icon-mystics">🔮</span>
                     <span class="social-class-name">Mistici</span>
                 </div>
                 <div class="social-class-stats">
-                    <div class="social-class-count" id="mystics-count">0</div>
-                    <div class="social-class-wealth" id="mystics-wealth">0💰</div>
+                    <div class="social-class-stat-item">
+                        <div class="social-class-count" id="mystics-count">0</div>
+                        <div class="social-class-label">Membri</div>
+                    </div>
+                    <div class="social-class-stat-item">
+                        <div class="social-class-wealth" id="mystics-wealth">0💰</div>
+                        <div class="social-class-label">Ricchezza</div>
+                    </div>
+                </div>
+                <div class="social-class-details" id="details-mystics">
+                    <div class="detail-section">
+                        <h4>📋 Bisogni e Necessità</h4>
+                        <ul id="needs-mystics">
+                            <li>Libertà di pratica spirituale</li>
+                            <li>Rispetto delle loro tradizioni</li>
+                            <li>Protezione da persecuzioni</li>
+                        </ul>
+                    </div>
+                    <div class="detail-section">
+                        <h4>💎 Ricchezza Dettagliata</h4>
+                        <p id="wealth-details-mystics">I mistici vivono di offerte e servizi spirituali. La loro ricchezza è modesta ma stabile.</p>
+                    </div>
+                    <div class="detail-section">
+                        <h4>🎯 Aspirazioni</h4>
+                        <p id="desires-mystics">Preservare le antiche conoscenze, diffondere la saggezza, ottenere rispetto nella società.</p>
+                    </div>
+                    <button class="chat-link-btn" onclick="event.stopPropagation(); startFactionChat('mystics')">
+                        💬 Colloquio con Madre Elowen
+                    </button>
                 </div>
             </div>
             
-            <div class="social-class-card">
+            <div class="social-class-card" onclick="toggleClassCard(this, 'outcasts')" data-class="outcasts">
                 <div class="social-class-header">
-                    <span class="social-class-icon">🏚️</span>
+                    <span class="social-class-icon" id="icon-outcasts">🏚️</span>
                     <span class="social-class-name">Emarginati</span>
                 </div>
                 <div class="social-class-stats">
-                    <div class="social-class-count" id="outcasts-count">0</div>
-                    <div class="social-class-wealth" id="outcasts-wealth">0💰</div>
+                    <div class="social-class-stat-item">
+                        <div class="social-class-count" id="outcasts-count">0</div>
+                        <div class="social-class-label">Membri</div>
+                    </div>
+                    <div class="social-class-stat-item">
+                        <div class="social-class-wealth" id="outcasts-wealth">0💰</div>
+                        <div class="social-class-label">Ricchezza</div>
+                    </div>
+                </div>
+                <div class="social-class-details" id="details-outcasts">
+                    <div class="detail-section">
+                        <h4>📋 Bisogni e Necessità</h4>
+                        <ul id="needs-outcasts">
+                            <li>Sopravvivenza di base</li>
+                            <li>Reintegrazione sociale</li>
+                            <li>Opportunità di riscatto</li>
+                        </ul>
+                    </div>
+                    <div class="detail-section">
+                        <h4>💎 Ricchezza Dettagliata</h4>
+                        <p id="wealth-details-outcasts">Gli emarginati sopravvivono ai margini della società con elemosine, furti e lavori occasionali.</p>
+                    </div>
+                    <div class="detail-section">
+                        <h4>🎯 Aspirazioni</h4>
+                        <p id="desires-outcasts">Essere accettati, trovare un posto nella società, sfuggire alla povertà e al disprezzo.</p>
+                    </div>
+                    <button class="chat-link-btn" onclick="event.stopPropagation(); startFactionChat('outcasts')">
+                        💬 Colloquio con Rasko il Senzapatria
+                    </button>
                 </div>
             </div>
             
-            <div class="social-class-card">
+            <div class="social-class-card" onclick="toggleClassCard(this, 'merchants')" data-class="merchants">
                 <div class="social-class-header">
-                    <span class="social-class-icon">⚖️</span>
+                    <span class="social-class-icon" id="icon-merchants">⚖️</span>
                     <span class="social-class-name">Mercanti</span>
                 </div>
                 <div class="social-class-stats">
-                    <div class="social-class-count" id="merchants-count">0</div>
-                    <div class="social-class-wealth" id="merchants-wealth">0💰</div>
+                    <div class="social-class-stat-item">
+                        <div class="social-class-count" id="merchants-count">0</div>
+                        <div class="social-class-label">Membri</div>
+                    </div>
+                    <div class="social-class-stat-item">
+                        <div class="social-class-wealth" id="merchants-wealth">0💰</div>
+                        <div class="social-class-label">Ricchezza</div>
+                    </div>
+                </div>
+                <div class="social-class-details" id="details-merchants">
+                    <div class="detail-section">
+                        <h4>📋 Bisogni e Necessità</h4>
+                        <ul id="needs-merchants">
+                            <li>Rotte commerciali sicure</li>
+                            <li>Riduzione di dazi e tasse</li>
+                            <li>Accordi commerciali vantaggiosi</li>
+                        </ul>
+                    </div>
+                    <div class="detail-section">
+                        <h4>💎 Ricchezza Dettagliata</h4>
+                        <p id="wealth-details-merchants">I mercanti accumulano fortune attraverso il commercio e le speculazioni. Sono tra i più ricchi.</p>
+                    </div>
+                    <div class="detail-section">
+                        <h4>🎯 Aspirazioni</h4>
+                        <p id="desires-merchants">Monopolizzare i commerci, ottenere privilegi esclusivi, espandere le reti commerciali internazionali.</p>
+                    </div>
+                    <button class="chat-link-btn" onclick="event.stopPropagation(); startFactionChat('merchants')">
+                        💬 Colloquio con Ser Lothar
+                    </button>
                 </div>
             </div>
         </div>
@@ -3979,7 +5319,7 @@
     </div>
 
     <!-- ===== SEZIONE 3: ECONOMIA ===== -->
-    <div style="margin-bottom: 35px; border-left: 3px solid var(--accent); padding-left: 15px;">
+    <div id="domain-economy-section" style="margin-bottom: 35px; border-left: 3px solid var(--accent); padding-left: 15px;">
         <div style="font-size: 1.1em; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; font-weight: bold; display: flex; align-items: center; gap: 10px;">
             <span style="width: 30px; height: 2px; background: var(--accent);"></span>
             💰 Economia e Risorse
@@ -4092,7 +5432,7 @@
     </div>
 
     <!-- ===== SEZIONE 4: SVILUPPO ===== -->
-    <div style="margin-bottom: 35px; border-left: 3px solid var(--accent); padding-left: 15px;">
+    <div id="domain-development-section" style="margin-bottom: 35px; border-left: 3px solid var(--accent); padding-left: 15px;">
         <div style="font-size: 1.1em; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; font-weight: bold; display: flex; align-items: center; gap: 10px;">
             <span style="width: 30px; height: 2px; background: var(--accent);"></span>
             🏗️ Sviluppo e Governo
@@ -4948,7 +6288,7 @@ function createDefaultResources() {
 function createDefaultCounty() {
     return {
         desc: "",
-        pop: 220, // Allineato alla somma di createDefaultPopulation
+        pop: 50, // Allineato alla somma di createDefaultPopulation
         gold: 400, // Oro sufficiente per emergenze
         food: 80, // Partiamo con la pancia piena
         health: 70, // Buona salute iniziale
@@ -4977,6 +6317,7 @@ let county = createDefaultCounty();
 lastResourceSnapshot = cloneResourceBag(county.resources);
 lastResourceDelta = createEmptyResourceDelta();
 let industrySummary = null;
+let gameActive = false;
 
 // Tracciamo l'ultimo stato per mostrare delta stagionale (pop, gold, food, health)
 let lastPop = county.pop;
@@ -4986,6 +6327,28 @@ let lastHealth = county.health;
 
 // Memoria dell'ultimo stato dei bisogni per l'IA
 let lastNeedsReport = {};
+
+function checkResourceBottlenecks() {
+    const bottlenecks = [];
+    buildings.forEach(building => {
+        if (building.stage !== 'complete') return;
+        const data = buildingData[building.type];
+        if (!data || !data.consumes) return;
+        Object.entries(data.consumes).forEach(([resource, amount]) => {
+            const available = county.resources[resource] || 0;
+            if (available < amount) {
+                bottlenecks.push({
+                    building: building.type,
+                    resource: resource,
+                    needed: amount,
+                    available: available,
+                    shortfall: amount - available
+                });
+            }
+        });
+    });
+    return bottlenecks;
+}
 
 // AGGIUNGI QUESTO OGGETTO GLOBALE PER LA GUERRA
 let warState = {
@@ -5100,14 +6463,14 @@ const TOTAL_LAND = 100;
 function createDefaultPopulation() {
     return {
         // Totale: ~220 abitanti (Molto più gestibile)
-        nobility: { count: 5, wealth: 200, literacy: 90, workforceRatio: 0.2, employed: 0, resources: createEmptyResourceBag() },
-        clergy: { count: 5, wealth: 100, literacy: 95, workforceRatio: 0.8, employed: 0, resources: createEmptyResourceBag() },
-        militia: { count: 10, wealth: 20, literacy: 20, workforceRatio: 1.0, employed: 0, resources: createEmptyResourceBag() },
-        peasants: { count: 150, wealth: 5, literacy: 5, workforceRatio: 0.8, employed: 0, resources: createEmptyResourceBag() }, // Forza lavoro principale
-        burghers: { count: 20, wealth: 50, literacy: 40, workforceRatio: 0.8, employed: 0, resources: createEmptyResourceBag() },
-        merchants: { count: 5, wealth: 80, literacy: 70, workforceRatio: 0.9, employed: 0, resources: createEmptyResourceBag() },
-        mystics: { count: 5, wealth: 10, literacy: 30, workforceRatio: 0.5, employed: 0, resources: createEmptyResourceBag() },
-        outcasts: { count: 20, wealth: 0, literacy: 0, workforceRatio: 0.6, employed: 0, resources: createEmptyResourceBag() }
+        nobility: { count: 1, wealth: 200, literacy: 90, workforceRatio: 0.2, employed: 0, resources: createEmptyResourceBag(), privateGold: 0, privateResources: createEmptyResourceBag() },
+        clergy: { count: 1, wealth: 100, literacy: 95, workforceRatio: 0.8, employed: 0, resources: createEmptyResourceBag(), privateGold: 0, privateResources: createEmptyResourceBag() },
+        militia: { count: 2, wealth: 20, literacy: 20, workforceRatio: 1.0, employed: 0, resources: createEmptyResourceBag(), privateGold: 0, privateResources: createEmptyResourceBag() },
+        peasants: { count: 34, wealth: 5, literacy: 5, workforceRatio: 0.8, employed: 0, resources: createEmptyResourceBag(), privateGold: 0, privateResources: createEmptyResourceBag() }, // Forza lavoro principale
+        burghers: { count: 5, wealth: 50, literacy: 40, workforceRatio: 0.8, employed: 0, resources: createEmptyResourceBag(), privateGold: 0, privateResources: createEmptyResourceBag() },
+        merchants: { count: 1, wealth: 80, literacy: 70, workforceRatio: 0.9, employed: 0, resources: createEmptyResourceBag(), privateGold: 0, privateResources: createEmptyResourceBag() },
+        mystics: { count: 1, wealth: 10, literacy: 30, workforceRatio: 0.5, employed: 0, resources: createEmptyResourceBag(), privateGold: 0, privateResources: createEmptyResourceBag() },
+        outcasts: { count: 5, wealth: 0, literacy: 0, workforceRatio: 0.6, employed: 0, resources: createEmptyResourceBag(), privateGold: 0, privateResources: createEmptyResourceBag() }
     };
 }
 
@@ -6178,6 +7541,9 @@ function updateAssetSummaryUI(summaryRef = null) {
         const avgEffPct = g.count > 0 ? Math.floor((g.avgEff / g.count) * 100) : 0;
         let effColor = avgEffPct < 50 ? '#f44336' : (avgEffPct < 100 ? '#ffeb3b' : '#6ada91');
 
+        const data = buildingData[typeKey];
+        if (!data) return;
+
         const card = document.createElement("div");
         card.className = "asset-card";
         card.style.borderLeft = "4px solid var(--accent)"; 
@@ -6192,6 +7558,36 @@ function updateAssetSummaryUI(summaryRef = null) {
             </div>`;
         }
 
+        // Mostra produzione se presente
+        let productionHtml = "";
+        if (data.recipe) {
+            let prodParts = [];
+            if (data.recipe.input) {
+                const inputs = Object.entries(data.recipe.input).map(([res, amt]) => `${resourceLabels[res] || res}: ${amt}`).join(', ');
+                prodParts.push(`<span style="color:#f44336;">Consuma: ${inputs}</span>`);
+            }
+            if (data.recipe.output) {
+                const outputs = Object.entries(data.recipe.output).map(([res, amt]) => `${resourceLabels[res] || res}: ${amt}`).join(', ');
+                prodParts.push(`<span style="color:#4caf50;">Produce: ${outputs}</span>`);
+            }
+            if (prodParts.length > 0) {
+                productionHtml = `
+                <div style="font-size:0.9em; margin-bottom:6px;">
+                    📦 ${prodParts.join(' → ')}
+                </div>`;
+            }
+        }
+
+        // Mostra abitazioni se presente
+        let housingHtml = "";
+        if (data.housing) {
+            const classLabel = data.housingClass ? factionLabel(data.housingClass) : "Generiche";
+            housingHtml = `
+            <div style="font-size:0.9em; margin-bottom:6px;">
+                🏠 Abitazioni (${classLabel}): +${g.count * data.housing} capacità
+            </div>`;
+        }
+
         card.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                 <div style="font-weight:bold; color:var(--accent); font-size:1.05em;">
@@ -6199,6 +7595,8 @@ function updateAssetSummaryUI(summaryRef = null) {
                 </div>
             </div>
             ${staffHtml}
+            ${productionHtml}
+            ${housingHtml}
             <div style="background:#222; height:8px; border-radius:4px; margin-bottom:8px; overflow:hidden; border:1px solid #444;">
                 <div style="background:${effColor}; width:${avgEffPct}%; height:100%;"></div>
             </div>
@@ -6689,6 +8087,21 @@ function collectTaxes(targetState = null, options = {}) {
         const effectivePercent = Math.max(0, (policy[cat.key] || 0) + lawDelta);
         const income = Math.floor(baseWealth * (effectivePercent / 100));
         total += income;
+
+        // Distribuzione ricchezza privata
+        const privateShare = {
+            nobility: 0.7,
+            merchants: 0.6,
+            clergy: 0.5,
+            militia: 0.3,
+            burghers: 0.4,
+            peasants: 0.1,
+            mystics: 0.2,
+            outcasts: 0.05
+        }[cat.key] || 0.1;
+        const privateIncome = Math.floor(income * privateShare);
+        statePop[cat.key].privateGold = (statePop[cat.key].privateGold || 0) + privateIncome;
+
         const tolerance = cat.tolerance;
         if (effectivePercent > tolerance) {
             const penalty = Math.round((effectivePercent - tolerance) / 2);
@@ -7288,6 +8701,24 @@ function resetGameState() {
         { id: "start_house_2", type: "cottage", x: 2, y: 1, owner: "count", stage: "complete", condition: 100, priority: "normal" },
         { id: "start_house_3", type: "cottage", x: 3, y: 0, owner: "count", stage: "complete", condition: 100, priority: "normal" },
         { id: "start_tenement", type: "tenement", x: 1, y: 1, owner: "count", stage: "complete", condition: 100, priority: "normal" }, // Palazzina
+        // Cottage aggiuntivi per raggiungere 220 capacità
+        { id: "start_house_4", type: "cottage", x: 4, y: 0, owner: "count", stage: "complete", condition: 100, priority: "normal" },
+        { id: "start_house_5", type: "cottage", x: 4, y: 1, owner: "count", stage: "complete", condition: 100, priority: "normal" },
+        { id: "start_house_6", type: "cottage", x: 5, y: 0, owner: "count", stage: "complete", condition: 100, priority: "normal" },
+        { id: "start_house_7", type: "cottage", x: 5, y: 1, owner: "count", stage: "complete", condition: 100, priority: "normal" },
+        { id: "start_house_8", type: "cottage", x: 6, y: 0, owner: "count", stage: "complete", condition: 100, priority: "normal" },
+        { id: "start_house_9", type: "cottage", x: 6, y: 1, owner: "count", stage: "complete", condition: 100, priority: "normal" },
+        { id: "start_house_10", type: "cottage", x: 7, y: 0, owner: "count", stage: "complete", condition: 100, priority: "normal" },
+        { id: "start_house_11", type: "cottage", x: 7, y: 1, owner: "count", stage: "complete", condition: 100, priority: "normal" },
+        { id: "start_house_12", type: "cottage", x: 8, y: 0, owner: "count", stage: "complete", condition: 100, priority: "normal" },
+        { id: "start_house_13", type: "cottage", x: 8, y: 1, owner: "count", stage: "complete", condition: 100, priority: "normal" },
+        { id: "start_house_14", type: "cottage", x: 9, y: 0, owner: "count", stage: "complete", condition: 100, priority: "normal" },
+        { id: "start_house_15", type: "cottage", x: 9, y: 1, owner: "count", stage: "complete", condition: 100, priority: "normal" },
+        { id: "start_house_16", type: "cottage", x: 10, y: 0, owner: "count", stage: "complete", condition: 100, priority: "normal" },
+        { id: "start_house_17", type: "cottage", x: 10, y: 1, owner: "count", stage: "complete", condition: 100, priority: "normal" },
+        { id: "start_house_18", type: "cottage", x: 11, y: 0, owner: "count", stage: "complete", condition: 100, priority: "normal" },
+        { id: "start_house_19", type: "cottage", x: 11, y: 1, owner: "count", stage: "complete", condition: 100, priority: "normal" },
+        { id: "start_house_20", type: "cottage", x: 12, y: 0, owner: "count", stage: "complete", condition: 100, priority: "normal" },
 
         // Servizi
         { id: "start_well", type: "village_well", x: 1, y: 2, owner: "count", stage: "complete", condition: 100, priority: "normal" },
@@ -7470,228 +8901,6 @@ function assignInitialStructures() {
 function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
 function clamp(v){ return Math.max(0, Math.min(100,v)); }
 
-/* ============================================================
-/* ============================================================
-// Colori e stili medievali
-const MAP_STYLES = {
-    water: "#a3c6d4",
-    waterDeep: "#8ab0c0",
-    grass: "#d6e4aa",
-    forest: "#8fb376",
-    forestDark: "#6d9158",
-    mountain: "#cfcfc4",
-    mountainShadow: "#a0a0a0",
-    swamp: "#8d9678",
-    hills: "#e0d8a6",
-    paper: "#f4ecd8",
-    ink: "#3e2723"
-};
-
-function drawCountyMap() {
-    const canvas = document.getElementById("county-map");
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    const tileSize = canvas.width / worldMap.width;
-
-    // Sfondo base (Pergamena)
-    ctx.fillStyle = MAP_STYLES.paper;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Disegna ogni casella (Tile)
-    for (let y = 0; y < worldMap.height; y++) {
-        for (let x = 0; x < worldMap.width; x++) {
-            const tile = getTile(x, y);
-            if (!tile) continue;
-            drawTileVisuals(ctx, x * tileSize, y * tileSize, tileSize, tile);
-        }
-    }
-
-    // Disegna bordi di proprietà terriera
-    drawOwnershipBorders(ctx, tileSize);
-
-    // Disegna griglia leggera (opzionale, per chiarezza)
-    ctx.strokeStyle = "rgba(0,0,0,0.05)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    for (let i = 0; i <= worldMap.width; i++) {
-        ctx.moveTo(i * tileSize, 0); ctx.lineTo(i * tileSize, canvas.height);
-        ctx.moveTo(0, i * tileSize); ctx.lineTo(canvas.width, i * tileSize);
-    }
-    ctx.stroke();
-
-    // Disegna Insediamenti e Strutture
-    drawSettlements(ctx, tileSize);
-    drawStructureMarkers(ctx, tileSize);
-    drawStructureLabels(ctx, tileSize);
-    
-    // Effetto vignettatura (ombra ai bordi)
-    drawVignette(ctx, canvas.width, canvas.height);
-}
-
-function drawOwnershipBorders(ctx, size) {
-    const ownershipColors = {
-        count: "rgba(212, 175, 55, 0.8)",  // Oro
-        nobility: "rgba(150, 50, 50, 0.8)", // Rosso scuro
-        clergy: "rgba(100, 100, 200, 0.8)", // Blu
-        commons: "rgba(100, 150, 100, 0.8)" // Verde
-    };
-
-    for (let y = 0; y < worldMap.height; y++) {
-        for (let x = 0; x < worldMap.width; x++) {
-            const tile = getTile(x, y);
-            if (!tile || !tile.owner || tile.owner === 'wild') continue;
-
-            const px = x * size;
-            const py = y * size;
-
-            // Controlla se i vicini hanno proprietari diversi
-            const neighbors = [
-                {dx: 0, dy: -1}, {dx: 1, dy: 0}, {dx: 0, dy: 1}, {dx: -1, dy: 0}
-            ];
-
-            neighbors.forEach(n => {
-                const nx = x + n.dx;
-                const ny = y + n.dy;
-                const nTile = getTile(nx, ny);
-                if (nTile && nTile.owner !== tile.owner) {
-                    ctx.strokeStyle = ownershipColors[tile.owner] || "rgba(0,0,0,0.5)";
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    if (n.dx === 0 && n.dy === -1) { // Sopra
-                        ctx.moveTo(px, py); ctx.lineTo(px + size, py);
-                    } else if (n.dx === 1 && n.dy === 0) { // Destra
-                        ctx.moveTo(px + size, py); ctx.lineTo(px + size, py + size);
-                    } else if (n.dx === 0 && n.dy === 1) { // Sotto
-                        ctx.moveTo(px, py + size); ctx.lineTo(px + size, py + size);
-                    } else if (n.dx === -1 && n.dy === 0) { // Sinistra
-                        ctx.moveTo(px, py); ctx.lineTo(px, py + size);
-                    }
-                    ctx.stroke();
-                }
-            });
-        }
-    }
-}
-
-function drawStructureLabels(ctx, size) {
-    structures.mines.forEach(s => drawLabel(ctx, s, size, "Miniera", "#555"));
-    structures.sawmills.forEach(s => drawLabel(ctx, s, size, "Segheria", "#4caf50"));
-    structures.quarries.forEach(s => drawLabel(ctx, s, size, "Cava", "#795548"));
-    structures.monasteries.forEach(s => drawLabel(ctx, s, size, "Monastero", "#9c27b0"));
-    
-    buildings.forEach(b => {
-        if (b.stage === 'complete') {
-            const label = buildingData[b.type]?.name || b.type;
-            drawLabel(ctx, b, size, label, "#2196f3");
-        }
-    });
-}
-
-function drawLabel(ctx, s, size, label, color) {
-    const x = s.x * size + size / 2;
-    const y = s.y * size + size / 2 - 15; // Sopra l'icona
-
-    ctx.fillStyle = "rgba(0,0,0,0.7)";
-    ctx.fillRect(x - 20, y - 10, 40, 15);
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1;
-    ctx.strokeRect(x - 20, y - 10, 40, 15);
-
-    ctx.fillStyle = "#fff";
-    ctx.font = "8px Arial";
-    ctx.textAlign = "center";
-    ctx.fillText(label, x, y + 2);
-}
-
-// Commentata per duplicazione
-// function drawRegionMap() {
-//     const canvas = document.getElementById("region-map");
-//     if (!canvas) return;
-//     const ctx = canvas.getContext("2d");
-//     const size = canvas.width / 8;
-
-//     // Sfondo carta antica
-//     ctx.fillStyle = "#e3d5b8"; 
-//     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-//     // Disegna territori
-//     for (let y = 0; y < 8; y++) {
-//         for (let x = 0; x < 8; x++) {
-//             let owner = "wild";
-//             // Logica semplice per proprietari (uguale a prima ma con colori nuovi)
-//             if (y < 2) owner = "auvrey";
-//             else if (x > 5 && y > 5) owner = "falken";
-//             else if (rand(0,10) > 4) owner = "count";
-
-//             const px = x * size;
-//             const py = y * size;
-
-//             // Disegna solo bordi colorati e leggero riempimento per effetto mappa politica
-//             ctx.fillStyle = getRegionColor(owner, 0.3);
-//             ctx.fillRect(px, py, size, size);
-            
-//             ctx.strokeStyle = getRegionColor(owner, 0.8);
-//             ctx.lineWidth = 1;
-//             ctx.strokeRect(px, py, size, size);
-            
-//             // Disegna un simbolo per il proprietario
-//             if (Math.random() > 0.7 && owner !== 'wild') {
-//                 ctx.font = "16px serif";
-//                 ctx.textAlign = "center";
-//                 ctx.fillStyle = "rgba(0,0,0,0.3)";
-//                 const symbol = owner === 'count' ? '⚜️' : (owner === 'auvrey' ? '🦁' : '🦅');
-//                 ctx.fillText(symbol, px + size/2, py + size/2 + 5);
-//             }
-//         }
-//     }
-    
-//     drawNeighborPins(ctx);
-//     drawVignette(ctx, canvas.width, canvas.height);
-// }
-
-function getRegionColor(owner, alpha) {
-    const map = {
-        count: `rgba(212, 175, 55, ${alpha})`,  // Oro
-        auvrey: `rgba(180, 40, 40, ${alpha})`,  // Rosso scuro
-        falken: `rgba(20, 60, 120, ${alpha})`,  // Blu scuro
-        wild: `rgba(100, 100, 100, ${alpha})`   // Grigio neutro
-    };
-    return map[owner] || map.wild;
-}
-
-function drawNeighborPins(ctx) {
-    const canvas = ctx.canvas;
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = canvas.width * 0.35;
-
-    neighboringCounties.forEach((c, idx) => {
-        const angle = (idx / neighboringCounties.length) * Math.PI * 2;
-        const x = centerX + Math.cos(angle) * radius;
-        const y = centerY + Math.sin(angle) * radius;
-
-        ctx.beginPath();
-        ctx.fillStyle = getRegionColor(c.key, 1);
-        ctx.arc(x, y, 12, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = "#3e2723";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        ctx.fillStyle = "#fff";
-        ctx.font = "10px Georgia";
-        ctx.textAlign = "center";
-        ctx.fillText(c.name.split(" ")[0], x, y + 3);
-    });
-}
-
-// Riusa drawNeighborPins esistente ma migliora lo stile dei pin se vuoi
-// ... (Il resto delle funzioni ausiliarie come rand() rimane invariato)
-
-/* ============================================================
-   ===================== STRUTTURE DI BASE =====================
-   ============================================================ */
-
 function createEmptyStructures() {
     return {
         mines: [],
@@ -7723,371 +8932,196 @@ let buildings = [];  // Lista edifici in costruzione
 let laborEfficiency = {}; // Mappa globale efficienza per tipo edificio
 
 const buildingData = {
-    // --- SETTORE PRIMARIO (Estrazione) ---
-    // Non hanno input, producono e basta in base alla fertilità/risorse naturali
+    // --- MATERIE PRIME (Tier 1) ---
     wheat_farm: {
         name: "Fattoria di Grano",
-        desc: "Produce grano grezzo.",
+        desc: "Coltiva il grano base per il pane. Essenziale per non morire di fame.",
         cost: { gold: 50, wood: 20 },
         time: 3,
-        staff: { type: 'peasants', amount: 10 }, // Bassa qualifica
-        recipe: { output: { grain: 20 } }
+        upkeep: 2, // Costo oro per turno
+        staff: { type: 'peasants', amount: 10 },
+        recipe: { output: { grain: 25 } } // Produce 25 Grano
     },
     sheep_farm: {
         name: "Allevamento Ovini",
-        desc: "Produce lana grezza.",
+        desc: "Produce lana per i vestiti e un po' di carne.",
         cost: { gold: 60, wood: 30 },
         time: 3,
+        upkeep: 3,
         staff: { type: 'peasants', amount: 8 },
         recipe: { output: { wool: 15, livestock: 2 } }
     },
-
-    // --- SETTORE SECONDARIO (Trasformazione Base) ---
-    mill: {
-        name: "Mulino a Vento",
-        desc: "Macina il grano in farina.",
-        cost: { gold: 100, wood: 50, stone: 20 },
-        time: 4,
-        staff: { type: 'peasants', amount: 5 }, // Richiede pochi ma costanti
-        recipe: { 
-            input: { grain: 10 }, 
-            output: { flour: 12 } // Resa leggermente superiore per valore
-        }
-    },
-    weaver: {
-        name: "Filanda",
-        desc: "Tesse la lana grezza in tessuti.",
-        cost: { gold: 150, wood: 60 },
-        time: 5,
-        staff: { type: 'burghers', amount: 8 }, // Richiede artigiani (Borghesi)
-        minLiteracy: 15, // Richiede un minimo di istruzione per i telai
-        recipe: { 
-            input: { wool: 10 }, 
-            output: { fabric: 8 } 
-        }
-    },
-
-    // --- SETTORE TERZIARIO (Prodotti Finiti) ---
-    bakery: {
-        name: "Forno Comunale",
-        desc: "Cuoce il pane per il popolo.",
-        cost: { gold: 80, stone: 40 },
-        time: 3,
-        staff: { type: 'burghers', amount: 4 },
-        recipe: { 
-            input: { flour: 5, wood: 2 }, // Consuma anche legna per il forno!
-            output: { bread: 20 } 
-        }
-    },
-    tailor: {
-        name: "Sartoria",
-        desc: "Confeziona abiti finiti.",
-        cost: { gold: 200, wood: 50, stone: 10 },
+    iron_mine: {
+        name: "Miniera di Ferro",
+        desc: "Estrae ferro grezzo. Richiede molto legno per puntellare i tunnel.",
+        cost: { gold: 140, wood: 40, stone: 80 },
         time: 6,
-        staff: { type: 'burghers', amount: 6 },
-        minLiteracy: 30, // Alta qualifica
-        recipe: { 
-            input: { fabric: 5 }, 
-            output: { clothes: 5 } 
-        }
-    },
-    tool_smith: {
-        name: "Fabbro Utensili",
-        desc: "Crea attrezzi per migliorare il lavoro.",
-        cost: { gold: 150, iron: 20, stone: 50 },
-        time: 5,
-        staff: { type: 'burghers', amount: 5 },
-        recipe: { 
-            input: { iron: 5, wood: 5 }, 
-            output: { tools: 5 } 
-        }
-    },
-    wheat_field: {
-        name: "Campi di Grano Estesi",
-        desc: "Bonifica terre per nuove coltivazioni intensive.",
-        effect: "Grano (produzione auto), Cibo ++",
-        cost: { gold: 50, wood: 10 },
-        time: 3,
-        upkeep: 2
-    },
-    dairy_farm: {
-        name: "Fattoria e Caseificio",
-        desc: "Allevamento bovino per carne e formaggi.",
-        effect: "Bestiame (produzione auto), Cibo +",
-        cost: { gold: 80, wood: 40 },
-        time: 3,
-        upkeep: 3
-    },
-    granary: {
-        name: "Granaio Fortificato",
-        desc: "Protegge i raccolti da parassiti e ladri.",
-        effect: "Sicurezza +, Riserve Cibo protette",
-        cost: { gold: 100, wood: 80, stone: 40 },
-        time: 4,
-        upkeep: 5
-    },
-
-    // --- ECONOMIA & INDUSTRIA ---
-    market: {
-        name: "Mercato Cittadino",
-        desc: "Il cuore del commercio locale.",
-        effect: "Felicità ++, Oro +, Mercanti ++",
-        cost: { gold: 100, wood: 50 },
-        time: 3,
-        upkeep: 8
-    },
-    harbor: {
-        name: "Porto Commerciale",
-        desc: "Apre rotte marittime per l'export.",
-        effect: "Oro ++, Mercanti +++, Nobiltà +",
-        cost: { gold: 300, wood: 60, stone: 80 },
-        time: 6,
-        upkeep: 25
-    },
-    sawmill: {
-        name: "Segheria Reale",
-        desc: "Impianto idraulico per il taglio del legname.",
-        effect: "Legno (produzione auto)",
-        cost: { gold: 90, wood: 60, stone: 30 },
-        time: 4,
-        upkeep: 5,
-        isStructure: true,
+        upkeep: 10,
+        resourceUpkeep: { wood: 2 }, // CONSUMA LEGNO OGNI TURNO PER FUNZIONARE
         staff: { type: 'peasants', amount: 15 },
-        minLiteracy: 0
+        recipe: { output: { iron: 12 } }
     },
     stone_quarry: {
         name: "Cava di Pietra",
-        desc: "Estrazione intensiva di materiali da costruzione.",
-        effect: "Pietra (produzione auto)",
-        cost: { gold: 85, wood: 40, stone: 40 },
+        desc: "Taglia blocchi di pietra per le costruzioni avanzate.",
+        cost: { gold: 85, wood: 40 },
+        time: 5,
+        upkeep: 5,
+        resourceUpkeep: { iron: 1 }, // Consuma attrezzi (ferro)
+        staff: { type: 'peasants', amount: 12 },
+        recipe: { output: { stone: 10 } }
+    },
+    sawmill: {
+        name: "Segheria",
+        desc: "Taglia i tronchi delle foreste circostanti.",
+        cost: { gold: 90, stone: 30 },
+        time: 4,
+        upkeep: 4,
+        staff: { type: 'peasants', amount: 10 },
+        recipe: { output: { wood: 15 } }
+    },
+
+    // --- TRASFORMAZIONE (Tier 2) ---
+    mill: {
+        name: "Mulino a Vento",
+        desc: "Converte il Grano in Farina. Senza di questo il pane non si fa.",
+        cost: { gold: 100, wood: 50, stone: 20 },
+        time: 4,
+        upkeep: 5,
+        staff: { type: 'peasants', amount: 5 },
+        recipe: { input: { grain: 10 }, output: { flour: 12 } }
+    },
+    weaver: {
+        name: "Filanda",
+        desc: "Trasforma la Lana grezza in Tessuti utilizzabili.",
+        cost: { gold: 150, wood: 60 },
         time: 5,
         upkeep: 8,
-        isStructure: true,
-        staff: { type: 'peasants', amount: 20 },
-        minLiteracy: 0
-    },
-    monastery: {
-        name: "Monastero Antico",
-        desc: "Centro spirituale e di apprendimento.",
-        effect: "Fede ++, Istruzione +",
-        cost: { gold: 120, stone: 60, wood: 40 },
-        time: 6,
-        upkeep: 12,
-        isStructure: true,
-        staff: { type: 'clergy', amount: 8 },
-        minLiteracy: 0
-    },
-    iron_mine: {
-        name: "Miniera di Ferro",
-        desc: "Tunnel profondi per l'estrazione di metalli.",
-        effect: "Ferro (produzione auto)",
-        cost: { gold: 140, wood: 40, stone: 80, iron: 20 },
-        time: 6,
-        upkeep: 15,
-        isStructure: true,
-        staff: { type: 'peasants', amount: 30 },
-        minLiteracy: 0
-    },
-    mint: {
-        name: "Zecca Ducale",
-        desc: "Conia moneta sovrana.",
-        effect: "Oro (rendita fissa), Mercanti +",
-        cost: { gold: 100, stone: 60, iron: 15 },
-        time: 5,
-        upkeep: 20
-    },
-
-    // --- MILITARE & SICUREZZA ---
-    watchtower: {
-        name: "Torre di Guardia",
-        desc: "Avvista nemici e banditi da lontano.",
-        effect: "Sicurezza ++, Aggressività Vicini --",
-        cost: { gold: 120, stone: 70, wood: 20 },
-        time: 4,
-        upkeep: 10,
-        staff: { type: 'militia', amount: 5 }
-    },
-    barracks: {
-        name: "Caserma della Guardia",
-        desc: "Alloggi permanenti per la milizia cittadina.",
-        effect: "Sicurezza +++, Milizia ++",
-        cost: { gold: 120, wood: 50, stone: 70, iron: 15 },
-        time: 5,
-        upkeep: 30
-    },
-    mercenary_camp: {
-        name: "Accampamento Mercenario",
-        desc: "Soldati di ventura a pagamento.",
-        effect: "Milizia ++, Clero --, Oro - (mantenimento)",
-        cost: { gold: 150, wood: 40, stone: 20 },
-        time: 3,
-        upkeep: 50
+        staff: { type: 'burghers', amount: 8 },
+        recipe: { input: { wool: 8 }, output: { fabric: 8 } }
     },
     forge: {
-        name: "Forgia Militare",
-        desc: "Converte Ferro e Carbone (Legno) in Armi e Armature.",
-        effect: "Produzione Armi, Milizia ++",
-        cost: { gold: 200, wood: 80, stone: 120, iron: 40 },
+        name: "Forgia",
+        desc: "Fonde il Ferro grezzo in Lingotti e Armi.",
+        cost: { gold: 200, wood: 80, stone: 120 },
         time: 5,
-        upkeep: 15,
-        productionInput: { iron: 5, wood: 5 }, // Costo conversione
-        productionOutput: { weapons: 3, armor: 1 } // Output
-    },
-    stone_walls: {
-        name: "Mura di Cinta",
-        desc: "Una possente difesa contro gli eserciti invasori.",
-        effect: "Sicurezza ++++, Nobiltà +, Prestigio",
-        cost: { gold: 500, stone: 400, wood: 50 },
-        time: 8,
-        upkeep: 15
+        upkeep: 12,
+        resourceUpkeep: { wood: 5 }, // Carbone per il fuoco
+        staff: { type: 'burghers', amount: 6 },
+        recipe: { input: { iron: 6 }, output: { iron_ingots: 5, weapons: 1 } }
     },
 
-    // --- FEDE & CULTURA ---
-    chapel: {
-        name: "Cappella Votiva",
-        desc: "Un piccolo luogo di preghiera per il popolo.",
-        effect: "Clero +, Felicità +",
-        cost: { gold: 60, stone: 20, wood: 30 },
+    // --- PRODOTTI FINITI (Tier 3) ---
+    bakery: {
+        name: "Forno Comunale",
+        desc: "Usa Farina e Legna per sfornare Pane per la popolazione.",
+        cost: { gold: 80, stone: 40 },
         time: 3,
-        upkeep: 5
+        upkeep: 5,
+        staff: { type: 'burghers', amount: 4 },
+        recipe: { input: { flour: 5, wood: 2 }, output: { bread: 20 } }
+    },
+    tailor: {
+        name: "Sartoria",
+        desc: "Crea Vestiti dai Tessuti. Aumenta felicità e salute in inverno.",
+        cost: { gold: 200, wood: 50 },
+        time: 6,
+        upkeep: 10,
+        staff: { type: 'burghers', amount: 5 },
+        recipe: { input: { fabric: 4 }, output: { clothes: 5 } }
+    },
+
+    // --- SERVIZI E SPECIALI ---
+    market: {
+        name: "Mercato",
+        desc: "Genera Oro passivo basato sulla popolazione.",
+        cost: { gold: 100, wood: 50 },
+        time: 3,
+        upkeep: 5, // Tasse di gestione
+        staff: { type: 'merchants', amount: 5 },
+        recipe: { output: { gold: 15 } } // Genera oro direttamente
+    },
+    barracks: {
+        name: "Caserma",
+        desc: "Ospita soldati. Consuma Cibo e Ferro per mantenere la Sicurezza.",
+        cost: { gold: 120, stone: 70 },
+        time: 5,
+        upkeep: 20,
+        resourceUpkeep: { bread: 5, weapons: 1 }, // Mantenimento truppe
+        staff: { type: 'militia', amount: 10 },
+        effect: "Sicurezza ++"
     },
     church: {
-        name: "Chiesa Parrocchiale",
-        desc: "Il centro della vita spirituale della comunità.",
-        effect: "Clero ++, Felicità ++, Salute +",
-        cost: { gold: 250, stone: 150, wood: 60, luxuries: 10 },
+        name: "Chiesa",
+        desc: "Produce Fede (Erbe/Arcano) e Felicità, consuma Candele (Lana/Grasso).",
+        cost: { gold: 250, stone: 150 },
         time: 6,
-        upkeep: 5
-    },
-    grand_cathedral: {
-        name: "Grande Cattedrale",
-        desc: "Un'opera monumentale che attira pellegrini.",
-        effect: "Clero ++++, Prestigio Reale, Oro (offerte)",
-        cost: { gold: 1200, stone: 800, wood: 200, iron: 50, luxuries: 50 },
-        time: 12,
-        upkeep: 60
-    },
-    monk_clinic: {
-        name: "Clinica dei Monaci",
-        desc: "Erbe e cure per i malati.",
-        effect: "Salute +++, Clero ++",
-        cost: { gold: 80, wood: 30, herbs: 10 },
-        time: 3,
-        upkeep: 5
-    },
-
-    // --- ISTRUZIONE & PRESTIGIO ---
-    school: {
-        name: "Scuola degli Scribi",
-        desc: "Insegna a leggere e far di conto ai figli dei borghesi.",
-        effect: "Artigiani ++, Mistici +, Efficienza tasse",
-        cost: { gold: 180, wood: 100, stone: 20 },
-        time: 5,
         upkeep: 10,
         staff: { type: 'clergy', amount: 5 },
-        isEducational: true
+        recipe: { input: { gold: 5 }, output: { herbs: 3, happy: 2 } } // Le offerte generano benefici
     },
-    library: {
-        name: "Biblioteca del Conte",
-        desc: "Raccoglie sapere antico e mappe rare.",
-        effect: "Mistici +++, Consigli migliori",
-        cost: { gold: 400, stone: 100, wood: 100, arcane: 10 },
-        time: 7,
-        upkeep: 20
-    },
-    theater: {
-        name: "Teatro all'Aperto",
-        desc: "Svago e cultura per tutte le classi sociali.",
-        effect: "Felicità +++, Nobiltà +, Popolo +",
-        cost: { gold: 250, wood: 150, stone: 50 },
-        time: 5,
-        upkeep: 15
-    },
-
-    // --- ABITAZIONI & ESPANSIONE ---
     cottage: {
-        name: "Casupola",
-        desc: "Alloggio base per contadini e lavoratori.",
-        effect: "Capacità +50, Contadini +",
-        housing: 50, // Nuova proprietà: posti letto
-        cost: { gold: 20, wood: 25 },
+        name: "Cottage",
+        desc: "Aumenta la capacità abitativa (+10 pop).",
+        housing: 10,
+        housingClass: 'peasants',
+        cost: { gold: 30, wood: 20 },
         time: 2,
-        upkeep: 2
+        upkeep: 1,
+        effect: "Popolazione Max +"
     },
     tenement: {
-        name: "Palazzina Urbana",
-        desc: "Alloggi densi per la borghesia e artigiani.",
-        effect: "Capacità +150, Rischio malattie leggero",
-        housing: 150,
-        cost: { gold: 80, wood: 60, stone: 30 },
-        time: 4,
-        upkeep: 5
-    },
-    noble_estate: {
-        name: "Tenuta Nobile",
-        desc: "Lussuose dimore per attirare l'aristocrazia.",
-        effect: "Capacità +20 (Nobili), Nobiltà ++, Prestigio",
+        name: "Palazzina",
+        desc: "Abitazione più grande per famiglie contadine.",
         housing: 20,
-        cost: { gold: 300, stone: 100, luxuries: 20 },
-        time: 6,
-        upkeep: 0,
-        staff: { type: 'peasants', amount: 10 }
-    },
-    
-    // --- NUOVI EDIFICI ---
-    cotton_plantation: {
-        name: "Piantagione di Cotone",
-        desc: "Coltivazione intensiva per la produzione tessile.",
-        effect: "Cotone (produzione auto)",
-        cost: { gold: 60, wood: 20 },
+        housingClass: 'peasants',
+        cost: { gold: 60, wood: 40 },
         time: 3,
-        upkeep: 5,
-        staff: { type: 'peasants', amount: 40 }, // Richiede 40 contadini
-        minLiteracy: 0
+        upkeep: 2,
+        effect: "Popolazione Max +"
     },
-    textile_factory: {
-        name: "Manifattura Tessile",
-        desc: "Trasforma il cotone grezzo in tessuti pregiati.",
-        effect: "Converte Cotone in Tessuti (Alto valore)",
-        cost: { gold: 200, wood: 80, stone: 40, iron: 10 },
-        time: 6,
-        upkeep: 15,
-        staff: { type: 'burghers', amount: 20 }, // Richiede artigiani (Borghesi)
-        minLiteracy: 30, // Richiede istruzione minima
-        productionInput: { cotton: 5 },
-        productionOutput: { textiles: 8 }
-    },
-    school: {
-        name: "Scuola Comunale",
-        desc: "Aumenta l'alfabetizzazione della popolazione locale.",
-        effect: "Istruzione ++, Mobilità Sociale",
-        cost: { gold: 150, wood: 100, stone: 20 },
+    townhouse: {
+        name: "Casa Cittadina",
+        desc: "Abitazione confortevole per artigiani e mercanti.",
+        housing: 15,
+        housingClass: 'burghers',
+        cost: { gold: 150, wood: 80, stone: 50 },
         time: 5,
-        upkeep: 10,
-        staff: { type: 'clergy', amount: 5 }, // Richiede Clero come insegnanti
-        isEducational: true
-    },
-    local_shop: {
-        name: "Bottega Generale",
-        desc: "Distribuisce beni e aumenta la velocità del denaro.",
-        effect: "Oro ++, Felicità +",
-        cost: { gold: 80, wood: 40 },
-        time: 3,
         upkeep: 5,
-        staff: { type: 'burghers', amount: 5 },
-        minLiteracy: 20
+        effect: "Popolazione Max +"
     },
-    
-    // ... (altri edifici come Scuole e Case rimangono invariati) ...
-    sawmill: {
-        name: "Segheria Reale",
-        desc: "Impianto idraulico per il taglio del legname.",
-        effect: "Legno (produzione auto)",
-        cost: { gold: 90, wood: 60, stone: 30 },
+    manor: {
+        name: "Maniero",
+        desc: "Residenza signorile per la nobiltà.",
+        housing: 10,
+        housingClass: 'nobility',
+        cost: { gold: 400, wood: 200, stone: 150 },
+        time: 8,
+        upkeep: 15,
+        effect: "Popolazione Max +"
+    },
+    // Edifici privati per fazioni
+    private_manor: {
+        name: "Maniero Privato",
+        desc: "Residenza privata costruita dalla nobiltà con risorse proprie.",
+        housing: 8,
+        housingClass: 'nobility',
+        owner: 'nobility',
+        cost: { gold: 300, wood: 150, stone: 100 },
+        time: 6,
+        upkeep: 10,
+        effect: "Popolazione Max + (Privato)"
+    },
+    private_shop: {
+        name: "Negozio Privato",
+        desc: "Bottega commerciale costruita dai mercanti con risorse proprie.",
+        housing: 5,
+        housingClass: 'merchants',
+        owner: 'merchants',
+        cost: { gold: 200, wood: 50, stone: 30 },
         time: 4,
         upkeep: 5,
-        staff: { type: 'peasants', amount: 15 }, // Richiede manodopera
-        isStructure: true
+        effect: "Ricchezza Mercantile + (Privato)"
     }
 };
 
@@ -8146,11 +9180,19 @@ function calculateSeasonalBudget() {
     // Stipendi Milizia (pagati dalla contea)
     const militiaWages = Math.floor((populationGroups.militia?.count || 0) * 1.2);
     
+    // Upkeep Edifici
+    let upkeepBuildings = 0;
+    buildings.filter(b => b.stage === 'complete').forEach(b => {
+        const data = buildingData[b.type];
+        if (data && data.upkeep) upkeepBuildings += data.upkeep;
+    });
+    
     const expenses = {
         upkeep_military: upkeep.military + militiaWages,
         upkeep_civil: upkeep.civil,
         upkeep_court: upkeep.court,
         upkeep_infrastructure: upkeep.infrastructure,
+        upkeep_buildings: upkeepBuildings,
         welfare_laws: lawCostGold,
         import_costs: Math.floor(seasonalTransactions.marketPurchases || 0)
     };
@@ -8299,70 +9341,74 @@ function processProductionChains(targetState = null) {
     const resourceBag = stateRef.resources;
     const report = { produced: {}, consumed: {}, shortages: [] };
 
-    // Ordine di esecuzione: Prima le materie prime, poi i trasformati
-    // (Per permettere al mulino di usare il grano raccolto nello stesso turno)
-    const productionOrder = [
-        ['wheat_farm', 'sheep_farm', 'iron_mine', 'sawmill'], // Tier 1
+    // Ordine logico: Prima estrazione -> Poi trasformazione -> Poi prodotti finiti
+    const productionPriority = [
+        ['wheat_farm', 'sheep_farm', 'iron_mine', 'stone_quarry', 'sawmill'], // Tier 1
         ['mill', 'weaver', 'forge'], // Tier 2
-        ['bakery', 'tailor', 'tool_smith', 'textile_factory'] // Tier 3
+        ['bakery', 'tailor', 'church', 'market', 'barracks'] // Tier 3
     ];
 
-    // Appiattisci l'array per il loop, ma mantieni la logica concettuale
     const buildingsList = buildings.filter(b => b.stage === 'complete');
 
-    // Eseguiamo in 3 passaggi per simulare la catena nello stesso turno
-    productionOrder.forEach(tierGroup => {
-        
-        buildingsList.filter(b => tierGroup.includes(b.type)).forEach(building => {
+    productionPriority.forEach(group => {
+        buildingsList.filter(b => group.includes(b.type)).forEach(building => {
             const data = buildingData[building.type];
-            if (!data || !data.recipe) return;
+            if (!data) return;
 
-            // 1. Recupera Efficienza (calcolata dalla funzione Labor/Education precedente)
-            // Se non c'è staff, efficienza è 0. Se c'è sciopero, è 0.
-            let efficiency = building.currentEfficiency || 0;
+            let efficiency = building.currentEfficiency || 1.0; // 1.0 se non calcolato diversamente
             
-            if (efficiency <= 0) return; // Fabbrica ferma
-
-            // 2. Calcola Input necessari (Scalati per efficienza)
-            // Nota: Anche se lavorano al 50%, consumano il 50% delle risorse
-            let maxProductionRatio = efficiency; 
-
-            // Verifica disponibilità risorse Input
-            if (data.recipe.input) {
-                for (const [resKey, amount] of Object.entries(data.recipe.input)) {
-                    const needed = amount * efficiency;
-                    const available = resourceBag[resKey] || 0;
-                    
-                    if (available < needed) {
-                        // Collo di bottiglia! Riduciamo la produzione in base alle risorse disponibili
-                        const ratio = available / amount; // Quanto possiamo produrre realmente?
-                        maxProductionRatio = Math.min(maxProductionRatio, ratio);
-                        
-                        if (!report.shortages.includes(resKey)) report.shortages.push(resKey);
+            // 1. CONTROLLO MANTENIMENTO RISORSE (Resource Upkeep)
+            // Se l'edificio richiede risorse per funzionare (es. Legno per Miniera)
+            if (data.resourceUpkeep) {
+                for (const [res, amt] of Object.entries(data.resourceUpkeep)) {
+                    if ((resourceBag[res] || 0) < amt) {
+                        efficiency = 0; // L'edificio si ferma!
+                        if (!report.shortages.includes(res)) report.shortages.push(res);
+                    } else {
+                        resourceBag[res] -= amt; // Consuma risorsa mantenimento
+                        report.consumed[res] = (report.consumed[res] || 0) + amt;
                     }
                 }
             }
 
-            // Se non abbiamo risorse nemmeno per produrre un po', salta
-            if (maxProductionRatio <= 0.01) return;
+            if (efficiency <= 0) return; // Edificio fermo
 
-            // 3. Consuma Input
-            if (data.recipe.input) {
-                for (const [resKey, amount] of Object.entries(data.recipe.input)) {
-                    const realCost = amount * maxProductionRatio;
-                    resourceBag[resKey] -= realCost;
+            // 2. GESTIONE RICETTA (Recipe)
+            if (data.recipe) {
+                // A. Consumo Input (es. Grano -> Farina)
+                if (data.recipe.input) {
+                    for (const [res, amt] of Object.entries(data.recipe.input)) {
+                        const needed = Math.floor(amt * efficiency);
+                        if ((resourceBag[res] || 0) < needed) {
+                            efficiency = 0; // Manca materia prima
+                            if (!report.shortages.includes(res)) report.shortages.push(res);
+                        } 
+                    }
                     
-                    report.consumed[resKey] = (report.consumed[resKey] || 0) + realCost;
+                    // Se abbiamo tutto, consumiamo
+                    if (efficiency > 0) {
+                        for (const [res, amt] of Object.entries(data.recipe.input)) {
+                            const realCost = Math.floor(amt * efficiency);
+                            resourceBag[res] -= realCost;
+                            report.consumed[res] = (report.consumed[res] || 0) + realCost;
+                        }
+                    }
                 }
-            }
 
-            // 4. Genera Output
-            if (data.recipe.output) {
-                for (const [resKey, amount] of Object.entries(data.recipe.output)) {
-                    const realOutput = amount * maxProductionRatio;
-                    resourceBag[resKey] = (resourceBag[resKey] || 0) + realOutput;
-                    
-                    report.produced[resKey] = (report.produced[resKey] || 0) + realOutput;
+                // B. Generazione Output
+                if (efficiency > 0 && data.recipe.output) {
+                    for (const [res, amt] of Object.entries(data.recipe.output)) {
+                        const realOutput = Math.floor(amt * efficiency);
+                        
+                        // Gestione speciale per output non-risorse
+                        if (res === 'gold') stateRef.gold += realOutput;
+                        else if (res === 'happy') stateRef.happy = Math.min(100, stateRef.happy + realOutput);
+                        else if (res === 'security') stateRef.security = Math.min(100, stateRef.security + realOutput);
+                        else {
+                            resourceBag[res] = (resourceBag[res] || 0) + realOutput;
+                            report.produced[res] = (report.produced[res] || 0) + realOutput;
+                        }
+                    }
                 }
             }
         });
@@ -9107,22 +10153,23 @@ function simulateEconomyTurns(turns = 5) {
 function startBuilding(data) {
     const type = data.type;
     const name = buildingData[type].name;
+    const owner = buildingData[type].owner || null;
 
     // COSTI
     const cost = data.cost;
-    if (!hasResources(cost)) {
+    if (!hasResources(cost, owner)) {
         addMsg("ai", `❌ Mancano le risorse per costruire ${name}.`);
         return;
     }
 
-    payResources(cost);
+    payResources(cost, owner);
 
     buildings.push({
         id: crypto.randomUUID(),
         type: type,
         x: data.x,
         y: data.y,
-        owner: "count",
+        owner: owner || "count",
         turns_left: data.turns,
         condition: 100,
         stage: "building",
@@ -9132,30 +10179,48 @@ function startBuilding(data) {
     addMsg("ai", `🏗️ Avviata la costruzione di <b>${name}</b> in (${data.x}, ${data.y}). Sarà completata in ${data.turns} turni.`);
 }
 
-function hasResources(cost) {
+function hasResources(cost, owner = null) {
     for (let k in cost) {
         // Controllo Valuta
         if (k === 'gold' || k === 'oro') {
-            if ((county.gold || 0) < cost[k]) return false;
+            if (owner) {
+                if ((populationGroups[owner].privateGold || 0) < cost[k]) return false;
+            } else {
+                if ((county.gold || 0) < cost[k]) return false;
+            }
         } 
         // Controllo Materiali
         else {
-            if ((county.resources[k] || 0) < cost[k]) return false;
+            if (owner) {
+                if ((populationGroups[owner].privateResources[k] || 0) < cost[k]) return false;
+            } else {
+                if ((county.resources[k] || 0) < cost[k]) return false;
+            }
         }
     }
     return true;
 }
 
-function payResources(cost) {
+function payResources(cost, owner = null) {
     for (let k in cost) {
         // 1. GESTIONE DELL'ORO (assumendo sia la chiave 'gold' o 'oro' e sia in county.gold)
         if (k === 'gold' || k === 'oro') {
-            if (county.gold !== undefined) {
-                county.gold -= cost[k]; // Sottrae dal Tesoro separato
+            if (owner) {
+                if (populationGroups[owner].privateGold !== undefined) {
+                    populationGroups[owner].privateGold -= cost[k];
+                }
+            } else {
+                if (county.gold !== undefined) {
+                    county.gold -= cost[k]; // Sottrae dal Tesoro separato
+                }
             }
         } 
         // 2. GESTIONE DELLE ALTRE RISORSE (legno, pietra, etc.)
-        else if (county.resources[k] !== undefined) {
+        else if (owner) {
+            if (populationGroups[owner].privateResources[k] !== undefined) {
+                populationGroups[owner].privateResources[k] -= cost[k];
+            }
+        } else if (county.resources[k] !== undefined) {
             county.resources[k] -= cost[k]; // Sottrae dal contenitore generico
         }
     }
@@ -9374,6 +10439,24 @@ function applyBuildingEffects(b) {
             adjustPopulation("nobility", 20);
             factions.nobility += 10;
             county.happy = clamp(county.happy + 10);
+            break;
+            
+        // Edifici privati
+        case "private_manor":
+            // Aumenta ricchezza privata della nobiltà
+            populationGroups.nobility.privateGold += 20; // Bonus ricchezza privata
+            populationGroups.nobility.privateResources = normalizeResourceBag(populationGroups.nobility.privateResources);
+            populationGroups.nobility.privateResources.luxuries = (populationGroups.nobility.privateResources.luxuries || 0) + 5;
+            factions.nobility += 5; // Aumenta lealtà
+            addMsg("system", "🏰 Il maniero privato aumenta il prestigio e la ricchezza della nobiltà.");
+            break;
+        case "private_shop":
+            // Aumenta ricchezza privata dei mercanti
+            populationGroups.merchants.privateGold += 15;
+            populationGroups.merchants.privateResources = normalizeResourceBag(populationGroups.merchants.privateResources);
+            populationGroups.merchants.privateResources.textiles = (populationGroups.merchants.privateResources.textiles || 0) + 10;
+            factions.merchants += 5;
+            addMsg("system", "🛒 Il negozio privato incrementa i commerci e la ricchezza dei mercanti.");
             break;
             
         default:
@@ -9628,12 +10711,13 @@ function renderPopulationDetails() {
         const employed = data.employed || 0;
         const unemployed = Math.max(0, workforce - employed);
         const unempPct = workforce > 0 ? Math.round((unemployed / workforce) * 100) : 0;
+        const occPct = workforce > 0 ? Math.round((employed / workforce) * 100) : 0;
         
         // Colore stato occupazione
         let jobColor = "#6ada91";
         if (unempPct > 20) jobColor = "#ff9800"; // Disoccupazione media
         if (unempPct > 50) jobColor = "#f44336"; // Disoccupazione alta
-        if (employed >= workforce) jobColor = "#2196f3"; // Piena occupazione (Labor shortage)
+        if (workforce > 0 && employed >= workforce) jobColor = "#2196f3"; // Piena occupazione (Labor shortage)
 
         html += `
         <div class="social-class-card">
@@ -9652,7 +10736,7 @@ function renderPopulationDetails() {
                     </div>
                     <div style="display:flex; justify-content:space-between; color:${jobColor}">
                         <span>⚒️ Occ:</span>
-                        <span>${Math.floor((employed/workforce)*100)}%</span>
+                        <span>${workforce > 0 ? occPct + '%' : '—'}</span>
                     </div>
                     <div style="font-size:0.9em; text-align:right; opacity:0.7">
                         (${unemployed} in cerca)
@@ -9666,6 +10750,57 @@ function renderPopulationDetails() {
     grid.innerHTML = html;
 }
 
+function scrollDomainSection(targetId, btn) {
+    const el = document.getElementById(targetId);
+    if (!el) return;
+    const offset = 150;
+    const targetTop = el.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top: Math.max(0, targetTop), behavior: 'smooth' });
+    if (btn) {
+        document.querySelectorAll('.domain-quick-nav button').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected','true');
+    }
+}
+
+function updateDomainSummaryCards(capacity, stabilityValue) {
+    const occupancy = capacity > 0 ? Math.round((county.pop / capacity) * 100) : 0;
+    const foodValue = Math.round(county.food);
+    const happyValue = Math.round(county.happy);
+    const stabilityRounded = Math.round(stabilityValue);
+    const foodHintText = foodValue >= 70 ? 'Granai pieni' : foodValue >= 40 ? 'Monitorare scorte' : 'Razione critica';
+    const happyHintText = happyValue >= 70 ? 'Corte serena' : happyValue >= 45 ? 'Tensioni diffuse' : 'Malcontento';
+    const stabilityHintText = stabilityValue >= 70 ? 'Fazioni cooperative' : stabilityValue >= 45 ? 'Equilibrio fragile' : 'Rischio sommosse';
+
+    // Aggiorna la griglia panoramica (stat-card)
+    const statPopVal = document.getElementById('stat-pop-value');
+    if (statPopVal) { statPopVal.classList.add('pulse'); statPopVal.innerText = county.pop; setTimeout(()=>statPopVal.classList.remove('pulse'), 900); }
+    const statPopHint = document.getElementById('stat-pop-hint');
+    if (statPopHint) statPopHint.innerText = `Capacità ${capacity} (${occupancy}% occupate)`;
+    const statFoodVal = document.getElementById('stat-food-value');
+    if (statFoodVal) { statFoodVal.classList.add('pulse'); statFoodVal.innerText = `${foodValue}%`; setTimeout(()=>statFoodVal.classList.remove('pulse'), 900); }
+    const statFoodHint = document.getElementById('stat-food-hint');
+    if (statFoodHint) statFoodHint.innerText = foodHintText;
+    const statHappyVal = document.getElementById('stat-happy-value');
+    if (statHappyVal) { statHappyVal.classList.add('pulse'); statHappyVal.innerText = `${happyValue}%`; setTimeout(()=>statHappyVal.classList.remove('pulse'), 900); }
+    const statHappyHint = document.getElementById('stat-happy-hint');
+    if (statHappyHint) statHappyHint.innerText = happyHintText;
+    const statStabVal = document.getElementById('stat-stability-value');
+    if (statStabVal) { statStabVal.classList.add('pulse'); statStabVal.innerText = `${stabilityRounded}%`; setTimeout(()=>statStabVal.classList.remove('pulse'), 900); }
+    const statStabHint = document.getElementById('stat-stability-hint');
+    if (statStabHint) statStabHint.innerText = stabilityHintText;
+    const statGoldVal = document.getElementById('stat-gold-value');
+    if (statGoldVal) { statGoldVal.classList.add('pulse'); statGoldVal.innerText = fmtMoney(county.gold); setTimeout(()=>statGoldVal.classList.remove('pulse'), 900); }
+    const statSecVal = document.getElementById('stat-security-value');
+    if (statSecVal) { statSecVal.classList.add('pulse'); statSecVal.innerText = `${Math.round(county.security)}%`; setTimeout(()=>statSecVal.classList.remove('pulse'), 900); }
+    // Set visual status on overview grid (if present)
+    const setCardStatus = (id, s) => { const el = document.getElementById(id); if (!el) return; el.classList.remove('status-ok','status-warn','status-critical'); el.classList.add(s); };
+    setCardStatus('stat-pop', occupancy >= 100 ? 'status-critical' : occupancy >= 90 ? 'status-warn' : 'status-ok');
+    setCardStatus('stat-food', foodValue < 25 ? 'status-critical' : foodValue < 50 ? 'status-warn' : 'status-ok');
+    setCardStatus('stat-happy', happyValue < 35 ? 'status-critical' : happyValue < 55 ? 'status-warn' : 'status-ok');
+    setCardStatus('stat-stability', stabilityValue < 35 ? 'status-critical' : stabilityValue < 55 ? 'status-warn' : 'status-ok');
+}
+
 function updateUI() {
     ensureWorldSystems();
     const summary = updateIndustrySummary();
@@ -9677,10 +10812,13 @@ function updateUI() {
     const popColor = county.pop > capacity ? "#ff7c7c" : "#fff"; // Rosso se sovraffollato
     
     // Aggiorna il testo della popolazione indicando anche la capacità
-    document.getElementById("val-pop").innerHTML = `
-        <span style="color:${popColor}">${county.pop}</span> 
-        <span style="font-size:0.6em; color:#888;">/ ${capacity} cap.</span>
-    `;
+    const valPopEl = document.getElementById("val-pop");
+    if (valPopEl) {
+        valPopEl.innerHTML = `
+            <span style="color:${popColor}">${county.pop}</span> 
+            <span style="font-size:0.6em; color:#888;">/ ${capacity} cap.</span>
+        `;
+    }
     // Visual indicators for changes (pop, gold, food, health)
     (function(){
         const THRESH = 1; // minimum absolute change to show indicator
@@ -9718,20 +10856,27 @@ function updateUI() {
     
     // ... resto della funzione
 
-    document.getElementById("val-gold").innerText = fmtMoney(county.gold);
+    const valGoldEl = document.getElementById("val-gold");
+    if (valGoldEl) valGoldEl.innerText = fmtMoney(county.gold);
 
     updateBar("food", county.food);
     updateBar("health", county.health);
     updateBar("happy", county.happy);
-    updateBar("stability", calculateStability());
+    const stabilityValue = calculateStability();
+    updateBar("stability", stabilityValue);
 
-    document.getElementById("land-count").innerText = landOwnership.count;
-    document.getElementById("land-nobility").innerText = landOwnership.nobility;
-    document.getElementById("land-clergy").innerText = landOwnership.clergy;
-    document.getElementById("land-commons").innerText = landOwnership.commons;
+    const landCountEl = document.getElementById("land-count");
+    if (landCountEl) landCountEl.innerText = landOwnership.count;
+    const landNobilityEl = document.getElementById("land-nobility");
+    if (landNobilityEl) landNobilityEl.innerText = landOwnership.nobility;
+    const landClergyEl = document.getElementById("land-clergy");
+    if (landClergyEl) landClergyEl.innerText = landOwnership.clergy;
+    const landCommonsEl = document.getElementById("land-commons");
+    if (landCommonsEl) landCommonsEl.innerText = landOwnership.commons;
 
     // Aggiorna classi sociali con ricchezza dettagliata
     renderPopulationDetails();
+    updateDomainSummaryCards(capacity, stabilityValue);
 
     updateResourceUI();
     updateDiplomacyUI();
@@ -9745,11 +10890,16 @@ function updateUI() {
 
     // Update HUD stats
     const season = getSeason();
-    document.getElementById('hud-season').textContent = `${season.label} ${worldTime.year}`;
-    document.getElementById('hud-gold').textContent = county.gold;
-    document.getElementById('hud-pop').textContent = `${county.pop} / ${capacity}`;
-    document.getElementById('hud-happy').textContent = county.happy;
-    document.getElementById('hud-security').textContent = county.security;
+    const hudSeasonEl = document.getElementById('hud-season');
+    if (hudSeasonEl) hudSeasonEl.textContent = `${season.label} ${worldTime.year}`;
+    const hudGoldEl = document.getElementById('hud-gold');
+    if (hudGoldEl) hudGoldEl.textContent = county.gold;
+    const hudPopEl = document.getElementById('hud-pop');
+    if (hudPopEl) hudPopEl.textContent = `${county.pop} / ${capacity}`;
+    const hudHappyEl = document.getElementById('hud-happy');
+    if (hudHappyEl) hudHappyEl.textContent = county.happy;
+    const hudSecurityEl = document.getElementById('hud-security');
+    if (hudSecurityEl) hudSecurityEl.textContent = county.security;
 
     const turnTag = document.getElementById("chat-turn");
     if (turnTag) turnTag.innerText = `Turno ${county.turn}`;
@@ -9758,30 +10908,49 @@ function updateUI() {
     renderResourceStats();
     renderMarket();
     renderNeedsPanel();
+    
+    // Add real-time budget delta
+    const budgetDelta = detailedBudget.net;
+    const deltaEl = document.getElementById('hud-gold-delta');
+    if (deltaEl) {
+        deltaEl.textContent = (budgetDelta >= 0 ? '+' : '') + budgetDelta;
+        deltaEl.className = 'budget-delta ' + (budgetDelta >= 0 ? 'pos' : 'neg');
+    }
+    
+    // Render faction powers
+    renderFactionPowers();
 }
 
 function updateDiplomacyUI() {
     // Aggiorna Statistiche Militari
-    document.getElementById("mil-soldiers").innerText = populationGroups.militia.count;
-    document.getElementById("mil-levies").innerText = warState.leviesCount;
-    document.getElementById("mil-power").innerText = calculateMilitaryPower();
-    document.getElementById("mil-weapons").innerText = county.resources.weapons || 0;
+    const milSoldiersEl = document.getElementById("mil-soldiers");
+    if (milSoldiersEl) milSoldiersEl.innerText = populationGroups.militia.count;
+    const milLeviesEl = document.getElementById("mil-levies");
+    if (milLeviesEl) milLeviesEl.innerText = warState.leviesCount;
+    const milPowerEl = document.getElementById("mil-power");
+    if (milPowerEl) milPowerEl.innerText = calculateMilitaryPower();
+    const milWeaponsEl = document.getElementById("mil-weapons");
+    if (milWeaponsEl) milWeaponsEl.innerText = county.resources.weapons || 0;
     
     // Aggiorna Efficienza con colore
     const eff = getArmyEfficiency();
     let effColor = eff > 80 ? "#6ada91" : eff > 40 ? "#ff9800" : "#f44336";
     const effEl = document.getElementById("mil-efficiency");
-    effEl.innerText = eff + "%";
-    effEl.style.color = effColor;
+    if (effEl) {
+        effEl.innerText = eff + "%";
+        effEl.style.color = effColor;
+    }
     
     // Aggiorna testo pulsante
     const mobBtn = document.getElementById("btn-mobilize");
-    if (warState.mobilized) {
-        mobBtn.innerText = "🏳️ Sciogli la Leva (Torna ai campi)";
-        mobBtn.style.background = "#444";
-    } else {
-        mobBtn.innerText = "🔔 Chiama la Leva (Mobilita Contadini)";
-        mobBtn.style.background = "linear-gradient(120deg, #8b0000, #4a0000)";
+    if (mobBtn) {
+        if (warState.mobilized) {
+            mobBtn.innerText = "🏳️ Sciogli la Leva (Torna ai campi)";
+            mobBtn.style.background = "#444";
+        } else {
+            mobBtn.innerText = "🔔 Chiama la Leva (Mobilita Contadini)";
+            mobBtn.style.background = "linear-gradient(120deg, #8b0000, #4a0000)";
+        }
     }
 
     // Genera Card Diplomatiche
@@ -10396,8 +11565,8 @@ function fmtPctFrac(value) {
 function updateBar(id,val){
     const bar = document.getElementById(`bar-${id}`);
     const txt = document.getElementById(`txt-${id}`);
-    bar.style.width = val + "%";
-    txt.innerText = parseFloat(val).toFixed(2) + "%";
+    if (bar) bar.style.width = val + "%";
+    if (txt) txt.innerText = parseFloat(val).toFixed(2) + "%";
 }
 
 function renderNeedsPanel() {
@@ -13754,6 +14923,8 @@ function startGame() {
     advisor.name = advisorName || "Consigliere di Corte";
     advisor.personality = advisorTone || personalitySettings.advisorTone;
 
+    gameActive = true;
+
     // Genera tutto
     generateWorldMap();
     generateSettlements();
@@ -13779,6 +14950,8 @@ function startGame() {
     }
 
     autoSaveGame();
+
+    initMapInteraction();
 }
 
 function switchTab(id, btn){
@@ -13795,88 +14968,248 @@ function switchTab(id, btn){
 
 /* ================= GESTIONE MODULO EDIFICI ================= */
 
+function generateProductionChain(buildingKey) {
+    const b = buildingData[buildingKey];
+    if (!b || !b.recipe) return '';
+
+    let html = '<div class="production-chain">';
+
+    // Input section
+    if (b.recipe.input && Object.keys(b.recipe.input).length > 0) {
+        html += '<div class="chain-inputs">';
+        html += '<h5>Input:</h5>';
+        Object.entries(b.recipe.input).forEach(([res, amt]) => {
+            html += `<span class="chain-resource input">${resourceIcon(res)} ${amt}</span>`;
+        });
+        html += '</div>';
+        html += '<div class="chain-arrow">→</div>';
+    }
+
+    // Building
+    html += `<div class="chain-building">${b.name}</div>`;
+
+    // Output section
+    if (b.recipe.output && Object.keys(b.recipe.output).length > 0) {
+        html += '<div class="chain-arrow">→</div>';
+        html += '<div class="chain-outputs">';
+        html += '<h5>Output:</h5>';
+        Object.entries(b.recipe.output).forEach(([res, amt]) => {
+            html += `<span class="chain-resource output">${resourceIcon(res)} ${amt}</span>`;
+        });
+        html += '</div>';
+    }
+
+    // Upkeep section
+    if (b.upkeep || b.resourceUpkeep) {
+        html += '<div class="chain-upkeep">';
+        html += '<h5>💰 Manutenzione per Turno:</h5>';
+
+        if (b.upkeep && b.upkeep > 0) {
+            html += `<div class="upkeep-gold">💰 ${b.upkeep} oro</div>`;
+        }
+
+        if (b.resourceUpkeep && Object.keys(b.resourceUpkeep).length > 0) {
+            html += '<div class="upkeep-resources">';
+            Object.entries(b.resourceUpkeep).forEach(([res, amt]) => {
+                html += `<span class="chain-resource upkeep">${resourceIcon(res)} ${amt}</span>`;
+            });
+            html += '</div>';
+        }
+
+        html += '</div>';
+    }
+
+    html += '</div>';
+    return html;
+}
+
 function openBuildingModal() {
     const modal = document.getElementById("modal-buildings");
     const grid = document.getElementById("building-grid");
-    if(!modal || !grid) return;
+    if (!modal || !grid) return;
 
-    grid.innerHTML = "";
-    
-    // 1. Recupera il livello attuale
     const currentTier = getCurrentTier();
-    const currentTierIdx = currentTier.id;
+    let html = `<h4 style="color: var(--accent); margin-bottom: 15px;">Livello Attuale: ${currentTier.name}</h4>`;
 
-    // Header del modale con info livello
-    const headerInfo = document.createElement("div");
-    headerInfo.style.gridColumn = "1 / -1";
-    headerInfo.style.marginBottom = "15px";
-    headerInfo.style.padding = "10px";
-    headerInfo.style.background = "rgba(212, 175, 55, 0.1)";
-    headerInfo.style.border = "1px solid var(--accent)";
-    headerInfo.innerHTML = `
-        <strong style="color:var(--accent)">LIVELLO: ${currentTier.name}</strong> 
-        <span style="font-size:0.8em">(Popolazione: ${county.pop})</span><br>
-        <small style="color:#ccc">Prossimo livello a ${getNextTierThreshold()} abitanti.</small>
-    `;
-    grid.appendChild(headerInfo);
-    
+    // Cicla attraverso tutti gli edifici
     Object.keys(buildingData).forEach(key => {
         const b = buildingData[key];
+        if (!b) return;
+
+        // Controlla se l'edificio è sbloccato per questo livello
+        const isUnlocked = currentTier.unlocks && currentTier.unlocks.includes(key);
+        if (!isUnlocked) return;
+
+        // Determina il tipo di edificio per colori e immagini
+        const buildingType = getBuildingType(key);
+        const bgColor = getBuildingTypeColor(buildingType);
+        const imageUrl = getBuildingImageUrl(key, buildingType);
+
+        // Genera HTML per i costi con colori
+        let costHtml = '';
+        if (b.cost) {
+            costHtml = Object.entries(b.cost).map(([res, amt]) => {
+                const hasEnough = checkResources({[res]: amt});
+                const costClass = hasEnough ? 'available' : 'missing';
+                return `<span class="cost-badge ${costClass}">${resourceIcon(res)} ${amt}</span>`;
+            }).join('');
+        }
+
+        // Genera sezione produzione
+        let productionHtml = '';
+        if (b.recipe && (b.recipe.input || b.recipe.output)) {
+            productionHtml = '<div class="card-production-box">';
+            if (b.recipe.input && Object.keys(b.recipe.input).length > 0) {
+                const inputs = Object.entries(b.recipe.input).map(([res, amt]) => `${resourceIcon(res)} ${amt}`).join(' + ');
+                productionHtml += `<div class="prod-row">${inputs} <span class="prod-arrow">→</span></div>`;
+            }
+            productionHtml += `<div class="prod-row">${b.name}</div>`;
+            if (b.recipe.output && Object.keys(b.recipe.output).length > 0) {
+                const outputs = Object.entries(b.recipe.output).map(([res, amt]) => `${resourceIcon(res)} ${amt}`).join(' + ');
+                productionHtml += `<div class="prod-row"><span class="prod-arrow">→</span> ${outputs}</div>`;
+            }
+            productionHtml += '</div>';
+        }
+
+        // Genera sezione manutenzione
+        let upkeepHtml = '';
+        if (b.upkeep || b.resourceUpkeep) {
+            upkeepHtml = '<div class="card-upkeep">';
+            upkeepHtml += '<strong>💰 Manutenzione per Turno:</strong><br>';
+            if (b.upkeep && b.upkeep > 0) {
+                upkeepHtml += `${b.upkeep} oro<br>`;
+            }
+            if (b.resourceUpkeep && Object.keys(b.resourceUpkeep).length > 0) {
+                const upkeepList = Object.entries(b.resourceUpkeep).map(([res, amt]) => `${resourceIcon(res)} ${amt}`).join(', ');
+                upkeepHtml += upkeepList;
+            }
+            upkeepHtml += '</div>';
+        }
+
+        // Genera sezione manodopera
+        let laborHtml = '';
+        if (b.staff && b.staff.type && b.staff.amount) {
+            const laborType = b.staff.type;
+            const laborAmount = b.staff.amount;
+            const laborTypeName = laborType === 'peasant' ? 'Contadini' : 
+                                 laborType === 'burgher' ? 'Borghesi' : 
+                                 laborType === 'militia' ? 'Milizia' : 
+                                 laborType.charAt(0).toUpperCase() + laborType.slice(1);
+            
+            // Verifica se hai abbastanza lavoratori
+            const availableLabor = populationGroups[laborType] ? populationGroups[laborType].count : 0;
+            const hasEnoughLabor = availableLabor >= laborAmount;
+            const laborClass = hasEnoughLabor ? 'available' : 'missing';
+            
+            laborHtml = `<div class="card-labor ${laborClass}">
+                <strong>👥 Manodopera Necessaria:</strong><br>
+                ${laborTypeName}: ${laborAmount} (${availableLabor} disponibili)
+            </div>`;
+        }
+
+        // Verifica se possiamo costruire (risorse sufficienti)
+        const hasResources = checkResources(b.cost);
+        const hasLabor = checkLabor(b.staff);
+        const canBuild = hasResources && hasLabor;
         
-        // 2. LOGICA DI PROGRESSIONE: Verifica se l'edificio è sbloccato
-        // Un edificio è sbloccato se appare nell'array 'unlocks' di un tier RAGGIUNTO o PRECEDENTE
-        let isUnlocked = false;
-        for (let i = 0; i <= currentTierIdx; i++) {
-            if (SETTLEMENT_TIERS[i].unlocks.includes(key)) {
-                isUnlocked = true;
-                break;
+        // Determina il testo del pulsante
+        let buttonText = '🏗️ Costruisci';
+        if (!canBuild) {
+            if (!hasResources && !hasLabor) {
+                buttonText = '❌ Risorse e Manodopera Insufficienti';
+            } else if (!hasResources) {
+                buttonText = '❌ Risorse Insufficienti';
+            } else if (!hasLabor) {
+                buttonText = '❌ Manodopera Insufficiente';
             }
         }
 
-        // Se non è sbloccato, non mostrarlo (o mostralo grigio con lucchetto)
-        if (!isUnlocked) return; 
+        html += `
+            <div class="building-card-v3 ${canBuild ? '' : 'disabled'}" style="background: linear-gradient(135deg, ${bgColor}22, ${bgColor}11);">
+                <div class="card-img-top" style="background-image: url('${imageUrl}');">
+                    <div class="card-time-badge">⏳ ${b.time} turni</div>
+                </div>
 
-        const canBuild = checkResources(b.cost); 
-        
-        let costHtml = "";
-        Object.entries(b.cost).forEach(([res, amount]) => {
-            let have = (res === 'gold' || res === 'oro') ? (county.gold || 0) : (county.resources[res] || 0);
-            const missingClass = have < amount ? "missing" : "";
-            costHtml += `<span class="cost-item ${missingClass}">
-                ${resourceIcon(res)} ${amount}
-            </span>`;
-        });
+                <div class="card-body">
+                    <h3 class="card-title">${b.name}</h3>
+                    <p class="card-desc">${b.description || ''}</p>
 
-        const card = document.createElement("div");
-        card.className = "building-card-ui";
-        card.innerHTML = `
-            <div class="b-header">
-                <span class="b-title">${b.name}</span>
-                <span class="b-time">⏳ ${b.time} turni</span>
+                    ${productionHtml}
+                    ${upkeepHtml}
+                    ${laborHtml}
+                </div>
+
+                <div class="card-footer">
+                    <div class="cost-grid">
+                        ${costHtml}
+                    </div>
+                    <button class="btn-build-v3 ${canBuild ? '' : 'disabled'}"
+                            onclick="orderBuilding('${key}')"
+                            ${canBuild ? '' : 'disabled'}>
+                        ${buttonText}
+                    </button>
+                </div>
             </div>
-            <div class="b-desc">${b.desc}</div>
-            <div class="b-effect">✨ ${b.effect}</div>
-            <div class="b-cost">${costHtml}</div>
-            <button class="btn-main" 
-                style="font-size:0.85em; padding:8px; margin-top:6px; ${canBuild ? '' : 'opacity:0.5; cursor:not-allowed;'}"
-                onclick="${canBuild ? `orderBuilding('${key}')` : ''}">
-                ${canBuild ? 'Avvia Cantiere' : 'Risorse Insufficienti'}
-            </button>
         `;
-        grid.appendChild(card);
     });
 
+    grid.innerHTML = html;
     modal.classList.add("active");
-}
-
-function getNextTierThreshold() {
-    const current = getCurrentTier();
-    const next = SETTLEMENT_TIERS[current.id + 1];
-    return next ? next.threshold : "Max Livello";
 }
 
 function closeBuildingModal() {
     document.getElementById("modal-buildings").classList.remove("active");
+}
+
+// Funzioni helper per il sistema V3 delle carte costruzione
+function getBuildingType(key) {
+    // Determina il tipo di edificio basato sulla chiave
+    if (key.includes('farm') || key.includes('mill') || key.includes('bakery') || key.includes('brewery')) {
+        return 'farm';
+    } else if (key.includes('mine') || key.includes('quarry') || key.includes('sawmill')) {
+        return 'mine';
+    } else if (key.includes('house') || key.includes('inn') || key.includes('tavern')) {
+        return 'house';
+    } else if (key.includes('market') || key.includes('shop') || key.includes('warehouse')) {
+        return 'market';
+    } else if (key.includes('church') || key.includes('temple') || key.includes('chapel')) {
+        return 'church';
+    } else if (key.includes('barracks') || key.includes('tower') || key.includes('wall')) {
+        return 'barracks';
+    }
+    return 'other';
+}
+
+function getBuildingTypeColor(type) {
+    const colors = {
+        farm: '#2d4a22',      // Verde scuro per fattorie
+        mine: '#3d3d3d',      // Grigio scuro per miniere
+        house: '#5c4033',     // Marrone per case
+        market: '#856818',    // Oro scuro per mercati
+        church: '#4b0082',    // Viola per chiese
+        barracks: '#7a1f1f',  // Rosso scuro per caserme
+        other: '#2c3e50'      // Blu scuro neutro
+    };
+    return colors[type] || colors.other;
+}
+
+function getBuildingImageUrl(key, type) {
+    // Usa placehold.co per immagini placeholder con testo e colore specifico
+    const baseUrl = 'https://placehold.co/240x130';
+    const colors = {
+        farm: '2d4a22/white',
+        mine: '3d3d3d/white',
+        house: '5c4033/white',
+        market: '856818/white',
+        church: '4b0082/white',
+        barracks: '7a1f1f/white',
+        other: '2c3e50/white'
+    };
+
+    const color = colors[type] || colors.other;
+    const text = encodeURIComponent(key.replace(/_/g, ' ').toUpperCase());
+
+    return `${baseUrl}/${color}?text=${text}&font=arial`;
 }
 
 function resourceIcon(res) {
@@ -13899,9 +15232,17 @@ function checkResources(cost) {
     return true;
 }
 
+function checkLabor(labor) {
+    if (!labor || !labor.type || !labor.amount) return true; // Nessun requisito di manodopera
+    
+    const availableLabor = populationGroups[labor.type] ? populationGroups[labor.type].count : 0;
+    return availableLabor >= labor.amount;
+}
+
 function orderBuilding(key) {
     const b = buildingData[key];
     if (!checkResources(b.cost)) return;
+    if (!checkLabor(b.staff)) return;
 
     // 1. Avvia la costruzione usando la funzione esistente
     startBuilding({
@@ -14883,20 +16224,6 @@ function closeModal() {
 /* ============================================================================ */
 
 document.addEventListener("DOMContentLoaded", initStartScreen);
-
-
-
-/* ███████████████████████████████████████████████████████████████████████████
-   ██                                                                       ██
-   ██           SISTEMA DI GUERRA IMMERSIVO AVANZATO                       ██
-   ██           Sistema completo con tattiche, assedi e IA narrativa       ██
-   ██                                                                       ██
-   ███████████████████████████████████████████████████████████████████████████ */
-
-/* ===================================================================
-   SISTEMA DI GUERRA IMMERSIVO AVANZATO
-   Sistema completo con tattiche, assedi, morale, comandanti e IA narrativa
-   =================================================================== */
 
 // ===================== STRUTTURE DATI AVANZATE =====================
 
@@ -16295,6 +17622,429 @@ window.concludeBattle = concludeBattle;
 window.siegeAction = siegeAction;
 window.abandonSiege = abandonSiege;
 
+function initMapInteraction() {
+    const canvas = document.getElementById("county-map");
+    if (!canvas) return;
+    
+    canvas.addEventListener("click", function(event) {
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        
+        // Calcola coordinate mappa
+        const mapX = Math.floor(x / (canvas.width / 8));
+        const mapY = Math.floor(y / (canvas.height / 8));
+        
+        // Mostra menu contestuale
+        showMapContextMenu(mapX, mapY, event.clientX, event.clientY);
+    });
+}
+
+function showMapContextMenu(x, y, screenX, screenY) {
+    const menu = document.getElementById("map-menu");
+    if (!menu) return;
+    
+    // Posiziona menu
+    menu.style.left = screenX + "px";
+    menu.style.top = screenY + "px";
+    menu.style.display = "block";
+    
+    // Genera opzioni basate su posizione
+    const options = getMapMenuOptions(x, y);
+    
+    menu.innerHTML = options.map(option => `
+        <button class="map-menu-btn" onclick="${option.action}">
+            ${option.icon} ${option.label}
+        </button>
+    `).join("");
+    
+    // Chiudi menu se clicchi fuori
+    document.addEventListener("click", function closeMenu(e) {
+        if (!menu.contains(e.target)) {
+            menu.style.display = "none";
+            document.removeEventListener("click", closeMenu);
+        }
+    });
+}
+
+function getMapMenuOptions(x, y) {
+    const options = [];
+    
+    // Opzione costruzione edificio
+    options.push({
+        label: "Costruisci Edificio",
+        icon: "🏗️",
+        action: `orderBuildingMap(${x}, ${y})`
+    });
+    
+    // Opzione azione rapida
+    options.push({
+        label: "Azione Rapida",
+        icon: "⚡",
+        action: `quickActionMap(${x}, ${y})`
+    });
+    
+    return options;
+}
+
+function orderBuildingMap(x, y) {
+    // Apri modale edifici con posizione pre-selezionata
+    openBuildingModal();
+    
+    // Nota: potresti voler passare x,y al modale per posizionamento automatico
+}
+
+function quickActionMap(x, y) {
+    // Azioni rapide come esplorazione, raccolta risorse, ecc.
+    addMsg("system", `Azione rapida su (${x}, ${y}) - Funzionalità da implementare`);
+}
+
+function showToast(message, type = "info") {
+    const container = document.getElementById("toast-container");
+    if (!container) return;
+    
+    const toast = document.createElement("div");
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    
+    container.appendChild(toast);
+    
+    // Rimuovi automaticamente dopo 3 secondi
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+        }
+    }, 3000);
+}
+
+function checkActiveAdvisor() {
+    // Controlla condizioni per avvisi advisor
+    if (county.resources.food < 50 && county.pop > 100) {
+        showToast("Consigliere: Le riserve di cibo sono basse! Aumenta la produzione agricola.", "warning");
+    }
+    
+    if (county.gold < 100) {
+        showToast("Consigliere: Le casse sono vuote! Considera tasse o commercio.", "warning");
+    }
+    
+    if (county.happiness < 30) {
+        showToast("Consigliere: Il popolo è infelice! Organizza eventi o migliora le condizioni.", "warning");
+    }
+}
+
+function renderFactionPowers() {
+    const container = document.getElementById("faction-impact-list");
+    if (!container) return;
+    
+    let powersHtml = "";
+    
+    Object.entries(factions).forEach(([key, power]) => {
+        if (power > 0) {
+            powersHtml += `
+                <div class="faction-power-item">
+                    <span class="faction-name">${factionLabel(key)}</span>
+                    <button class="faction-power-btn" onclick="activateFactionPower('${key}')">
+                        Attiva Potere (${power} influenza)
+                    </button>
+                </div>
+            `;
+        }
+    });
+    
+    container.innerHTML = powersHtml;
+}
+
+function activateFactionPower(factionKey) {
+    const power = factions[factionKey];
+    if (!power || power <= 0) return;
+    
+    switch(factionKey) {
+        case "nobility":
+            county.gold += 50;
+            addMsg("system", "I nobili hanno donato 50 oro alla corona!");
+            break;
+        case "merchants":
+            county.resources.wood += 20;
+            county.resources.stone += 20;
+            addMsg("system", "I mercanti hanno fornito materiali da costruzione!");
+            break;
+        case "peasants":
+            county.happiness += 10;
+            addMsg("system", "I contadini celebrano la tua saggezza!");
+            break;
+        case "clergy":
+            county.happiness += 5;
+            county.pop += 5;
+            addMsg("system", "La chiesa benedice il regno, attirando nuovi fedeli!");
+            break;
+        case "militia":
+            populationGroups.militia.count += 10;
+            addMsg("system", "La milizia recluta nuovi soldati!");
+            break;
+    }
+    
+    factions[factionKey] -= 1; // Consuma influenza
+    updateUI();
+}
+
+// ===================== FUNZIONI PER MENU LATERALE E CARD ESPANDIBILI =====================
+
+// Toggle menu laterale statistiche
+function toggleStatsSidebar() {
+    const sidebar = document.getElementById('stats-sidebar');
+    sidebar.classList.toggle('open');
+    updateSidebarStats();
+}
+
+// Aggiorna statistiche nel menu laterale
+function updateSidebarStats() {
+    document.getElementById('sidebar-pop').textContent = county.pop || 0;
+    document.getElementById('sidebar-gold').textContent = county.gold || 0;
+    document.getElementById('sidebar-food').textContent = Math.round((county.food / county.pop) * 100) + '%' || '0%';
+    document.getElementById('sidebar-health').textContent = Math.round(county.health) + '%' || '0%';
+    document.getElementById('sidebar-happiness').textContent = Math.round(county.happy) + '%' || '0%';
+    document.getElementById('sidebar-stability').textContent = Math.round(calculateStability()) + '%' || '0%';
+    
+    document.getElementById('sidebar-land-count').textContent = landOwnership.count || 0;
+    document.getElementById('sidebar-land-nobility').textContent = landOwnership.nobility || 0;
+    document.getElementById('sidebar-land-clergy').textContent = landOwnership.clergy || 0;
+    document.getElementById('sidebar-land-commons').textContent = landOwnership.commons || 0;
+    
+    document.getElementById('sidebar-wood').textContent = county.resources.wood || 0;
+    document.getElementById('sidebar-stone').textContent = county.resources.stone || 0;
+    document.getElementById('sidebar-iron').textContent = county.resources.iron || 0;
+    document.getElementById('sidebar-grain').textContent = county.resources.grain || 0;
+}
+
+// Toggle espansione card classe sociale
+function toggleClassCard(cardElement, className) {
+    const wasExpanded = cardElement.classList.contains('expanded');
+    
+    // Chiudi tutte le card
+    document.querySelectorAll('.social-class-card').forEach(card => {
+        card.classList.remove('expanded');
+    });
+    
+    // Se non era espansa, espandi questa
+    if (!wasExpanded) {
+        cardElement.classList.add('expanded');
+        updateClassMood(className);
+    }
+}
+
+// Aggiorna l'icona della classe in base all'umore
+function updateClassMood(className) {
+    // Calcola l'umore medio della classe basato su felicità e bisogni
+    const happiness = county.happy || 50;
+    const health = county.health || 50;
+    const avgMood = (happiness + health) / 2;
+    
+    // Scegli l'emoji in base all'umore
+    const iconElement = document.getElementById(`icon-${className}`);
+    if (!iconElement) return;
+    
+    const moodIcons = {
+        nobility: {
+            happy: '👑',
+            neutral: '🤴',
+            sad: '😠'
+        },
+        clergy: {
+            happy: '⛪',
+            neutral: '✝️',
+            sad: '⚰️'
+        },
+        militia: {
+            happy: '⚔️',
+            neutral: '🛡️',
+            sad: '💀'
+        },
+        burghers: {
+            happy: '🏛️',
+            neutral: '🏪',
+            sad: '🏚️'
+        },
+        peasants: {
+            happy: '👥',
+            neutral: '🧑‍🌾',
+            sad: '😢'
+        },
+        mystics: {
+            happy: '🔮',
+            neutral: '🌙',
+            sad: '💔'
+        },
+        outcasts: {
+            happy: '🏚️',
+            neutral: '🗡️',
+            sad: '☠️'
+        },
+        merchants: {
+            happy: '⚖️',
+            neutral: '💰',
+            sad: '💸'
+        }
+    };
+    
+    let mood = 'neutral';
+    if (avgMood >= 70) mood = 'happy';
+    else if (avgMood < 40) mood = 'sad';
+    
+    if (moodIcons[className]) {
+        iconElement.textContent = moodIcons[className][mood];
+    }
+}
+
+// Aggiorna tutte le icone delle classi in base all'umore
+function updateAllClassMoods() {
+    const classes = ['nobility', 'clergy', 'militia', 'burghers', 'peasants', 'mystics', 'outcasts', 'merchants'];
+    classes.forEach(className => updateClassMood(className));
+}
+
+// Avvia chat con una fazione specifica
+function startFactionChat(factionKey) {
+    // Passa alla tab della chat
+    switchTab('tab-chat');
+    
+    // Aggiungi messaggio automatico nella chat
+    const factionNames = {
+        nobility: 'Lord Emeric di Montferrand',
+        clergy: 'Vescovo Aldebrando di Sorenza',
+        militia: 'Capitano Ronan il Ferro',
+        burghers: 'Maestro Bernard Forgiatore',
+        peasants: 'Odric il Lavoratore',
+        mystics: 'Madre Elowen la Veggente',
+        outcasts: 'Rasko il Senzapatria',
+        merchants: 'Ser Lothar dei Ponti'
+    };
+    
+    const factionName = factionNames[factionKey] || 'Rappresentante';
+    addMsg('system', `Hai richiesto un colloquio con ${factionName}. Cosa vuoi discutere?`);
+    
+    // Imposta il contesto per la chat AI
+    chatContext = `colloquio individuale con ${factionName}`;
+}
+
+// Estendi updateUI esistente per aggiornare anche le icone delle classi
+const originalUpdateUI = updateUI;
+updateUI = function() {
+    if (typeof originalUpdateUI === 'function') {
+        originalUpdateUI();
+    }
+    updateAllClassMoods();
+    updateSidebarStats();
+};
+
+
+
+
+// ===== SISTEMA TOP BAR (MIGLIORAMENTO) =====
+
+// Funzione per aggiornare la top bar
+function updateTopStatsBar() {
+    const bar = document.getElementById('top-stats-bar');
+    if (!bar) return;
+    
+    // Mostra solo se il gioco è attivo
+    if (!gameActive) {
+        bar.style.display = 'none';
+        return;
+    }
+    
+    // Mostra solo se il gioco è attivo
+    if (typeof county !== 'undefined' && county && county.pop > 0) {
+        bar.style.display = 'flex';
+        
+        // Aggiorna valori
+        const heroName = document.getElementById('top-hero-name');
+        const pop = document.getElementById('top-pop');
+        const gold = document.getElementById('top-gold');
+        const food = document.getElementById('top-food');
+        const happiness = document.getElementById('top-happiness');
+        
+        if (heroName) heroName.textContent = county.name || 'Conte';
+        if (pop) pop.textContent = Math.floor(county.pop || 0);
+        if (gold) {
+            const goldValue = Math.floor(county.gold || 0);
+            gold.textContent = goldValue;
+            
+            // Celebrate ogni 1000 oro
+            if (goldValue > 0 && goldValue % 1000 < 50) {
+                document.querySelectorAll('.stat-badge').forEach(badge => {
+                    badge.classList.add('celebrate');
+                    setTimeout(() => badge.classList.remove('celebrate'), 600);
+                });
+            }
+        }
+        if (food) food.textContent = Math.round((county.food / county.pop) * 100 || 0) + '%';
+        if (happiness) happiness.textContent = Math.round(county.happy || 0) + '%';
+    } else {
+        bar.style.display = 'none';
+    }
+}
+
+// Integra updateTopStatsBar con updateUI esistente
+(function() {
+    // Salva riferimento a updateUI originale se esiste
+    const originalUpdateUI = typeof window.updateUI !== 'undefined' ? window.updateUI : null;
+    
+    // Crea nuova updateUI che include la top bar
+    window.updateUI = function() {
+        // Chiama l'originale se esiste
+        if (originalUpdateUI && typeof originalUpdateUI === 'function') {
+            originalUpdateUI.apply(this, arguments);
+        }
+        // Aggiorna top bar
+        updateTopStatsBar();
+    };
+    
+    // Se updateUI non esiste ancora, sarà sostituita quando verrà creata
+    if (!originalUpdateUI) {
+        console.log('⏳ updateTopStatsBar attenderà la creazione di updateUI');
+    }
+})();
+
+// Aggiorna top bar anche quando cambia lo stato
+if (typeof county !== 'undefined') {
+    setInterval(updateTopStatsBar, 1000); // Aggiorna ogni secondo
+}
+
+// Auto-save con notifica toast
+let autoSaveInterval = setInterval(() => {
+    if (gameActive && typeof saveGame === 'function' && typeof county !== 'undefined' && county && county.pop > 0) {
+        saveGame();
+        if (typeof showToast === 'function') {
+            showToast('💾 Partita salvata automaticamente', 'success');
+        }
+    }
+}, 300000); // Ogni 5 minuti
+
+// Cleanup al closing
+window.addEventListener('beforeunload', () => {
+    clearInterval(autoSaveInterval);
+});
+
+// Smooth scroll per tabs
+document.addEventListener('DOMContentLoaded', function() {
+    // Smooth scroll tabs
+    const tabs = document.querySelector('.tabs');
+    if (tabs) {
+        tabs.addEventListener('click', function(e) {
+            if (e.target.classList.contains('tab-btn')) {
+                e.target.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'nearest', 
+                    inline: 'center' 
+                });
+            }
+        });
+    }
+    
+    // Inizializza top bar se il gioco è già attivo
+    setTimeout(updateTopStatsBar, 500);
+});
+
+console.log('✨ Miglioramenti UI caricati: Top Bar, Hover Effects, Auto-save');
 
 
 </script>
@@ -16373,6 +18123,88 @@ window.abandonSiege = abandonSiege;
 <div id="modal-generic" class="modal" style="z-index: 9999;">
     <div class="modal-content" id="modal-generic-content">
         <!-- Contenuto dinamico inserito da showModal() -->
+    </div>
+</div>
+
+
+<!-- ===================== MENU LATERALE STATISTICHE ===================== -->
+<div class="domain-stats-sidebar" id="stats-sidebar">
+    <button class="sidebar-close-btn" onclick="toggleStatsSidebar()">✕</button>
+    
+    <div class="sidebar-header">
+        📊 Statistiche del Dominio
+    </div>
+    
+    <div class="sidebar-stat-group">
+        <h4>Popolazione e Oro</h4>
+        <div class="sidebar-stat-item">
+            <span class="sidebar-stat-label">Popolazione Totale</span>
+            <span class="sidebar-stat-value" id="sidebar-pop">0</span>
+        </div>
+        <div class="sidebar-stat-item">
+            <span class="sidebar-stat-label">Oro</span>
+            <span class="sidebar-stat-value" id="sidebar-gold">0</span>
+        </div>
+    </div>
+    
+    <div class="sidebar-stat-group">
+        <h4>Indicatori di Benessere</h4>
+        <div class="sidebar-stat-item">
+            <span class="sidebar-stat-label">Cibo</span>
+            <span class="sidebar-stat-value" id="sidebar-food">0%</span>
+        </div>
+        <div class="sidebar-stat-item">
+            <span class="sidebar-stat-label">Salute</span>
+            <span class="sidebar-stat-value" id="sidebar-health">0%</span>
+        </div>
+        <div class="sidebar-stat-item">
+            <span class="sidebar-stat-label">Felicità</span>
+            <span class="sidebar-stat-value" id="sidebar-happiness">0%</span>
+        </div>
+        <div class="sidebar-stat-item">
+            <span class="sidebar-stat-label">Stabilità Sociale</span>
+            <span class="sidebar-stat-value" id="sidebar-stability">0%</span>
+        </div>
+    </div>
+    
+    <div class="sidebar-stat-group">
+        <h4>Territorio</h4>
+        <div class="sidebar-stat-item">
+            <span class="sidebar-stat-label">Terre del Conte</span>
+            <span class="sidebar-stat-value" id="sidebar-land-count">0</span>
+        </div>
+        <div class="sidebar-stat-item">
+            <span class="sidebar-stat-label">Nobiltà</span>
+            <span class="sidebar-stat-value" id="sidebar-land-nobility">0</span>
+        </div>
+        <div class="sidebar-stat-item">
+            <span class="sidebar-stat-label">Clero</span>
+            <span class="sidebar-stat-value" id="sidebar-land-clergy">0</span>
+        </div>
+        <div class="sidebar-stat-item">
+            <span class="sidebar-stat-label">Comuni</span>
+            <span class="sidebar-stat-value" id="sidebar-land-commons">0</span>
+        </div>
+    </div>
+    
+    <div class="sidebar-stat-group">
+        <h4>Risorse</h4>
+        <div class="sidebar-stat-item">
+            <span class="sidebar-stat-label">Legno</span>
+            <span class="sidebar-stat-value" id="sidebar-wood">0</span>
+        </div>
+        <div class="sidebar-stat-item">
+            <span class="sidebar-stat-label">Pietra</span>
+            <span class="sidebar-stat-value" id="sidebar-stone">0</span>
+        </div>
+        <div class="sidebar-stat-item">
+            <span class="sidebar-stat-label">Ferro</span>
+            <span class="sidebar-stat-value" id="sidebar-iron">0</span>
+        </div>
+        <div class="sidebar-stat-item">
+            <span class="sidebar-stat-label">Grano</span>
+            <span class="sidebar-stat-value" id="sidebar-grain">0</span>
+        </div>
     </div>
 </div>
 
