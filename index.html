@@ -1676,6 +1676,23 @@
     padding: 10px;
 }
 
+// Estensione icone per i nuovi beni di mercato (fallback al set originale)
+const __origGetResourceIcon = getResourceIcon;
+getResourceIcon = function(key) {
+    const ext = {
+        spices: "🧂",
+        parchment: "📜",
+        candles: "🕯️",
+        incense: "🌫️",
+        crystals: "🔮",
+        parade_horses: "🐎",
+        seeds: "🌱",
+        pottery: "🏺"
+    };
+    if (ext[key]) return ext[key];
+    return __origGetResourceIcon ? __origGetResourceIcon(key) : "✨";
+};
+
 /* La Carta */
 .building-card-v3 {
     background-color: #1a1a1a;
@@ -3253,6 +3270,193 @@
     box-shadow: 0 5px 15px rgba(212,175,55,0.5);
 }
 
+/* ===================== POPUP DETTAGLI CLASSE ===================== */
+#class-modal {
+    z-index: 7000;
+}
+
+#class-modal .modal-content {
+    width: min(760px, 94vw);
+    background: linear-gradient(140deg, rgba(18,18,18,0.98), rgba(10,10,10,0.95));
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.65);
+    padding: 18px 20px 22px;
+}
+
+.class-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.class-title {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.class-title h3 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: 1px;
+}
+
+.class-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--text-soft);
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.85em;
+}
+
+.class-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.class-meta-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+
+.class-meta-card .label {
+    color: var(--text-soft);
+    font-size: 0.8em;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.class-meta-card .value {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.class-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 10px 0 18px;
+}
+
+.class-box {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.class-box h4 {
+    margin: 0 0 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-size: 0.9em;
+}
+
+.class-box ul {
+    margin: 0;
+    padding-left: 18px;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.class-box .pill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0;
+    list-style: none;
+}
+
+.class-box .pill-list li {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 6px 10px;
+    color: var(--text);
+    font-size: 0.9em;
+}
+
+.class-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border-soft);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* Override generale per i modali: assicurati che stiano sopra i tab */
+.modal {
+    z-index: 7000 !important;
+}
+.modal .modal-content {
+    position: relative;
+}
+
+/* Sintesi Economia / Sviluppo */
+.eco-summary-grid,
+.dev-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 12px 0 18px;
+}
+
+.eco-card,
+.dev-card {
+    background: linear-gradient(160deg, rgba(255,255,255,0.03), rgba(0,0,0,0.1));
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 6px 22px rgba(0,0,0,0.35);
+}
+
+.eco-card .label,
+.dev-card .label {
+    color: var(--text-soft);
+    font-size: 0.8em;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.eco-card .value,
+.dev-card .value {
+    font-size: 1.3em;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.eco-card small,
+.dev-card small {
+    color: var(--text-soft);
+}
+
 /* ===================== MENU LATERALE STATISTICHE ===================== */
 .domain-stats-sidebar {
     position: fixed;
@@ -3834,26 +4038,34 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 0.75em;
+    font-size: 0.8em;
     color: var(--text-soft);
+}
+
+.need-bar-row span {
+    width: 90px;
+    color: var(--text);
+    font-weight: 600;
 }
 
 .need-track {
     flex: 1;
-    height: 6px;
-    background: #222;
-    border-radius: 3px;
+    height: 10px;
+    background: linear-gradient(90deg, rgba(40,40,40,0.9), rgba(20,20,20,0.9));
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
     overflow: hidden;
+    box-shadow: inset 0 1px 4px rgba(0,0,0,0.45);
 }
 
 .need-fill {
     height: 100%;
-    border-radius: 3px;
+    border-radius: 6px;
     transition: width 0.5s ease;
 }
 
-.fill-prim { background: #6ada91; }
-.fill-sec { background: #64b5f6; }
+.fill-prim { background: linear-gradient(90deg, #4caf50, #6ada91); }
+.fill-sec { background: linear-gradient(90deg, #2196f3, #64b5f6); }
 
 /* Status Warning */
 .need-warning {
@@ -3864,6 +4076,8 @@
     background: rgba(255, 0, 0, 0.1);
     padding: 4px 8px;
     border-radius: 4px;
+}
+
 /* Stile per il Modale Cronache */
 .chronicle-content {
     max-width: 650px;
@@ -4293,14 +4507,18 @@
 /* Navigazione rapida sezione Dominio */
 .domain-quick-nav {
     position: sticky;
-    top: 120px;
+    top: 96px;
     z-index: 2500;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 12px;
-    padding: 12px 0;
-    background: linear-gradient(180deg, rgba(5,5,5,0.95), rgba(5,5,5,0));
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 14px;
+    margin-bottom: 12px;
+    background: linear-gradient(180deg, rgba(7,7,7,0.95), rgba(5,5,5,0.9));
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 14px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.35);
 }
 
 .domain-quick-nav { box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset; }
@@ -4313,13 +4531,14 @@
     background: rgba(20,20,20,0.9);
     border: 1px solid var(--border-soft);
     color: var(--text);
-    padding: 6px 12px;
-    border-radius: 999px;
-    font-size: 0.8em;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.85em;
     letter-spacing: 1px;
     text-transform: uppercase;
     cursor: pointer;
     transition: all 0.2s ease;
+    min-height: 46px;
 }
 
 .domain-quick-nav button:hover,
@@ -5325,6 +5544,29 @@ textarea:focus-visible {
             💰 Economia e Risorse
         </div>
 
+        <div class="eco-summary-grid">
+            <div class="eco-card">
+                <div class="label">Entrate stimate</div>
+                <div class="value" id="eco-income">0</div>
+                <small id="eco-income-note">Ultimo turno</small>
+            </div>
+            <div class="eco-card">
+                <div class="label">Saldo cassa</div>
+                <div class="value" id="eco-treasury">0</div>
+                <small id="eco-treasury-note">Oro disponibile</small>
+            </div>
+            <div class="eco-card">
+                <div class="label">Scorte cibo</div>
+                <div class="value" id="eco-food">0%</div>
+                <small id="eco-food-note">Capacit� granai</small>
+            </div>
+            <div class="eco-card">
+                <div class="label">Stabilit�</div>
+                <div class="value" id="eco-stability">-</div>
+                <small>Impatto fazioni</small>
+            </div>
+        </div>
+
         <!-- Risorse e Magazzini (collassabile) -->
         <button class="section-toggle" onclick="togglePanel('panel-resources')">
             Risorse e Magazzini
@@ -5395,7 +5637,32 @@ textarea:focus-visible {
                 <div class="stat-card">
                     <div class="stat-val" id="res-armor">0</div>
                     <div class="stat-sub">Armature</div>
-                    <small class="res-delta" id="res-armor-delta">—</small>
+                    <small class="res-delta" id="res-armor-delta">-</small>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val" id="res-spices">0</div>
+                    <div class="stat-sub">Spezie</div>
+                    <small class="res-delta" id="res-spices-delta">-</small>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val" id="res-parchment">0</div>
+                    <div class="stat-sub">Pergamene</div>
+                    <small class="res-delta" id="res-parchment-delta">-</small>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val" id="res-candles">0</div>
+                    <div class="stat-sub">Candele/Incensi</div>
+                    <small class="res-delta" id="res-candles-delta">-</small>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val" id="res-crystals">0</div>
+                    <div class="stat-sub">Cristalli</div>
+                    <small class="res-delta" id="res-crystals-delta">-</small>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val" id="res-parade_horses">0</div>
+                    <div class="stat-sub">Cavalli da parata</div>
+                    <small class="res-delta" id="res-parade_horses-delta">-</small>
                 </div>
             </div>
         </div>
@@ -5438,6 +5705,29 @@ textarea:focus-visible {
             🏗️ Sviluppo e Governo
         </div>
 
+        <div class="dev-summary-grid">
+            <div class="dev-card">
+                <div class="label">Leggi attive</div>
+                <div class="value" id="dev-laws">0</div>
+                <small id="dev-laws-note">Decreti in vigore</small>
+            </div>
+            <div class="dev-card">
+                <div class="label">Opere in corso</div>
+                <div class="value" id="dev-buildings">0</div>
+                <small id="dev-buildings-note">Costruzioni e cantieri</small>
+            </div>
+            <div class="dev-card">
+                <div class="label">Insediamenti</div>
+                <div class="value" id="dev-settlements">0</div>
+                <small id="dev-settlements-note">Villaggi e botteghe</small>
+            </div>
+            <div class="dev-card">
+                <div class="label">Ordine pubblico</div>
+                <div class="value" id="dev-order">-</div>
+                <small>Milizia e sicurezza</small>
+            </div>
+        </div>
+
         <!-- Sintesi Insediamenti (collassabile) -->
         <button class="section-toggle" onclick="togglePanel('panel-assets')">
             Sintesi Insediamenti
@@ -5447,6 +5737,15 @@ textarea:focus-visible {
             <div id="asset-summary" class="asset-grid">
                 <div class="asset-card">I dettagli compariranno dopo l'avvio.</div>
             </div>
+        </div>
+
+        <!-- Progetti di costruzione desiderati dalle categorie -->
+        <button class="section-toggle" onclick="togglePanel('panel-projects')">
+            Progetti delle Categorie
+            <span>Cosa vorrebbero costruire</span>
+        </button>
+        <div id="panel-projects" class="section-panel collapsed">
+            <div id="projects-grid" class="asset-grid"></div>
         </div>
 
         <!-- Leggi e Decreti (collassabile) -->
@@ -5508,6 +5807,25 @@ textarea:focus-visible {
     </div>
 
 </div>
+
+<!-- Sezione magazzino privato governatore -->
+<div class="section-panel" style="margin-top:0; padding:16px;">
+    <h3 style="color:var(--accent); margin-top:0;">�Y'� Magazzino Privato del Governatore</h3>
+    <p class="text-soft" style="margin:6px 0 12px;">Compra dal mercato usando l'oro del conte; le risorse restano private per costruzioni personali.</p>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end; margin-bottom:12px;">
+        <div style="flex:1; min-width:180px;">
+            <label for="gov-buy-res" style="color:var(--text-soft); font-size:0.9em;">Risorsa</label>
+            <select id="gov-buy-res" style="width:100%; padding:8px; background:#111; color:var(--text); border:1px solid var(--border-soft); border-radius:6px;"></select>
+        </div>
+        <div style="width:120px;">
+            <label for="gov-buy-qty" style="color:var(--text-soft); font-size:0.9em;">Quantit��</label>
+            <input id="gov-buy-qty" type="number" min="1" value="5" style="width:100%; padding:8px; background:#111; color:var(--text); border:1px solid var(--border-soft); border-radius:6px;" />
+        </div>
+        <button class="btn-main" style="width:180px;" onclick="handleGovernorPurchase()">Compra per il conte</button>
+    </div>
+    <div id="gov-storage-list" class="resource-list" style="background:rgba(255,255,255,0.02); border:1px solid var(--border-soft); border-radius:10px; padding:10px;"></div>
+</div>
+
 <!-- ====================== TAB: DIPLOMAZIA ====================== -->
 <div id="tab-diplomacy" class="tab-view">
     <h2>Sala della Guerra e Diplomazia</h2>
@@ -5853,13 +6171,13 @@ let publicChatHistory = [];
 
 const RESOURCE_KEYS = [
     // Materie Prime
-    "wood","stone","iron","copper","gold","grain","livestock","wool","herbs","clay",
+    "wood","stone","iron","copper","gold","grain","livestock","wool","herbs","clay","seeds",
     // Semilavorati
-    "flour", "iron_ingots", "fabric", "leather",
+    "flour", "iron_ingots", "fabric", "leather", "parchment", "candles",
     // Prodotti Finiti (Alto valore)
-    "bread", "tools", "clothes", "weapons", "armor", "furniture", "pottery",
+    "bread", "tools", "clothes", "weapons", "armor", "furniture", "pottery", "parade_horses",
     // Speciali
-    "luxuries","arcane","textiles","cotton"
+    "luxuries","arcane","textiles","cotton","spices","incense","crystals"
 ];
 
 const resourceLabels = {
@@ -5873,10 +6191,13 @@ const resourceLabels = {
     livestock: "Bestiame",
     wool: "Lana",
     clay: "Argilla",
+    seeds: "Semi selezionati",
     flour: "Farina",
     iron_ingots: "Lingotti di Ferro",
     fabric: "Stoffa",
     leather: "Pelle",
+    parchment: "Pergamene",
+    candles: "Candele/Incensi",
     bread: "Pane",
     tools: "Utensili",
     clothes: "Vestiti",
@@ -5887,7 +6208,11 @@ const resourceLabels = {
     arcane: "Essenza arcana",
     weapons: "Armi",
     armor: "Armature",
-    cotton: "Cotone"
+    cotton: "Cotone",
+    spices: "Spezie",
+    incense: "Incenso",
+    crystals: "Cristalli arcani",
+    parade_horses: "Cavalli da parata"
 };
 
 const POP_NEEDS = {
@@ -8616,6 +8941,13 @@ function createEmptyResourceBag() {
     return createEmptyResourceDelta();
 }
 
+// Magazzino privato del governatore
+let governorStorage = null;
+function getGovernorStorage() {
+    if (!governorStorage) governorStorage = createEmptyResourceBag();
+    return governorStorage;
+}
+
 function migratePopulationGroups(groups) {
     const defaultGroups = createDefaultPopulation();
     
@@ -10701,10 +11033,9 @@ function seizeAssets(factionKey) {
 }
 
 function renderPopulationDetails() {
-    const grid = document.querySelector('.social-classes-grid'); // O crea un nuovo contenitore
+    const grid = document.querySelector('.social-classes-grid'); 
     if(!grid) return;
     
-    // Esempio di HTML arricchito per ogni card
     let html = "";
     Object.entries(populationGroups).forEach(([key, data]) => {
         const workforce = Math.floor(data.count * (data.workforceRatio || 0.6));
@@ -10719,8 +11050,9 @@ function renderPopulationDetails() {
         if (unempPct > 50) jobColor = "#f44336"; // Disoccupazione alta
         if (workforce > 0 && employed >= workforce) jobColor = "#2196f3"; // Piena occupazione (Labor shortage)
 
+        // CORREZIONE QUI SOTTO: Aggiunto onclick="toggleClassCard(this, '${key}')" e data-class="${key}"
         html += `
-        <div class="social-class-card">
+        <div class="social-class-card" onclick="toggleClassCard(this, '${key}')" data-class="${key}">
             <div class="social-class-header">
                 <span class="social-class-icon">${FACTION_ICONS[key] || '👤'}</span>
                 <span class="social-class-name">${factionLabel(key)}</span>
@@ -10743,6 +11075,9 @@ function renderPopulationDetails() {
                     </div>
                 </div>
             </div>
+            
+            <div class="social-class-details" id="details-${key}">
+                 </div>
         </div>
         `;
     });
@@ -11100,40 +11435,57 @@ function calculateMarketDemand() {
     const demand = createEmptyResourceBag();
     const supply = createEmptyResourceBag();
     
-    // Nobiltà: domanda lusso, offerta poco
+    // Nobiltà: domanda lusso, cavalli da parata e arredi rari
     demand.luxuries += populationGroups.nobility.count * 2;
     demand.arcane += populationGroups.nobility.count * 1;
+    demand.parade_horses += populationGroups.nobility.count * 0.8;
+    demand.furniture += populationGroups.nobility.count * 0.6;
+    demand.spices += populationGroups.nobility.count * 0.8;
     
     // Clero: domanda cibo e beni sacri, offerta spirituale
     demand.grain += populationGroups.clergy.count * 3;
     demand.textiles += populationGroups.clergy.count * 1;
+    demand.parchment += populationGroups.clergy.count * 1.5;
+    demand.candles += populationGroups.clergy.count * 1.5;
+    demand.incense += populationGroups.clergy.count * 1.2;
     
     // Militia: domanda armi e cibo, offerta protezione
     demand.iron += populationGroups.militia.count * 2;
     demand.grain += populationGroups.militia.count * 4;
+    demand.leather += populationGroups.militia.count * 1;
+    demand.weapons += populationGroups.militia.count * 0.8;
+    demand.armor += populationGroups.militia.count * 0.6;
     
     // Peasants: offerta cibo e materie prime, domanda beni essenziali
     supply.grain += populationGroups.peasants.count * 1;
     supply.wood += populationGroups.peasants.count * 0.5;
     supply.stone += populationGroups.peasants.count * 0.3;
+    supply.seeds += populationGroups.peasants.count * 0.4;
     demand.textiles += populationGroups.peasants.count * 0.5;
+    demand.tools += populationGroups.peasants.count * 0.4;
     
     // Burghers: domanda lusso moderato, offerta artigianato
     demand.luxuries += populationGroups.burghers.count * 1;
+    demand.fabric += populationGroups.burghers.count * 0.5;
     supply.textiles += populationGroups.burghers.count * 2;
     supply.iron += populationGroups.burghers.count * 1;
+    supply.tools += populationGroups.burghers.count * 0.5;
     
     // Merchants: domanda tutto, offerta commercio
     Object.keys(demand).forEach(key => {
         demand[key] += populationGroups.merchants.count * 0.5;
     });
     
-    // Mystics: domanda arcane, offerta mistica
+    // Mystics: domanda arcane e reagenti, offerta mistica
     demand.arcane += populationGroups.mystics.count * 3;
+    demand.crystals += populationGroups.mystics.count * 1.5;
+    demand.herbs += populationGroups.mystics.count * 1.2;
+    demand.incense += populationGroups.mystics.count * 0.8;
     
     // Outcasts: offerta lavoro, domanda sopravvivenza
     supply.wood += populationGroups.outcasts.count * 0.5;
     demand.grain += populationGroups.outcasts.count * 2;
+    demand.candles += populationGroups.outcasts.count * 0.6;
     
     return { demand, supply };
 }
@@ -15027,7 +15379,7 @@ function openBuildingModal() {
     const modal = document.getElementById("modal-buildings");
     const grid = document.getElementById("building-grid");
     if (!modal || !grid) return;
-
+    
     const currentTier = getCurrentTier();
     let html = `<h4 style="color: var(--accent); margin-bottom: 15px;">Livello Attuale: ${currentTier.name}</h4>`;
 
@@ -15155,10 +15507,15 @@ function openBuildingModal() {
 
     grid.innerHTML = html;
     modal.classList.add("active");
+    modal.style.display = "flex";
 }
 
 function closeBuildingModal() {
-    document.getElementById("modal-buildings").classList.remove("active");
+    const modal = document.getElementById("modal-buildings");
+    if (modal) {
+        modal.classList.remove("active");
+        modal.style.display = "none";
+    }
 }
 
 // Funzioni helper per il sistema V3 delle carte costruzione
@@ -15216,6 +15573,18 @@ function resourceIcon(res) {
     const map = { gold:"💰", wood:"🌲", stone:"🪨", iron:"⛏️", copper:"🥉" };
     return map[res] || res;
 }
+
+// Versione estesa per le nuove merci del mercato
+function resourceIconExtended(res) {
+    const map = {
+        gold:"�Y'�", wood:"�YO�", stone:"�Y��", iron:"�>?��?", copper:"�Y�%",
+        spices:"Spezie", parchment:"Perg.", candles:"Candele", incense:"Incenso", crystals:"Crist.", parade_horses:"Cavalli", seeds:"Semi"
+    };
+    return map[res] || res;
+}
+// Sostituisce la funzione base con quella estesa
+const __originalResourceIcon = resourceIcon;
+resourceIcon = function(res) { return resourceIconExtended(res); };
 
 function checkResources(cost) {
     for (let k in cost) {
@@ -15367,25 +15736,29 @@ function renderResourceStats() {
 function getBasePrices() {
     return {
         // Materie Prime (Basso costo)
-        grain: 2, wool: 3, iron: 5, wood: 2, clay: 1,
+        grain: 2, wool: 3, iron: 5, wood: 2, clay: 1, seeds: 2,
         
         // Semilavorati (Valore aggiunto dalla manodopera)
         flour: 5,       // Da grain (2)
         fabric: 8,      // Da wool (3)
         iron_ingots: 10,// Da iron (5) + carbone/legno
         leather: 6,     // Da livestock
+        parchment: 10,  // Da pelli lavorate
+        candles: 12,    // Da cera/erbe
         
         // Prodotti Finiti (Alto valore di mercato)
         bread: 8,       // Cibo di qualità
         clothes: 25,    // Vestiti (richiesti dalla popolazione)
         tools: 20,      // Utensili (aumentano efficienza)
         furniture: 15,  // Mobili (comfort)
+        parade_horses: 120,
         weapons: 40, 
         armor: 60,
         pottery: 5,
         
         // Altri
-        stone: 8, copper: 12, gold: 1, herbs: 4, livestock: 10, textiles: 20, luxuries: 50, arcane: 100
+        stone: 8, copper: 12, gold: 1, herbs: 4, livestock: 10, textiles: 20, luxuries: 50, arcane: 100,
+        spices: 55, incense: 18, crystals: 90
     };
 }
 
@@ -15401,6 +15774,12 @@ function getMarketPrices() {
         Object.keys(prices).forEach(res => {
             prices[res] *= modifier;
         });
+    });
+    // Se non esiste produzione interna di una risorsa, aggiungi un minimo di offerta esterna
+    Object.keys(prices).forEach(res => {
+        if (!county.resources[res] || county.resources[res] <= 0) {
+            county.resources[res] = 1; // disponibilità minima sul mercato globale
+        }
     });
     return prices;
 }
@@ -15666,6 +16045,45 @@ function renderWarehouse() {
             </div>
         `).join("");
     }
+
+    renderGovernorStorage();
+}
+
+// Magazzino privato del governatore: acquisto dal mercato
+function renderGovernorStorage() {
+    const list = document.getElementById('gov-storage-list');
+    if (!list) return;
+    const store = getGovernorStorage();
+    let html = '';
+    RESOURCE_KEYS.forEach(key => {
+        const val = store[key] || 0;
+        if (val > 0) {
+            html += `<div class="resource-row"><span>${getResourceIcon(key)} ${resourceLabels[key] || key}</span><span>${val}</span></div>`;
+        }
+    });
+    if (!html) html = '<p class="text-soft">Nessuna risorsa privata.</p>';
+    list.innerHTML = html;
+}
+
+function handleGovernorPurchase() {
+    const sel = document.getElementById('gov-buy-res');
+    const qtyEl = document.getElementById('gov-buy-qty');
+    if (!sel || !qtyEl) return;
+    const res = sel.value;
+    const qty = Math.max(1, parseInt(qtyEl.value, 10) || 1);
+    const prices = getMarketPrices();
+    const price = prices[res] || 1;
+    const cost = price * qty;
+    if ((county.gold || 0) < cost) {
+        alert('Oro insufficiente per questo acquisto.');
+        return;
+    }
+    county.gold = (county.gold || 0) - cost;
+    const store = getGovernorStorage();
+    store[res] = (store[res] || 0) + qty;
+    renderGovernorStorage();
+    updateUI();
+    addMsg('system', `Il conte ha acquistato ${qty} ${resourceLabels[res] || res} per ${cost} oro (magazzino privato).`);
 }
 
 function renderMarket() {
@@ -15705,7 +16123,7 @@ function renderMarket() {
     RESOURCE_KEYS.forEach(key => {
         const have = county.resources[key] || 0;
         const demand = Math.round(marketDynamics.demand[key] || 0);
-        const supply = Math.round(marketDynamics.supply[key] || 0);
+        const supply = Math.max(1, Math.round(marketDynamics.supply[key] || 0)); // garantiamo disponibilità
         
         // Calcolo Prezzi
         let priceMultiplier = 1.0;
@@ -17817,26 +18235,157 @@ function updateSidebarStats() {
 }
 
 // Toggle espansione card classe sociale
+const CLASS_DETAILS_MAP = {
+    nobility: {
+        name: 'Nobiltà',
+        category: 'Aristocrazia feudale',
+        desc: 'Famiglie di rango che gestiscono feudi, castelli e titoli.',
+        holdings: 'Castelli, feudi, diritti di giustizia e rendite',
+        needs: ['Prestigio e riconoscimento', 'Nuove terre e privilegi', 'Influenza politica'],
+        primaryNeeds: ['Cibo di qualità', 'Sicurezza di corte'],
+        secondaryNeeds: ['Lusso', 'Intrattenimento', 'Cavalli da parata'],
+        wants: ['Beni di pregio', 'Arredi di lusso', 'Cavalli da parata'],
+        lacks: 'Soffrono mancanza di lusso quando la corte taglia le spese.',
+        housing: 'Dimorano in castelli e palazzi nel capoluogo.',
+        projects: ['Ali di palazzo', 'Sale del trono', 'Giardini pensili'],
+        goals: 'Espandere domini e titoli, rafforzare l’alleanza con il Conte.',
+        tip: 'Mantieni cerimonie, assegna feudi o privilegi temporanei.'
+    },
+    clergy: {
+        name: 'Clero',
+        category: 'Autorità religiosa',
+        desc: 'Ordini monastici e prelati che guidano la fede nel dominio.',
+        holdings: 'Chiese, monasteri, decime e biblioteche',
+        needs: ['Luoghi di culto ben mantenuti', 'Rispetto delle tradizioni', 'Sostegno alla carità'],
+        primaryNeeds: ['Pane', 'Incensi e candele', 'Pergamene'],
+        secondaryNeeds: ['Tessuti per vesti', 'Erbe sacre'],
+        wants: ['Pergamene', 'Candele', 'Erbe sacre'],
+        lacks: 'Faticano a reperire velluto e incensi se il mercato è povero.',
+        housing: 'Vivono in monasteri e canoniche.',
+        projects: ['Cappelle votive', 'Scriptoria', 'Ospizi per pellegrini'],
+        goals: 'Espandere l’influenza religiosa e costruire nuovi luoghi di culto.',
+        tip: 'Finanzia opere pie e proteggi i pellegrini.'
+    },
+    militia: {
+        name: 'Milizia',
+        category: 'Forza armata',
+        desc: 'Guardie e soldati che difendono i confini e mantengono l’ordine.',
+        holdings: 'Caserme, armerie, pattuglie di confine',
+        needs: ['Equipaggiamento e armi', 'Addestramento regolare', 'Salario stabile'],
+        primaryNeeds: ['Razioni di grano', 'Armi', 'Armature'],
+        secondaryNeeds: ['Pelli per armature', 'Manutenzione caserme'],
+        wants: ['Ferro', 'Armi forgiate', 'Pelli per armature'],
+        lacks: 'In crisi quando il ferro scarseggia o la paga ritarda.',
+        housing: 'Alloggiano in caserme e posti di guardia.',
+        projects: ['Mura e palizzate', 'Poligoni di tiro', 'Scuderie militari'],
+        goals: 'Tenere alte le difese e garantire la sicurezza delle strade.',
+        tip: 'Aggiorna armi e paga, organizza esercitazioni.'
+    },
+    burghers: {
+        name: 'Borghesi',
+        category: 'Artigiani e bottegai',
+        desc: 'Maestri d’arte e mercanti cittadini che producono beni di qualità.',
+        holdings: 'Botteghe, laboratori, corporazioni',
+        needs: ['Officine ben rifornite', 'Domanda stabile', 'Protezione dai banditi'],
+        primaryNeeds: ['Cibo', 'Attrezzi', 'Materie prime'],
+        secondaryNeeds: ['Tessuti grezzi', 'Accesso ai mercati'],
+        wants: ['Legno stagionato', 'Ferro lavorabile', 'Tessuti grezzi'],
+        lacks: 'Bloccati se mancano materie prime o il mercato è instabile.',
+        housing: 'Vivono in case-bottega dentro le mura.',
+        projects: ['Laboratori migliorati', 'Forni da fusione', 'Guild hall cittadina'],
+        goals: 'Aumentare la produzione di beni di pregio e rafforzare le corporazioni.',
+        tip: 'Riduci dazi locali e sponsorizza fiere.'
+    },
+    peasants: {
+        name: 'Contadini',
+        category: 'Popolo rurale',
+        desc: 'Lavoratori dei campi e dei villaggi che sostengono il raccolto.',
+        holdings: 'Campi, villaggi, granai comunitari',
+        needs: ['Terra coltivabile', 'Tasse eque', 'Protezione da carestie'],
+        primaryNeeds: ['Grano', 'Semi', 'Attrezzi'],
+        secondaryNeeds: ['Pelle per ripari', 'Tessuti base'],
+        wants: ['Semi', 'Attrezzi in ferro', 'Bestiame'],
+        lacks: 'Soffrono se mancano attrezzi o granai pieni.',
+        housing: 'Case in legno e fattorie attorno ai villaggi.',
+        projects: ['Granai comuni', 'Canali di irrigazione', 'Mulini a vento'],
+        goals: 'Raccolti stabili e accesso a terre sicure.',
+        tip: 'Costruisci granai, riduci tasse in annate difficili.'
+    },
+    mystics: {
+        name: 'Mistici',
+        category: 'Sapienti e guaritori',
+        desc: 'Erboristi, studiosi e veggenti che custodiscono conoscenze arcane.',
+        holdings: 'Santuari, biblioteche, torri di studio',
+        needs: ['Accesso ad erbe rare', 'Protezione dalle persecuzioni', 'Spazi di ricerca'],
+        primaryNeeds: ['Erbe', 'Cristalli', 'Silenzio e protezione'],
+        secondaryNeeds: ['Pergamene', 'Incensi'],
+        wants: ['Erbe rare', 'Pergamene', 'Cristalli'],
+        lacks: 'Restano fermi se non ottengono reagenti e silenzio.',
+        housing: 'Torri isolate o eremi boschivi.',
+        projects: ['Erbari', 'Laboratori alchemici', 'Osservatori'],
+        goals: 'Ricercare arti arcane e sostenere la salute del popolo.',
+        tip: 'Finanzia laboratori e proteggi la loro autonomia.'
+    },
+    outcasts: {
+        name: 'Emarginati',
+        category: 'Popolazione ai margini',
+        desc: 'Rifugiati, banditi redenti e poveri senza terra.',
+        holdings: 'Baraccopoli, rifugi improvvisati, botteghe di fortuna',
+        needs: ['Sicurezza di base', 'Cibo e riparo', 'Opportunità di riscatto'],
+        primaryNeeds: ['Pane', 'Coperte', 'Alloggio'],
+        secondaryNeeds: ['Lavoro pagato', 'Attrezzi di base'],
+        wants: ['Pane', 'Coperte', 'Lavori pagati'],
+        lacks: 'Non hanno accesso a alloggi e cibo costante.',
+        housing: 'Capanni e tende ai margini dei centri abitati.',
+        projects: ['Alloggi modesti', 'Mense popolari', 'Laboratori di mestieri'],
+        goals: 'Reinserirsi nella società e trovare stabilità.',
+        tip: 'Crea lavori pubblici e programmi di inclusione.'
+    },
+    merchants: {
+        name: 'Mercanti',
+        category: 'Ceto mercantile',
+        desc: 'Reti commerciali che collegano mercati locali e lontani.',
+        holdings: 'Magazzini, carovane, banchieri e rotte fluviali',
+        needs: ['Rotte sicure', 'Dazi leggeri', 'Accordi vantaggiosi'],
+        primaryNeeds: ['Scorte di pregio', 'Sicurezza rotte'],
+        secondaryNeeds: ['Metalli preziosi', 'Spezie e tessuti rari'],
+        wants: ['Tessuti pregiati', 'Spezie', 'Metalli preziosi'],
+        lacks: 'Si bloccano quando le rotte sono insicure o tassate.',
+        housing: 'Case cittadine con magazzini annessi.',
+        projects: ['Carovane scortate', 'Darsene mercantili', 'Banchi di prestito'],
+        goals: 'Monopolizzare rotte chiave e accrescere i profitti.',
+        tip: 'Patrocina scorte armate e accordi commerciali.'
+    }
+};
+
 function toggleClassCard(cardElement, className) {
     const wasExpanded = cardElement.classList.contains('expanded');
-    
-    // Chiudi tutte le card
+    const modal = document.getElementById('class-modal');
+    const modalWasActive = modal && modal.classList.contains('active');
+
+    // Se la card era già espansa e il modale era attivo, chiudi tutto
+    if (wasExpanded && modalWasActive) {
+        closeClassModal();
+        return;
+    }
+
+    // Chiudi tutte le altre card
     document.querySelectorAll('.social-class-card').forEach(card => {
         card.classList.remove('expanded');
     });
-    
-    // Se non era espansa, espandi questa
-    if (!wasExpanded) {
-        cardElement.classList.add('expanded');
-        updateClassMood(className);
-    }
+
+    // Espandi questa card e apri il modale
+    cardElement.classList.add('expanded');
+    updateClassMood(className);
+    openClassModal(className);
 }
 
 // Aggiorna l'icona della classe in base all'umore
 function updateClassMood(className) {
+    const c = (typeof county !== 'undefined' && county) ? county : {};
     // Calcola l'umore medio della classe basato su felicità e bisogni
-    const happiness = county.happy || 50;
-    const health = county.health || 50;
+    const happiness = c.happy || 50;
+    const health = c.health || 50;
     const avgMood = (happiness + health) / 2;
     
     // Scegli l'emoji in base all'umore
@@ -17901,6 +18450,203 @@ function updateAllClassMoods() {
     classes.forEach(className => updateClassMood(className));
 }
 
+function classMoodText() {
+    const c = (typeof county !== 'undefined' && county) ? county : {};
+    const happiness = c.happy || 50;
+    const health = c.health || 50;
+    const stability = typeof calculateStability === 'function' ? calculateStability() : (c.stability || 50);
+    const avg = Math.round((happiness + health + stability) / 3);
+    if (avg >= 70) return 'Soddisfatti';
+    if (avg >= 40) return 'Neutrali';
+    return 'Inquieti';
+}
+
+function openClassModal(className) {
+    const modal = document.getElementById('class-modal');
+    if (!modal) return;
+
+    // Chiudi il modale se è già aperto prima di riaprirlo
+    if (modal.classList.contains('active')) {
+        closeClassModal();
+    }
+
+    // Continua con l'apertura del modale...
+    const data = CLASS_DETAILS_MAP[className] || {};
+    const countEl = document.getElementById(`${className}-count`);
+    const wealthEl = document.getElementById(`${className}-wealth`);
+    const iconEl = document.getElementById(`icon-${className}`);
+
+    const setText = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+    };
+
+    setText('class-modal-name', data.name || 'Classe');
+    setText('class-modal-cat', data.category || 'Classe sociale');
+    setText('class-modal-desc', data.desc || '');
+    setText('class-modal-count', countEl ? countEl.textContent : '0');
+    setText('class-modal-wealth', wealthEl ? wealthEl.textContent : '0');
+    setText('class-modal-lands', data.holdings || '-');
+    setText('class-modal-mood', classMoodText());
+    setText('class-modal-icon', iconEl ? iconEl.textContent : '*');
+
+    const needsList = document.getElementById('class-modal-needs');
+    if (needsList) {
+        needsList.innerHTML = '';
+        (data.needs || ['Richiedono stabilità, cibo e sicurezza']).forEach(need => {
+            const li = document.createElement('li');
+            li.textContent = need;
+            needsList.appendChild(li);
+        });
+    }
+
+    // Domanda di mercato e carenze
+    const wantsList = document.getElementById('class-modal-wants');
+    if (wantsList) {
+        wantsList.innerHTML = '';
+        (data.wants || ['Nessuna richiesta specifica']).forEach(w => {
+            const li = document.createElement('li');
+            li.textContent = w;
+            wantsList.appendChild(li);
+        });
+    }
+    setText('class-modal-lacks', data.lacks || '');
+
+    // Abitazioni e progetti desiderati
+    setText('class-modal-housing', data.housing || 'Alloggi non specificati');
+    const projectsList = document.getElementById('class-modal-projects');
+    if (projectsList) {
+        projectsList.innerHTML = '';
+        (data.projects || ['Nessun progetto pianificato']).forEach(p => {
+            const li = document.createElement('li');
+            li.textContent = p;
+            projectsList.appendChild(li);
+        });
+    }
+
+    setText('class-modal-goals', data.goals || 'Definisci gli obiettivi di questa classe.');
+    setText('class-modal-tip', data.tip || '');
+
+    // Bisogni primari/secondari esplicitati
+    const primaryList = document.getElementById('class-modal-primary');
+    const secondaryList = document.getElementById('class-modal-secondary');
+    const primaryNeeds = (data.primaryNeeds || ['Cibo', 'Sicurezza']);
+    const secondaryNeeds = (data.secondaryNeeds || ['Comfort', 'Prestigio']);
+    if (primaryList) {
+        primaryList.innerHTML = primaryNeeds.map(n => `<li>${n}</li>`).join('');
+    }
+    if (secondaryList) {
+        secondaryList.innerHTML = secondaryNeeds.map(n => `<li>${n}</li>`).join('');
+    }
+
+    const chatBtn = document.getElementById('class-modal-chat');
+    if (chatBtn) {
+        chatBtn.onclick = () => {
+            startFactionChat(className);
+            closeClassModal();
+        };
+    }
+
+    modal.classList.add('active');
+    // Assicurati che il modale sia visibile
+    if (getComputedStyle(modal).display === 'none') {
+        modal.style.display = 'flex';
+    }
+}
+
+function closeClassModal() {
+    const modal = document.getElementById('class-modal');
+    if (modal) {
+        modal.classList.remove('active');
+        // Rimosso modal.style.display = 'none' per evitare conflitti CSS
+        // Chiudi anche tutte le card espanse quando si chiude il modale
+        document.querySelectorAll('.social-class-card.expanded').forEach(card => {
+            card.classList.remove('expanded');
+        });
+    }
+}
+
+document.addEventListener('click', (ev) => {
+    const modal = document.getElementById('class-modal');
+    if (!modal || !modal.classList.contains('active')) return;
+
+    // Controlla se il click è direttamente sul backdrop (non sui suoi figli)
+    if (ev.target === modal) {
+        ev.stopPropagation(); // Previene la propagazione
+        closeClassModal();
+    }
+});
+
+// Garantisce che i click sulle card aprano sempre il popup (anche se gli handler inline non partono)
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.social-class-card').forEach(card => {
+        const classKey = card.getAttribute('data-class');
+        card.addEventListener('click', () => toggleClassCard(card, classKey));
+    });
+    // popola select magazzino privato
+    const sel = document.getElementById('gov-buy-res');
+    if (sel) {
+        sel.innerHTML = RESOURCE_KEYS.map(r => `<option value="${r}">${resourceLabels[r] || r}</option>`).join('');
+    }
+});
+
+function renderCategoryProjects() {
+    const grid = document.getElementById('projects-grid');
+    if (!grid) return;
+    const classes = Object.keys(CLASS_DETAILS_MAP);
+    grid.innerHTML = classes.map(key => {
+        const data = CLASS_DETAILS_MAP[key];
+        const projects = (data.projects || ['Nessun progetto']).map(p => `<li>${p}</li>`).join('');
+        const wants = (data.wants || []).slice(0,3).join(', ');
+        return `
+            <div class="asset-card">
+                <div style="font-weight:bold; color:var(--accent); margin-bottom:6px;">${data.name}</div>
+                <div style="color:var(--text-soft); font-size:0.9em; margin-bottom:6px;">Richiedono: ${wants || '—'}</div>
+                <ul style="margin:0; padding-left:16px; color:var(--text); line-height:1.4;">${projects}</ul>
+            </div>
+        `;
+    }).join('');
+}
+
+function refreshDomainHighlights() {
+    const c = (typeof county !== 'undefined' && county) ? county : {};
+    const stabilityVal = typeof calculateStability === 'function' ? Math.round(calculateStability()) : Math.round(c.stability || 0);
+    const income = (c.lastEconomy && (c.lastEconomy.income || c.lastEconomy.taxes)) || c.taxIncome || c.goldIncome || 0;
+    const foodPct = Math.round(c.food || 0);
+    const treasury = Math.round(c.gold || 0);
+    const buildingInProgress = (c.buildingsQueue && c.buildingsQueue.length) || (c.construction && c.construction.length) || 0;
+    const settlements = c.villages || c.towns || c.settlements || (c.pop ? Math.max(1, Math.round(c.pop / 120)) : 0);
+    const order = c.security || stabilityVal || 0;
+    const lawsActive = document.querySelectorAll('#law-list .law-card, #law-list .law-item').length;
+
+    const setText = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+    };
+
+    setText('eco-income', income);
+    setText('eco-treasury', treasury);
+    setText('eco-food', `${foodPct}%`);
+    setText('eco-stability', `${stabilityVal}%`);
+
+    setText('dev-laws', lawsActive);
+    setText('dev-buildings', buildingInProgress);
+    setText('dev-settlements', settlements);
+    setText('dev-order', `${Math.round(order)}%`);
+    renderCategoryProjects();
+}
+
+// Aggiorna sintesi al caricamento
+refreshDomainHighlights();
+
+document.addEventListener('click', (ev) => {
+    const modal = document.getElementById('class-modal');
+    if (!modal) return;
+    if (ev.target === modal) {
+        closeClassModal();
+    }
+});
+
 // Avvia chat con una fazione specifica
 function startFactionChat(factionKey) {
     // Passa alla tab della chat
@@ -17933,6 +18679,7 @@ updateUI = function() {
     }
     updateAllClassMoods();
     updateSidebarStats();
+    refreshDomainHighlights();
 };
 
 
@@ -18062,6 +18809,70 @@ console.log('✨ Miglioramenti UI caricati: Top Bar, Hover Effects, Auto-save');
 </div>
 
 <!-- MODALE CRONACHE STAGIONALI -->
+<div id="class-modal" class="modal">
+    <div class="modal-content">
+        <div class="class-modal-header">
+            <div class="class-title">
+                <div class="class-chip" id="class-modal-cat">Classe sociale</div>
+                <h3><span id="class-modal-icon" aria-hidden="true">�Y'�</span> <span id="class-modal-name">Dettagli classe</span></h3>
+                <p id="class-modal-desc" style="margin:0; color:var(--text-soft); line-height:1.6;">Panoramica della categoria, bisogni e tensioni.</p>
+            </div>
+            <button class="close-btn" onclick="closeClassModal()">�o</button>
+        </div>
+
+        <div class="class-meta-grid">
+            <div class="class-meta-card">
+                <div class="label">Membri</div>
+                <div class="value" id="class-modal-count">0</div>
+            </div>
+            <div class="class-meta-card">
+                <div class="label">Ricchezza</div>
+                <div class="value" id="class-modal-wealth">0</div>
+            </div>
+            <div class="class-meta-card">
+                <div class="label">Possedimenti</div>
+                <div class="value" id="class-modal-lands">-</div>
+            </div>
+            <div class="class-meta-card">
+                <div class="label">Umore</div>
+                <div class="value" id="class-modal-mood">-</div>
+            </div>
+        </div>
+
+        <div class="class-columns">
+            <div class="class-box">
+                <h4>Bisogni urgenti</h4>
+                <ul id="class-modal-needs"></ul>
+            </div>
+            <div class="class-box">
+                <h4>Obiettivi e timori</h4>
+                <div id="class-modal-goals" style="color:var(--text); line-height:1.6;"></div>
+            </div>
+            <div class="class-box">
+                <h4>Domanda di mercato</h4>
+                <ul id="class-modal-wants" class="pill-list"></ul>
+                <p id="class-modal-lacks" style="color:var(--text-soft); margin-top:8px;"></p>
+            </div>
+            <div class="class-box">
+                <h4>Abitazioni e progetti</h4>
+                <p id="class-modal-housing" style="color:var(--text); margin:0 0 8px;"></p>
+                <ul id="class-modal-projects" class="pill-list"></ul>
+            </div>
+            <div class="class-box">
+                <h4>Bisogni primari/secondari</h4>
+                <ul id="class-modal-primary" class="pill-list"></ul>
+                <ul id="class-modal-secondary" class="pill-list" style="margin-top:6px;"></ul>
+            </div>
+        </div>
+
+        <div class="class-actions">
+            <button class="btn-main" id="class-modal-chat">Apri colloquio</button>
+            <button class="btn-ghost" onclick="closeClassModal()">Chiudi</button>
+            <div id="class-modal-tip" style="color:var(--text-soft); font-size:0.9em;"></div>
+        </div>
+    </div>
+</div>
+
 <div id="modal-chronicle" class="modal" style="background: rgba(0,0,0,0.9); z-index: 5000;">
     <div class="modal-content chronicle-content">
         <div class="chronicle-header">
