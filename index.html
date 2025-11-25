@@ -5809,8 +5809,8 @@ textarea:focus-visible {
 </div>
 
 <!-- Sezione magazzino privato governatore -->
-<div class="section-panel" style="margin-top:0; padding:16px;">
-    <h3 style="color:var(--accent); margin-top:0;">�Y'� Magazzino Privato del Governatore</h3>
+<div id="gov-private-section" class="section-panel" style="margin-top:0; padding:16px; display:none;">
+    <h3 style="color:var(--accent); margin-top:0;">📦 Magazzino Privato del Governatore</h3>
     <p class="text-soft" style="margin:6px 0 12px;">Compra dal mercato usando l'oro del conte; le risorse restano private per costruzioni personali.</p>
     <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end; margin-bottom:12px;">
         <div style="flex:1; min-width:180px;">
@@ -18587,6 +18587,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const sel = document.getElementById('gov-buy-res');
     if (sel) {
         sel.innerHTML = RESOURCE_KEYS.map(r => `<option value="${r}">${resourceLabels[r] || r}</option>`).join('');
+    }
+    const privateSection = document.getElementById('gov-private-section');
+    const warehouseTab = document.getElementById('tab-warehouse');
+    if (privateSection && warehouseTab && privateSection.parentElement !== warehouseTab) {
+        warehouseTab.appendChild(privateSection);
+        privateSection.style.display = '';
     }
 });
 
